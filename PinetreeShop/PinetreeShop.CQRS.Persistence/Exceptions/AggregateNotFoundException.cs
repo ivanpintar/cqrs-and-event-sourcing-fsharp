@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace PinetreeShop.CQRS.Persistence.Exceptions
 {
     [Serializable]
-    internal class AggregateNotFoundException : Exception
+    public class AggregateNotFoundException : Exception
     {
         public AggregateNotFoundException()
         {

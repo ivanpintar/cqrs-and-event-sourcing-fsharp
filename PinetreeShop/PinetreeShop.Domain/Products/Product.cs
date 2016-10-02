@@ -10,22 +10,30 @@ namespace PinetreeShop.Domain.Products
 {
     public class Product : AggregateBase
     {
-        public string Name { get; set; }
-        public decimal Price { get; set; }
-        public uint Quantity { get; set; }
-        public uint Available { get; set; }
+        public string Name { get; private set; }
+        public decimal Price { get; private set; }
+        public uint Quantity { get; private set; }
+        public uint AvailableQuantity { get; private set; }
 
         public Product()
         {
+            Quantity = 0;
+            AvailableQuantity = 0;
+
             RegisterTransition<ProductCreated>(Apply);
             RegisterTransition<ProductQuantityChanged>(Apply);
             RegisterTransition<ProductReserved>(Apply);
             RegisterTransition<ProductReservationReleased>(Apply);            
         }
 
-        private Product(Guid id, string name, int price) : this()
+        private Product(Guid aggregateId, string name, decimal price) : this()
         {
-
+            RaiseEvent(new ProductCreated(aggregateId, name, price));
+        }
+        
+        internal static IAggregate Create(Guid aggregateId, string name, decimal price)
+        {
+            return new Product(aggregateId, name, price);
         }
 
         private void Apply(ProductReservationReleased evt)
@@ -45,7 +53,9 @@ namespace PinetreeShop.Domain.Products
 
         private void Apply(ProductCreated evt)
         {
-            throw new NotImplementedException();
+            Id = evt.AggregateId;
+            Name = evt.Name;
+            Price = evt.Price;
         }
     }
 }

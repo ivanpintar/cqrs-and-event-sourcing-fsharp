@@ -36,6 +36,15 @@ namespace PinetreeShop.Domain.Baskets.Commands
         }
     }
 
+    public class Cancel : CommandBase
+    {
+        public Cancel(Guid aggregateId) : base(aggregateId)
+        {
+
+        }
+    }
+
+
     public class Checkout : CommandBase
     {
         public Address Address { get; set; }

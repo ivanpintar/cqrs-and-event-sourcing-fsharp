@@ -8,6 +8,7 @@ namespace PinetreeShop.Domain.Baskets
         IHandle<CreateBasket>,
         IHandle<AddProduct>,
         IHandle<RemoveProduct>,
+        IHandle<Cancel>,
         IHandle<Checkout>
     {
         private IDomainRepository _domainRepository;
@@ -28,6 +29,11 @@ namespace PinetreeShop.Domain.Baskets
         }
 
         public IAggregate Handle(RemoveProduct command)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IAggregate Handle(Cancel command)
         {
             throw new NotImplementedException();
         }

@@ -8,20 +8,24 @@ namespace PinetreeShop.Domain.Baskets
 {
     public class Basket : AggregateBase
     {
-        private enum BasketState { Pending, CheckedOut };
-        private BasketState _state = BasketState.Pending;
+        public enum BasketState { Pending, Cancelled, CheckedOut };
+        public BasketState State { get; private set; }
+
         private List<OrderLine> _orderLines = new List<OrderLine>();
-        
+        public IEnumerable<OrderLine> OrderLines { get { return _orderLines; } }
+
         private Basket(Guid id) : this()
-        {
+        {   
         }
 
         public Basket()
         {
+            State = BasketState.Pending;
 
             RegisterTransition<BasketCreated>(Apply);
             RegisterTransition<ProductAdded>(Apply);
             RegisterTransition<ProductRemoved>(Apply);
+            RegisterTransition<Cancelled>(Apply);
             RegisterTransition<CheckedOut>(Apply);
         }
 
@@ -36,6 +40,11 @@ namespace PinetreeShop.Domain.Baskets
         }
 
         private void Apply(ProductRemoved evt)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void Apply(Cancelled evt)
         {
             throw new NotImplementedException();
         }

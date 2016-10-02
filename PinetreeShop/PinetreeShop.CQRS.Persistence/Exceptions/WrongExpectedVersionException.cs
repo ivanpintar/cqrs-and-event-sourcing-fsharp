@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace PinetreeShop.CQRS.Persistence.Exceptions
 {
     [Serializable]
-    internal class WrongExpectedVersionException : Exception
+    public class WrongExpectedVersionException : Exception
     {
         public WrongExpectedVersionException()
         {

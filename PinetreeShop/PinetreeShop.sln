@@ -9,11 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CQRS", "CQRS", "{BADC2E38-1
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{BE55598C-0571-4DC9-A146-601CAF4DFBE9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PinetreeShop.App", "PinetreeShop.App\PinetreeShop.App.csproj", "{C73A3027-EDF8-4DF8-83D2-2E0AC24DF052}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PinetreeShop.Shared", "PinetreeShop.Shared\PinetreeShop.Shared.csproj", "{6F9FDFEE-9626-4295-B7C9-3F2525B160FF}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Persistence", "Persistence", "{C13B669C-7C04-4D2D-86D3-F0D98B6E570F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PinetreeShop.CQRS.Infrastructure", "PinetreeShop.CQRS.Infrastructure\PinetreeShop.CQRS.Infrastructure.csproj", "{1F715587-CCCE-4289-B3B7-FD3299475337}"
 EndProject
@@ -25,16 +21,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PinetreeShop.Domain", "Pine
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PinetreeShop.Domain.Tests", "PinetreeShop.Domain.Tests\PinetreeShop.Domain.Tests.csproj", "{117D52E7-FA11-46DF-BB75-E82A291A76FE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PinetreeShop.WebAPI", "PinetreeShop.WebAPI\PinetreeShop.WebAPI.csproj", "{C3FB0D55-BC38-4CD2-95C8-62A51C137C9D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{4C72FA44-9BFD-43BD-8763-04E1D463A401}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C73A3027-EDF8-4DF8-83D2-2E0AC24DF052}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C73A3027-EDF8-4DF8-83D2-2E0AC24DF052}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C73A3027-EDF8-4DF8-83D2-2E0AC24DF052}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C73A3027-EDF8-4DF8-83D2-2E0AC24DF052}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6F9FDFEE-9626-4295-B7C9-3F2525B160FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6F9FDFEE-9626-4295-B7C9-3F2525B160FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F9FDFEE-9626-4295-B7C9-3F2525B160FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -59,6 +55,10 @@ Global
 		{117D52E7-FA11-46DF-BB75-E82A291A76FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{117D52E7-FA11-46DF-BB75-E82A291A76FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{117D52E7-FA11-46DF-BB75-E82A291A76FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3FB0D55-BC38-4CD2-95C8-62A51C137C9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3FB0D55-BC38-4CD2-95C8-62A51C137C9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3FB0D55-BC38-4CD2-95C8-62A51C137C9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3FB0D55-BC38-4CD2-95C8-62A51C137C9D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -70,5 +70,6 @@ Global
 		{B0A04400-830C-485E-A8BC-E1BEB951B2F4} = {D052523F-4202-47B9-A4C6-589450F2CA16}
 		{8604EBD4-4C55-46BA-B7BA-2CA6153B56FA} = {BE55598C-0571-4DC9-A146-601CAF4DFBE9}
 		{117D52E7-FA11-46DF-BB75-E82A291A76FE} = {BE55598C-0571-4DC9-A146-601CAF4DFBE9}
+		{C3FB0D55-BC38-4CD2-95C8-62A51C137C9D} = {4C72FA44-9BFD-43BD-8763-04E1D463A401}
 	EndGlobalSection
 EndGlobal

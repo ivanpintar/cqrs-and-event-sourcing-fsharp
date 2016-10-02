@@ -62,6 +62,10 @@
       <Project>{1F715587-CCCE-4289-B3B7-FD3299475337}</Project>
       <Name>PinetreeShop.CQRS.Infrastructure</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PinetreeShop.CQRS.Persistence\PinetreeShop.CQRS.Persistence.csproj">
+      <Project>{0E2B6EBB-B5EA-4FF4-833F-AD02F424A7FB}</Project>
+      <Name>PinetreeShop.CQRS.Persistence</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

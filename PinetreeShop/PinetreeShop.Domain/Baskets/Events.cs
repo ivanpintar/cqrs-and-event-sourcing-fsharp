@@ -35,6 +35,13 @@ namespace PinetreeShop.Domain.Baskets.Events
         }
     }
 
+    public class Cancelled : EventBase
+    {
+        public Cancelled(Guid aggregateId) : base(aggregateId)
+        {
+        }
+    }
+
     public class CheckedOut : EventBase
     {
         public Address Address { get; private set; }

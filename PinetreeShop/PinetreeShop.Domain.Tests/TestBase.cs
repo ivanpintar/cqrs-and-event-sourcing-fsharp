@@ -14,7 +14,6 @@ namespace PinetreeShop.Domain.Tests
     public class TestBase
     {
         private InMemoryDomainRepository _domainRepository;
-        private DomainEntry _domainEntry;
         private Dictionary<Guid, IEnumerable<IEvent>> _preConditions = new Dictionary<Guid, IEnumerable<IEvent>>();
 
         private DomainEntry BuildApplication()
@@ -93,7 +92,7 @@ namespace PinetreeShop.Domain.Tests
         private static List<PropertyInfo> GetProps(IEvent evt)
         {
             return evt.GetType()
-                .GetProperties(BindingFlags.Public)
+                .GetProperties(BindingFlags.Instance)
                 .Where(p => p.Name != "Date")
                 .OrderBy(p => p.Name)
                 .ToList();

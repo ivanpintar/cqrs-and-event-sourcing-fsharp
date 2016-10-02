@@ -12,7 +12,7 @@ namespace PinetreeShop.Domain.Tests.Product
 {
     public class CreateProductTests : TestBase
     {
-        [Fact]
+        [Theory]
         [InlineData("One", 1)]
         [InlineData("Two", 2)]
         [InlineData("Three", 3)]
@@ -25,7 +25,7 @@ namespace PinetreeShop.Domain.Tests.Product
         }
 
         [Fact]
-        public void When_CreatingProductWithSameGuid_ThrowProducExistsException(string name, decimal price)
+        public void When_CreatingProductWithSameGuid_ThrowProducExistsException()
         {
             Guid id = Guid.NewGuid();
 
