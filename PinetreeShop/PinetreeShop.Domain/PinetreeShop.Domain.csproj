@@ -49,6 +49,7 @@
     <Compile Include="DomainEntry.cs" />
     <Compile Include="Orders\Commands.cs" />
     <Compile Include="Orders\Events.cs" />
+    <Compile Include="Products\Exceptions.cs" />
     <Compile Include="Types.cs" />
     <Compile Include="Products\CommandHandlers.cs" />
     <Compile Include="Products\Commands.cs" />

@@ -1,4 +1,5 @@
 ﻿using PinetreeShop.Domain.Products.Commands;
+using PinetreeShop.Domain.Products.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,7 @@ namespace PinetreeShop.Domain.Tests.Product
             Guid id = Guid.NewGuid();
 
             When(new CreateProduct(id, name, price));
+            Then(new ProductCreated(id, name, price));
         }
     }
 }
