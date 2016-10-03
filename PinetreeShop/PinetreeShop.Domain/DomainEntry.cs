@@ -1,4 +1,6 @@
 ﻿using PinetreeShop.CQRS.Infrastructure;
+using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
+using PinetreeShop.CQRS.Infrastructure.Repositories;
 using PinetreeShop.Domain.Baskets;
 using PinetreeShop.Domain.Baskets.Commands;
 using PinetreeShop.Domain.Orders;
@@ -16,13 +18,14 @@ namespace PinetreeShop.Domain
     public class DomainEntry
     {
         private readonly CommandDispatcher _commandDispatcher;
+        private readonly WorkflowEventListener _workflowEventListener;
 
         public DomainEntry(
-            IDomainRepository domainRepository,
-            IEnumerable<Action<ICommand>> preExecutionPipe = null,
-            IEnumerable<Action<object>> postExecutionPipe = null) 
+            IAggregateRepository aggregateRepository,
+            IWorkflowRepository workflowRepository)
         {
-            _commandDispatcher = CreateCommandDispatcher(domainRepository, preExecutionPipe, postExecutionPipe);
+            _commandDispatcher = CreateCommandDispatcher(aggregateRepository);
+            _workflowEventListener = CreateEventListener(workflowRepository, _commandDispatcher);
         }
 
         public void ExecuteCommand<TCommand>(TCommand command) where TCommand : ICommand
@@ -30,27 +33,39 @@ namespace PinetreeShop.Domain
             _commandDispatcher.ExecuteCommand(command);
         }
 
-        private CommandDispatcher CreateCommandDispatcher(IDomainRepository domainRepository, IEnumerable<Action<ICommand>> preExecutionPipe, IEnumerable<Action<object>> postExecutionPipe)
+        public void HandleEvent<TEvent>(TEvent evt) where TEvent : IEvent
         {
-            var commandDispatcher = new CommandDispatcher(domainRepository, preExecutionPipe, postExecutionPipe);
+            _workflowEventListener.HandleEvent(evt);
+        }
 
-            var productCommandHandler = new ProductCommandHandler(domainRepository);
-            commandDispatcher.RegisterHander<CreateProduct>(productCommandHandler);
-            commandDispatcher.RegisterHander<ChangeProductQuantity>(productCommandHandler);
-            commandDispatcher.RegisterHander<ReserveProduct>(productCommandHandler);
-            commandDispatcher.RegisterHander<ReleaseProductReservation>(productCommandHandler);
+        private WorkflowEventListener CreateEventListener(IWorkflowRepository workflowRepository, CommandDispatcher commandDispatcher)
+        {
+            var eventListener = new WorkflowEventListener(workflowRepository, commandDispatcher);
 
-            var basketCommandHandler = new BasketCommandHandler(domainRepository);
-            commandDispatcher.RegisterHander<CreateBasket>(basketCommandHandler);
-            commandDispatcher.RegisterHander<AddProduct>(basketCommandHandler);
-            commandDispatcher.RegisterHander<RemoveProduct>(basketCommandHandler);
-            commandDispatcher.RegisterHander<Checkout>(basketCommandHandler);
+            return eventListener;
+        }
 
-            var orderCommandHandler = new OrderCommandHandler(domainRepository);
-            commandDispatcher.RegisterHander<CreateOrder>(orderCommandHandler);
-            commandDispatcher.RegisterHander<CancelOrder>(orderCommandHandler);
-            commandDispatcher.RegisterHander<ShipOrder>(orderCommandHandler);
-            commandDispatcher.RegisterHander<DeliverOrder>(orderCommandHandler);
+        private CommandDispatcher CreateCommandDispatcher(IAggregateRepository aggregateRepository)
+        {
+            var commandDispatcher = new CommandDispatcher(aggregateRepository);
+
+            var productCommandHandler = new ProductCommandHandler(aggregateRepository);
+            commandDispatcher.RegisterHandler<CreateProduct>(productCommandHandler);
+            commandDispatcher.RegisterHandler<ChangeProductQuantity>(productCommandHandler);
+            commandDispatcher.RegisterHandler<ReserveProduct>(productCommandHandler);
+            commandDispatcher.RegisterHandler<ReleaseProductReservation>(productCommandHandler);
+
+            var basketCommandHandler = new BasketCommandHandler(aggregateRepository);
+            commandDispatcher.RegisterHandler<CreateBasket>(basketCommandHandler);
+            commandDispatcher.RegisterHandler<AddProduct>(basketCommandHandler);
+            commandDispatcher.RegisterHandler<RemoveProduct>(basketCommandHandler);
+            commandDispatcher.RegisterHandler<Checkout>(basketCommandHandler);
+
+            var orderCommandHandler = new OrderCommandHandler(aggregateRepository);
+            commandDispatcher.RegisterHandler<CreateOrder>(orderCommandHandler);
+            commandDispatcher.RegisterHandler<CancelOrder>(orderCommandHandler);
+            commandDispatcher.RegisterHandler<ShipOrder>(orderCommandHandler);
+            commandDispatcher.RegisterHandler<DeliverOrder>(orderCommandHandler);
 
             return commandDispatcher;
         }

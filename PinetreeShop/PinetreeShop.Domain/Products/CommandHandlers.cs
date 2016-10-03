@@ -1,4 +1,6 @@
 ﻿using PinetreeShop.CQRS.Infrastructure;
+using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
+using PinetreeShop.CQRS.Infrastructure.Repositories;
 using PinetreeShop.CQRS.Persistence.Exceptions;
 using PinetreeShop.Domain.Products.Commands;
 using PinetreeShop.Domain.Products.Exceptions;
@@ -7,23 +9,23 @@ using System;
 namespace PinetreeShop.Domain.Products.CommandHandlers
 {
     public class ProductCommandHandler :
-        IHandle<CreateProduct>,
-        IHandle<ChangeProductQuantity>,
-        IHandle<ReserveProduct>,
-        IHandle<ReleaseProductReservation>
+        IHandleCommand<CreateProduct>,
+        IHandleCommand<ChangeProductQuantity>,
+        IHandleCommand<ReserveProduct>,
+        IHandleCommand<ReleaseProductReservation>
     {
-        private IDomainRepository _domainRepository;
+        private IAggregateRepository _aggregateRepository;
 
-        public ProductCommandHandler(IDomainRepository domainRepository)
+        public ProductCommandHandler(IAggregateRepository aggregateRepository)
         {
-            _domainRepository = domainRepository;
+            _aggregateRepository = aggregateRepository;
         }
 
         public IAggregate Handle(CreateProduct command)
         {
             try
             {
-                var product = _domainRepository.GetById<Product>(command.AggregateId);
+                var product = _aggregateRepository.GetAggregateById<Product>(command.AggregateId);
                 throw new ProductExistsException(command.AggregateId, "Product already exists");
             }
             catch (AggregateNotFoundException)
@@ -35,17 +37,23 @@ namespace PinetreeShop.Domain.Products.CommandHandlers
 
         public IAggregate Handle(ChangeProductQuantity command)
         {
-            throw new NotImplementedException();
+            var product = _aggregateRepository.GetAggregateById<Product>(command.AggregateId);
+            product.ChangeQuantity(command.Difference);
+            return product;
         }
 
         public IAggregate Handle(ReserveProduct command)
         {
-            throw new NotImplementedException();
+            var product = _aggregateRepository.GetAggregateById<Product>(command.AggregateId);
+            product.Reserve(command.AggregateId, command.BasketId, command.QuantityToReserve);
+            return product;
         }
 
         public IAggregate Handle(ReleaseProductReservation command)
         {
-            throw new NotImplementedException();
+            var product = _aggregateRepository.GetAggregateById<Product>(command.AggregateId);
+            product.ReleaseReservation(command.AggregateId, command.QuantityToRelease);
+            return product;
         }
     }
 }

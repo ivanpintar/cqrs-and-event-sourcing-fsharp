@@ -4,12 +4,14 @@ using System.Collections.Generic;
 
 namespace PinetreeShop.CQRS.Infrastructure
 {
-    public interface IAggregate
+    public interface IWorkflow
     {
         Guid Id { get; }
         int Version { get; }
         IEnumerable<IEvent> UncommittedEvents { get; }
         void ClearUncommittedEvents();
-        void ApplyEvent(IEvent evt);
+        IEnumerable<ICommand> UndispatchedCommands { get; }
+        void ClearUndispatchedCommands();
+        void Transition(IEvent evt);
     }
 }

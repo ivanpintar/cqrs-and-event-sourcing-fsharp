@@ -1,19 +1,21 @@
 ﻿using PinetreeShop.CQRS.Infrastructure;
+using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
+using PinetreeShop.CQRS.Infrastructure.Repositories;
 using PinetreeShop.Domain.Baskets.Commands;
 using System;
 
 namespace PinetreeShop.Domain.Baskets
 {
     public class BasketCommandHandler :
-        IHandle<CreateBasket>,
-        IHandle<AddProduct>,
-        IHandle<RemoveProduct>,
-        IHandle<Cancel>,
-        IHandle<Checkout>
+        IHandleCommand<CreateBasket>,
+        IHandleCommand<AddProduct>,
+        IHandleCommand<RemoveProduct>,
+        IHandleCommand<Cancel>,
+        IHandleCommand<Checkout>
     {
-        private IDomainRepository _domainRepository;
+        private IAggregateRepository _domainRepository;
 
-        public BasketCommandHandler(IDomainRepository domainRepository)
+        public BasketCommandHandler(IAggregateRepository domainRepository)
         {
             _domainRepository = domainRepository;
         }

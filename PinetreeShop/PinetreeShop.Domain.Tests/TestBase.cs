@@ -1,4 +1,5 @@
 ﻿using PinetreeShop.CQRS.Infrastructure;
+using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
 using PinetreeShop.CQRS.Persistence;
 using PinetreeShop.Domain;
 using System;
@@ -13,14 +14,17 @@ namespace PinetreeShop.Domain.Tests
 {
     public class TestBase
     {
-        private InMemoryDomainRepository _domainRepository;
+        private InMemoryAggregateRepository _domainRepository;
+        private InMemoryWorkflowRepository _workflowRepository;
         private Dictionary<Guid, IEnumerable<IEvent>> _preConditions = new Dictionary<Guid, IEnumerable<IEvent>>();
 
         private DomainEntry BuildApplication()
         {
-            _domainRepository = new InMemoryDomainRepository();
+            _domainRepository = new InMemoryAggregateRepository();
             _domainRepository.AddEvents(_preConditions);
-            return new DomainEntry(_domainRepository);
+
+            _workflowRepository = new InMemoryWorkflowRepository();
+            return new DomainEntry(_domainRepository, _workflowRepository);
         }
 
         protected void TearDown()

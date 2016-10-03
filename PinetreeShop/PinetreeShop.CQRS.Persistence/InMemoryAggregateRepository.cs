@@ -1,21 +1,21 @@
 ﻿using Newtonsoft.Json;
-using PinetreeShop.CQRS.Infrastructure;
+using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
+using PinetreeShop.CQRS.Infrastructure.Repositories;
 using PinetreeShop.CQRS.Persistence.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PinetreeShop.CQRS.Persistence
 {
-    public class InMemoryDomainRepository : DomainRepositoryBase
+    public class InMemoryAggregateRepository : AggregateRepositoryBase
     {
         public Dictionary<Guid, List<string>> _eventStore = new Dictionary<Guid, List<string>>();
         private List<IEvent> _latestEvents = new List<IEvent>();
+        private List<ICommand> _latestCommands = new List<ICommand>();
         private JsonSerializerSettings _serializationSettings;
 
-        public InMemoryDomainRepository()
+        public InMemoryAggregateRepository()
         {
             _serializationSettings = new JsonSerializerSettings
             {
@@ -23,18 +23,17 @@ namespace PinetreeShop.CQRS.Persistence
             };
         }
 
-        public override TResult GetById<TResult>(Guid id)
+        public override TResult GetAggregateById<TResult>(Guid id)
         {
             if (_eventStore.ContainsKey(id))
             {
-                var events = _eventStore[id];
-                var deserializedEvents = events.Select(e => JsonConvert.DeserializeObject(e, _serializationSettings) as IEvent);
-                return BuildAggregate<TResult>(deserializedEvents);
+                var events = _eventStore[id].Select(e => JsonConvert.DeserializeObject(e, _serializationSettings) as IEvent);
+                return BuildAggregate<TResult>(events);
             }
             throw new AggregateNotFoundException($"Could not find aggregate {typeof(TResult)}:{id}");
         }
 
-        public override IEnumerable<IEvent> Save<TAggregate>(TAggregate aggregate)
+        public override void SaveAggregate<TAggregate>(TAggregate aggregate)
         {
             var eventsToSave = aggregate.UncommittedEvents.ToList();
             var serializedEvents = eventsToSave.Select(Serialize).ToList();
@@ -55,9 +54,8 @@ namespace PinetreeShop.CQRS.Persistence
             }
             _latestEvents.AddRange(eventsToSave);
             aggregate.ClearUncommittedEvents();
-            return eventsToSave;
         }
-
+       
         public IEnumerable<IEvent> GetLatestEvents()
         {
             return _latestEvents;

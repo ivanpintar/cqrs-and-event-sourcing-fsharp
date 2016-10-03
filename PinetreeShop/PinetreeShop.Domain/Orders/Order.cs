@@ -14,10 +14,10 @@ namespace PinetreeShop.Domain.Orders
 
         public Order()
         {
-            RegisterTransition<OrderCreated>(Apply);
-            RegisterTransition<OrderCancelled>(Apply);
-            RegisterTransition<OrderShipped>(Apply);
-            RegisterTransition<OrderDelivered>(Apply);
+            RegisterEventHandler<OrderCreated>(Apply);
+            RegisterEventHandler<OrderCancelled>(Apply);
+            RegisterEventHandler<OrderShipped>(Apply);
+            RegisterEventHandler<OrderDelivered>(Apply);
         }
 
         public Order(Guid baskedId, IEnumerable<OrderLine> orderLines) : base()

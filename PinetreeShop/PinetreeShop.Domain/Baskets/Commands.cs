@@ -1,4 +1,5 @@
 ﻿using PinetreeShop.CQRS.Infrastructure;
+using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
 using PinetreeShop.Domain.Types;
 using System;
 
@@ -43,7 +44,6 @@ namespace PinetreeShop.Domain.Baskets.Commands
 
         }
     }
-
 
     public class Checkout : CommandBase
     {

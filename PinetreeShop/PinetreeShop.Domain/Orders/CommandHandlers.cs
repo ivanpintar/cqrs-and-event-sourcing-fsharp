@@ -1,18 +1,20 @@
 ﻿using PinetreeShop.CQRS.Infrastructure;
+using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
+using PinetreeShop.CQRS.Infrastructure.Repositories;
 using PinetreeShop.Domain.Orders.Commands;
 using System;
 
 namespace PinetreeShop.Domain.Orders
 {
     public class OrderCommandHandler :
-        IHandle<CreateOrder>,
-        IHandle<CancelOrder>,
-        IHandle<ShipOrder>,
-        IHandle<DeliverOrder>
+        IHandleCommand<CreateOrder>,
+        IHandleCommand<CancelOrder>,
+        IHandleCommand<ShipOrder>,
+        IHandleCommand<DeliverOrder>
     {
-        private IDomainRepository _domainRepository;
+        private IAggregateRepository _domainRepository;
 
-        public OrderCommandHandler(IDomainRepository domainRepository)
+        public OrderCommandHandler(IAggregateRepository domainRepository)
         {
             _domainRepository = domainRepository;
         }

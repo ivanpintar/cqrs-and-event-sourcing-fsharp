@@ -22,11 +22,11 @@ namespace PinetreeShop.Domain.Baskets
         {
             State = BasketState.Pending;
 
-            RegisterTransition<BasketCreated>(Apply);
-            RegisterTransition<ProductAdded>(Apply);
-            RegisterTransition<ProductRemoved>(Apply);
-            RegisterTransition<Cancelled>(Apply);
-            RegisterTransition<CheckedOut>(Apply);
+            RegisterEventHandler<BasketCreated>(Apply);
+            RegisterEventHandler<ProductAdded>(Apply);
+            RegisterEventHandler<ProductRemoved>(Apply);
+            RegisterEventHandler<Cancelled>(Apply);
+            RegisterEventHandler<CheckedOut>(Apply);
         }
 
         private void Apply(BasketCreated evt)

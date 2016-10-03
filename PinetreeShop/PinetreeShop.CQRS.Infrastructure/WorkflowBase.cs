@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace PinetreeShop.CQRS.Infrastructure
 {
-    public class AggregateBase : IAggregate
+    public class WorkflowBase : IWorkflow
     {
         private Dictionary<Type, Action<IEvent>> _eventHandlers = new Dictionary<Type, Action<IEvent>>();
 
@@ -19,12 +19,20 @@ namespace PinetreeShop.CQRS.Infrastructure
         private List<IEvent> _uncommittedEvents = new List<IEvent>();
         public IEnumerable<IEvent> UncommittedEvents { get { return _uncommittedEvents; } }
 
+        private List<ICommand> _undispatchedCommands = new List<ICommand>();
+        public IEnumerable<ICommand> UndispatchedCommands { get { return _undispatchedCommands; } }
+        
         public void ClearUncommittedEvents()
         {
             _uncommittedEvents.Clear();
         }
 
-        public void ApplyEvent(IEvent evt)
+        public void ClearUndispatchedCommands()
+        {
+            _undispatchedCommands.Clear();
+        }
+
+        public void Transition(IEvent evt)
         {
             var eventType = evt.GetType();
             if (_eventHandlers.ContainsKey(eventType))
@@ -36,9 +44,14 @@ namespace PinetreeShop.CQRS.Infrastructure
 
         protected void RaiseEvent(IEvent evt)
         {
-            ApplyEvent(evt);
+            Transition(evt);
             _uncommittedEvents.Add(evt);
         }
+        
+        protected void Dispatch(ICommand command)
+        {
+            _undispatchedCommands.Add(command);
+        }        
 
         protected void RegisterEventHandler<T>(Action<T> handler) where T : class
         {

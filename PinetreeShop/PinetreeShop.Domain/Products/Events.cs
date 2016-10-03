@@ -1,4 +1,5 @@
 ﻿using PinetreeShop.CQRS.Infrastructure;
+using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,8 +13,7 @@ namespace PinetreeShop.Domain.Products.Events
         public string Name { get; private set; }
         public decimal Price { get; private set; }
 
-
-        public ProductCreated(Guid aggregateId, string name,decimal price) : base(aggregateId)
+        public ProductCreated(Guid aggregateId, string name, decimal price) : base(aggregateId)
         {
             Name = name;
             Price = price;
@@ -33,22 +33,36 @@ namespace PinetreeShop.Domain.Products.Events
     public class ProductReserved : EventBase
     {
         public Guid BasketId { get; private set; }
-        public uint Quantity { get; private set; }
+        public uint QuantityToReserve { get; private set; }
 
-        public ProductReserved(Guid aggregateId, Guid basketId, uint quantity) : base(aggregateId)
+        public ProductReserved(Guid aggregateId, Guid basketId, uint quantityToReserve) : base(aggregateId)
         {
             BasketId = basketId;
-            Quantity = quantity;
+            QuantityToReserve = quantityToReserve;
+        }
+    }
+
+    public class ProductReservationFailed : EventFailedBase
+    {
+        public static string NotAvailable = "not available";
+
+        public Guid BasketId { get; private set; }
+        public uint QuantityToReserve { get; private set; }
+
+        public ProductReservationFailed(Guid aggregateId, Guid basketId, uint quantityToReserve, string reason) : base(aggregateId, reason)
+        {
+            BasketId = basketId;
+            QuantityToReserve = quantityToReserve;
         }
     }
 
     public class ProductReservationReleased : EventBase
     {
-        public uint Quantity { get; private set; }
+        public uint QuantityToRelease { get; private set; }
 
-        public ProductReservationReleased(Guid aggregateId, uint quantity) : base(aggregateId)
+        public ProductReservationReleased(Guid aggregateId, uint quantityToRelease) : base(aggregateId)
         {
-            Quantity = quantity;
+            QuantityToRelease = quantityToRelease;
         }
     }
 }

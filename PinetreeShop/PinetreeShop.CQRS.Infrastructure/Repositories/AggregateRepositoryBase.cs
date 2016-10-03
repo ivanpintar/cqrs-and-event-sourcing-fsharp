@@ -1,13 +1,11 @@
-﻿using System;
+﻿using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
+using System;
 using System.Collections.Generic;
 
-namespace PinetreeShop.CQRS.Infrastructure
+namespace PinetreeShop.CQRS.Infrastructure.Repositories
 {
-    public abstract class DomainRepositoryBase : IDomainRepository
-    {
-        public abstract TResult GetById<TResult>(Guid id) where TResult : IAggregate, new();
-        public abstract IEnumerable<IEvent> Save<TAggregate>(TAggregate aggregate) where TAggregate : IAggregate;
-
+    public abstract class AggregateRepositoryBase : IAggregateRepository
+    {       
         protected int CalculateExpectedVersion<T>(IAggregate aggregate, List<T> events)
         {
             return aggregate.Version - events.Count;
@@ -23,5 +21,8 @@ namespace PinetreeShop.CQRS.Infrastructure
 
             return result;
         }
+
+        public abstract void SaveAggregate<TAggregate>(TAggregate aggregate) where TAggregate : IAggregate;
+        public abstract TResult GetAggregateById<TResult>(Guid id) where TResult : IAggregate, new();
     }
 }

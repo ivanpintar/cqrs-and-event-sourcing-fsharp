@@ -16,7 +16,7 @@ namespace PinetreeShop.Domain.Tests.Product
         [InlineData("One", 1)]
         [InlineData("Two", 2)]
         [InlineData("Three", 3)]
-        public void When_ProductCreated_ProductIsCreatedWithTheGivenPrice(string name, int price)
+        public void When_CreateProduct_ProductCreated(string name, int price)
         {
             Guid id = Guid.NewGuid();
 
@@ -25,7 +25,7 @@ namespace PinetreeShop.Domain.Tests.Product
         }
 
         [Fact]
-        public void When_CreatingProductWithSameGuid_ThrowProducExistsException()
+        public void When_CreateProductWithSameGuid_ThrowProducExistsException()
         {
             Guid id = Guid.NewGuid();
 
