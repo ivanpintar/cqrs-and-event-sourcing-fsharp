@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Basket\AddProductTests.cs" />
+    <Compile Include="Basket\CancelTests.cs" />
     <Compile Include="Basket\CheckOutTests.cs" />
     <Compile Include="Basket\CreateBasketTests.cs" />
     <Compile Include="Basket\RemoveProductTests.cs" />

@@ -35,14 +35,7 @@ namespace PinetreeShop.Domain.Tests.Order
         {
             WhenThrows<ParameterNullException>(new CreateOrder(id, basketId, OrderLines, null));
         }
-
-        //[Fact]
-        public void When_CreateOrderServerError_CreateOrderFailed()
-        {
-
-
-        }
-
+        
         [Fact]
         public void When_CreateOrderWithSameGuid_ThrowAggregateExistsException()
         {

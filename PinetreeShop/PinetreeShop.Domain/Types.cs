@@ -19,6 +19,6 @@ namespace PinetreeShop.Domain.Types
         public Guid ProductId { get; set; }
         public string ProductName { get; set; }
         public decimal Price { get; set; }
-        public int Quantity { get; set; }
+        public uint Quantity { get; set; }
     }
 }

@@ -15,20 +15,24 @@ namespace PinetreeShop.Domain.Baskets.Events
     {
         public Guid ProductId { get; private set; }
         public uint Quantity { get; private set; }
+        public string ProductName { get; private set; }
+        public decimal Price { get; private set; }
 
-        public ProductAdded(Guid basketId, Guid productId, uint quantity) : base(basketId)
+        public ProductAdded(Guid basketId, Guid productId, string productName, decimal price, uint quantity) : base(basketId)
         {
             ProductId = productId;
+            ProductName = productName;
             Quantity = quantity;
+            Price = price;
         }
     }
 
-    public class AddProductFailed : EventFailedBase
+    public class AddProductReverted : EventFailedBase
     {
         public Guid ProductId { get; private set; }
         public uint Quantity { get; private set; }
        
-        public AddProductFailed(Guid basketId, Guid productId, uint quantity, string reason) : base(basketId, reason)
+        public AddProductReverted(Guid basketId, Guid productId, uint quantity, string reason) : base(basketId, reason)
         {
             ProductId = productId;
             Quantity = quantity;
@@ -46,19 +50,7 @@ namespace PinetreeShop.Domain.Baskets.Events
             Quantity = quantity;
         }
     }
-
-    public class RemoveProductFailed : EventFailedBase
-    {
-        public Guid ProductId { get; private set; }
-        public uint Quantity { get; private set; }
-
-        public RemoveProductFailed(Guid basketId, Guid productId, uint quantity, string reason) : base(basketId, reason)
-        {
-            ProductId = productId;
-            Quantity = quantity;
-        }
-    }
-
+    
     public class Cancelled : EventBase
     {
         public Cancelled(Guid basketId) : base(basketId)
@@ -68,17 +60,17 @@ namespace PinetreeShop.Domain.Baskets.Events
 
     public class CheckedOut : EventBase
     {
-        public Address Address { get; private set; }
+        public Address ShippintAddress { get; private set; }
 
-        public CheckedOut(Guid basketId, Address address) : base(basketId)
+        public CheckedOut(Guid basketId, Address shippingAddress) : base(basketId)
         {
-            Address = address;
+            ShippintAddress = shippingAddress;
         }
     }
 
-    public class CheckOutFailed : EventFailedBase
+    public class CheckOutReverted : EventFailedBase
     {
-        public CheckOutFailed(Guid basketId, string reason) : base(basketId, reason)
+        public CheckOutReverted(Guid basketId, string reason) : base(basketId, reason)
         {
         }
     }

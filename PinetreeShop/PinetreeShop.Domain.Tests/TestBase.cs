@@ -10,17 +10,17 @@ namespace PinetreeShop.Domain.Tests
 {
     public class TestBase
     {
-        private InMemoryAggregateRepository _domainRepository;
+        private InMemoryAggregateRepository _aggregateRepository;
         private InMemoryWorkflowRepository _workflowRepository;
         private Dictionary<Guid, IEnumerable<IEvent>> _preConditions = new Dictionary<Guid, IEnumerable<IEvent>>();
 
         private DomainEntry BuildApplication()
         {
-            _domainRepository = new InMemoryAggregateRepository();
-            _domainRepository.AddEvents(_preConditions);
+            _aggregateRepository = new InMemoryAggregateRepository();
+            _aggregateRepository.AddEvents(_preConditions);
 
             _workflowRepository = new InMemoryWorkflowRepository();
-            return new DomainEntry(_domainRepository, _workflowRepository);
+            return new DomainEntry(_aggregateRepository, _workflowRepository);
         }
 
         protected void TearDown()
@@ -48,8 +48,10 @@ namespace PinetreeShop.Domain.Tests
 
         protected void Then(params IEvent[] expectedEvents)
         {
-            var latestEvents = _domainRepository.GetLatestEvents().ToList();
-            var expectedEventsList = expectedEvents.ToList();
+            var latestEvents = _aggregateRepository.GetLatestEvents().ToList();
+            var expectedEventsList = expectedEvents != null
+                ? expectedEvents.ToList()
+                : new List<IEvent>();
 
             Assert.Equal(latestEvents.Count, expectedEventsList.Count);
 

@@ -58,8 +58,11 @@ namespace PinetreeShop.Domain
             var basketCommandHandler = new BasketCommandHandler(aggregateRepository);
             commandDispatcher.RegisterHandler<CreateBasket>(basketCommandHandler);
             commandDispatcher.RegisterHandler<AddProduct>(basketCommandHandler);
+            commandDispatcher.RegisterHandler<RevertAddProduct>(basketCommandHandler);
             commandDispatcher.RegisterHandler<RemoveProduct>(basketCommandHandler);
-            commandDispatcher.RegisterHandler<Checkout>(basketCommandHandler);
+            commandDispatcher.RegisterHandler<Cancel>(basketCommandHandler);
+            commandDispatcher.RegisterHandler<CheckOut>(basketCommandHandler);
+            commandDispatcher.RegisterHandler<RevertCheckOut>(basketCommandHandler);
 
             var orderCommandHandler = new OrderCommandHandler(aggregateRepository);
             commandDispatcher.RegisterHandler<CreateOrder>(orderCommandHandler);

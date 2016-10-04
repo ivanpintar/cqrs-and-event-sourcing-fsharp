@@ -16,4 +16,14 @@ namespace PinetreeShop.CQRS.Infrastructure.CommandsAndEvents
             AggregateId = aggregateId;
         }
     }
+
+    public class RevertCommandBase : CommandBase
+    {
+        public string Reason { get; set; }
+
+        public RevertCommandBase(Guid aggregateId, string reason) : base(aggregateId)
+        {
+            Reason = reason;
+        }
+    }
 }

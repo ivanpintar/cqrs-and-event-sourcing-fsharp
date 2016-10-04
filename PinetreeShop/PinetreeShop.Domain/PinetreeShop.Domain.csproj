@@ -44,6 +44,7 @@
     <Compile Include="Baskets\Commands.cs" />
     <Compile Include="Baskets\Events.cs" />
     <Compile Include="Baskets\Basket.cs" />
+    <Compile Include="Baskets\Exceptions.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="Orders\CommandHandlers.cs" />
     <Compile Include="Orders\Exceptions.cs" />

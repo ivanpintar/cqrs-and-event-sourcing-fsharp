@@ -1,7 +1,9 @@
 ﻿using PinetreeShop.CQRS.Infrastructure;
 using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
 using PinetreeShop.CQRS.Infrastructure.Repositories;
+using PinetreeShop.CQRS.Persistence.Exceptions;
 using PinetreeShop.Domain.Baskets.Commands;
+using PinetreeShop.Domain.Exceptions;
 using System;
 
 namespace PinetreeShop.Domain.Baskets
@@ -9,40 +11,73 @@ namespace PinetreeShop.Domain.Baskets
     public class BasketCommandHandler :
         IHandleCommand<CreateBasket>,
         IHandleCommand<AddProduct>,
+        IHandleCommand<RevertAddProduct>,
         IHandleCommand<RemoveProduct>,
         IHandleCommand<Cancel>,
-        IHandleCommand<Checkout>
+        IHandleCommand<CheckOut>,
+        IHandleCommand<RevertCheckOut>
     {
-        private IAggregateRepository _domainRepository;
+        private IAggregateRepository _aggregateRepository;
 
-        public BasketCommandHandler(IAggregateRepository domainRepository)
+        public BasketCommandHandler(IAggregateRepository aggregateRepository)
         {
-            _domainRepository = domainRepository;
+            _aggregateRepository = aggregateRepository;
         }
 
         public IAggregate Handle(AddProduct command)
         {
-            throw new NotImplementedException();
+            var basket = _aggregateRepository.GetAggregateById<Basket>(command.AggregateId);
+            basket.AddProduct(command.AggregateId, command.ProductId, command.ProductName, command.Price, command.Quantity);
+            return basket;
+        }
+
+        public IAggregate Handle(RevertCheckOut command)
+        {
+            var basket = _aggregateRepository.GetAggregateById<Basket>(command.AggregateId);
+            basket.RevertCheckout(command.AggregateId, command.Reason);
+            return basket;
+        }
+
+        public IAggregate Handle(RevertAddProduct command)
+        {
+            var basket = _aggregateRepository.GetAggregateById<Basket>(command.AggregateId);
+            basket.RevertAddProduct(command.AggregateId, command.ProductId, command.Quantity, command.Reason);
+            return basket;
         }
 
         public IAggregate Handle(CreateBasket command)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var basket = _aggregateRepository.GetAggregateById<Basket>(command.AggregateId);
+                throw new AggregateExistsException(command.AggregateId, "Order already exists");
+            }
+            catch (AggregateNotFoundException)
+            {
+                // We expect not to find anything
+            }
+            return Basket.Create(command.AggregateId);
         }
 
         public IAggregate Handle(RemoveProduct command)
         {
-            throw new NotImplementedException();
+            var basket = _aggregateRepository.GetAggregateById<Basket>(command.AggregateId);
+            basket.RemoveProduct(command.AggregateId, command.ProductId, command.Quantity);
+            return basket;
         }
 
         public IAggregate Handle(Cancel command)
         {
-            throw new NotImplementedException();
+            var basket = _aggregateRepository.GetAggregateById<Basket>(command.AggregateId);
+            basket.Cancel(command.AggregateId);
+            return basket;
         }
 
-        public IAggregate Handle(Checkout command)
+        public IAggregate Handle(CheckOut command)
         {
-            throw new NotImplementedException();
+            var basket = _aggregateRepository.GetAggregateById<Basket>(command.AggregateId);
+            basket.CheckOut(command.AggregateId, command.ShippingAddress);
+            return basket;
         }
     }
 }

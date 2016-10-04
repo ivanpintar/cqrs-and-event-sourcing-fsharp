@@ -17,8 +17,24 @@ namespace PinetreeShop.Domain.Baskets.Commands
     {
         public Guid ProductId { get; set; }
         public uint Quantity { get; set; }
+        public string ProductName { get; set; }
+        public decimal Price { get; set; }
 
-        public AddProduct(Guid basketId, Guid productId, uint quantity) : base(basketId)
+        public AddProduct(Guid basketId, Guid productId, string productName, decimal price, uint quantity) : base(basketId)
+        {
+            ProductId = productId;
+            Quantity = quantity;
+            ProductName = productName;
+            Price = price;
+        }
+    }
+
+    public class RevertAddProduct : RevertCommandBase
+    {
+        public Guid ProductId { get; set; }
+        public uint Quantity { get; set; }
+
+        public RevertAddProduct(Guid basketId, Guid productId, uint quantity, string reason) : base(basketId, reason)
         {
             ProductId = productId;
             Quantity = quantity;
@@ -45,14 +61,19 @@ namespace PinetreeShop.Domain.Baskets.Commands
         }
     }
 
-    public class Checkout : CommandBase
+    public class CheckOut : CommandBase
     {
-        public Address Address { get; set; }
+        public Address ShippingAddress { get; set; }
 
-        public Checkout(Guid basketId, Address address) : base(basketId)
+        public CheckOut(Guid basketId, Address shippingAddress) : base(basketId)
         {
-            Address = address;
+            ShippingAddress = shippingAddress;
         }
+    }
+
+    public class RevertCheckOut : RevertCommandBase
+    {
+        public RevertCheckOut(Guid basketId, string reason) : base(basketId, reason) { }
     }
 
 }
