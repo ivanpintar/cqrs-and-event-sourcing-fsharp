@@ -1,6 +1,8 @@
 ﻿using PinetreeShop.CQRS.Infrastructure;
 using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
 using PinetreeShop.CQRS.Infrastructure.Repositories;
+using PinetreeShop.CQRS.Persistence.Exceptions;
+using PinetreeShop.Domain.Exceptions;
 using PinetreeShop.Domain.Orders.Commands;
 using System;
 
@@ -12,31 +14,47 @@ namespace PinetreeShop.Domain.Orders
         IHandleCommand<ShipOrder>,
         IHandleCommand<DeliverOrder>
     {
-        private IAggregateRepository _domainRepository;
+        private IAggregateRepository _aggregateRepository;
 
-        public OrderCommandHandler(IAggregateRepository domainRepository)
+        public OrderCommandHandler(IAggregateRepository aggregateRepository)
         {
-            _domainRepository = domainRepository;
+            _aggregateRepository = aggregateRepository;
         }
 
         public IAggregate Handle(CreateOrder command)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var order = _aggregateRepository.GetAggregateById<Order>(command.AggregateId);
+                throw new AggregateExistsException(command.AggregateId, "Order already exists");
+            }
+            catch (AggregateNotFoundException)
+            {
+                // We expect not to find anything
+            }
+            return Order.Create(command.AggregateId, command.BasketId, command.Lines, command.ShippingAddress);
         }
 
         public IAggregate Handle(CancelOrder command)
         {
-            throw new NotImplementedException();
+            var order = _aggregateRepository.GetAggregateById<Order>(command.AggregateId);
+            order.Cancel(command.AggregateId);
+            return order;
         }
 
         public IAggregate Handle(ShipOrder command)
         {
-            throw new NotImplementedException();
+            var order = _aggregateRepository.GetAggregateById<Order>(command.AggregateId);
+            order.Ship(command.AggregateId);
+            return order;
         }
 
         public IAggregate Handle(DeliverOrder command)
         {
-            throw new NotImplementedException();
+
+            var order = _aggregateRepository.GetAggregateById<Order>(command.AggregateId);
+            order.Deliver(command.AggregateId);
+            return order;
         }
     }
 }

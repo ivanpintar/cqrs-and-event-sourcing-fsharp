@@ -1,40 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PinetreeShop.Domain.Exceptions;
+using System;
 
 namespace PinetreeShop.Domain.Products.Exceptions
 {
-    public class ProductException : Exception
+    public class ProductCreationException : DomainException
     {
-        public ProductException(Guid id, string message) : base($"Product {id}: {message}")
+        public ProductCreationException(Guid id, string message) : base(id, message)
         {
         }
     }
 
-    public class ProductExistsException : ProductException
-    {
-        public ProductExistsException(Guid id, string message) : base(id, message)
-        {
-        }
-    }
-
-    public class QuantityChangeException : ProductException
+    public class QuantityChangeException : DomainException
     {
         public QuantityChangeException(Guid id, string message) : base(id, message)
         {
         }
     }
 
-    public class ProductReservationException : ProductException
+    public class ProductReservationException : DomainException
     {
         public ProductReservationException(Guid id, string message) : base(id, message)
         {
         }
     }
 
-    public class ProductReservationReleaseException : ProductException
+    public class ProductReservationReleaseException : DomainException
     {
         public ProductReservationReleaseException(Guid id, string message) : base(id, message)
         {

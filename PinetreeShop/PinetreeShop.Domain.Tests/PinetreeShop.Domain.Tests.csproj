@@ -59,6 +59,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Basket\AddProductTests.cs" />
+    <Compile Include="Basket\CheckOutTests.cs" />
+    <Compile Include="Basket\CreateBasketTests.cs" />
+    <Compile Include="Basket\RemoveProductTests.cs" />
+    <Compile Include="Order\CancelOrderTests.cs" />
+    <Compile Include="Order\CreateOrderTests.cs" />
+    <Compile Include="Order\DeliverOrderTests.cs" />
+    <Compile Include="Order\ShipOrderTests.cs" />
     <Compile Include="Product\ChangeProductQuantityTests.cs" />
     <Compile Include="Product\CreateProductTests.cs" />
     <Compile Include="Product\ReleaseProductReservationsTests.cs" />
@@ -83,10 +91,7 @@
       <Name>PinetreeShop.Domain</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Basket\" />
-    <Folder Include="Order\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>

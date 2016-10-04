@@ -7,7 +7,7 @@ namespace PinetreeShop.Domain.Baskets.Commands
 {
     public class CreateBasket : CommandBase
     {
-        public CreateBasket(Guid aggregateId) : base(aggregateId)
+        public CreateBasket(Guid basketId) : base(basketId)
         {
 
         }
@@ -18,7 +18,7 @@ namespace PinetreeShop.Domain.Baskets.Commands
         public Guid ProductId { get; set; }
         public uint Quantity { get; set; }
 
-        public AddProduct(Guid aggregateId, Guid productId, uint quantity) : base(aggregateId)
+        public AddProduct(Guid basketId, Guid productId, uint quantity) : base(basketId)
         {
             ProductId = productId;
             Quantity = quantity;
@@ -30,7 +30,7 @@ namespace PinetreeShop.Domain.Baskets.Commands
         public Guid ProductId { get; set; }
         public uint Quantity { get; set; }
 
-        public RemoveProduct(Guid aggregateId, Guid productId, uint quantity) : base(aggregateId)
+        public RemoveProduct(Guid basketId, Guid productId, uint quantity) : base(basketId)
         {
             ProductId = productId;
             Quantity = quantity;
@@ -39,7 +39,7 @@ namespace PinetreeShop.Domain.Baskets.Commands
 
     public class Cancel : CommandBase
     {
-        public Cancel(Guid aggregateId) : base(aggregateId)
+        public Cancel(Guid basketId) : base(basketId)
         {
 
         }
@@ -49,7 +49,7 @@ namespace PinetreeShop.Domain.Baskets.Commands
     {
         public Address Address { get; set; }
 
-        public Checkout(Guid aggregateId, Address address) : base(aggregateId)
+        public Checkout(Guid basketId, Address address) : base(basketId)
         {
             Address = address;
         }

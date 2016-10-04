@@ -9,7 +9,7 @@ namespace PinetreeShop.CQRS.Infrastructure.CommandsAndEvents
 
     public class CommandBase : ICommand
     {
-        public Guid AggregateId { get; private set; }
+        public Guid AggregateId { get; set; }
 
         public CommandBase(Guid aggregateId)
         {

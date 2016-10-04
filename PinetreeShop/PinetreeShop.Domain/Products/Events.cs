@@ -1,10 +1,5 @@
-﻿using PinetreeShop.CQRS.Infrastructure;
-using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
+﻿using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PinetreeShop.Domain.Products.Events
 {
@@ -13,7 +8,7 @@ namespace PinetreeShop.Domain.Products.Events
         public string Name { get; private set; }
         public decimal Price { get; private set; }
 
-        public ProductCreated(Guid aggregateId, string name, decimal price) : base(aggregateId)
+        public ProductCreated(Guid productId, string name, decimal price) : base(productId)
         {
             Name = name;
             Price = price;
@@ -24,7 +19,7 @@ namespace PinetreeShop.Domain.Products.Events
     {
         public int Difference { get; private set; }
 
-        public ProductQuantityChanged(Guid aggregateId, int difference) : base(aggregateId)
+        public ProductQuantityChanged(Guid productId, int difference) : base(productId)
         {
             Difference = difference;
         }
@@ -35,7 +30,7 @@ namespace PinetreeShop.Domain.Products.Events
         public Guid BasketId { get; private set; }
         public uint QuantityToReserve { get; private set; }
 
-        public ProductReserved(Guid aggregateId, Guid basketId, uint quantityToReserve) : base(aggregateId)
+        public ProductReserved(Guid productId, Guid basketId, uint quantityToReserve) : base(productId)
         {
             BasketId = basketId;
             QuantityToReserve = quantityToReserve;
@@ -44,12 +39,12 @@ namespace PinetreeShop.Domain.Products.Events
 
     public class ProductReservationFailed : EventFailedBase
     {
-        public static string NotAvailable = "not available";
+        public static string NotAvailable = "NotAvailable";
 
         public Guid BasketId { get; private set; }
         public uint QuantityToReserve { get; private set; }
 
-        public ProductReservationFailed(Guid aggregateId, Guid basketId, uint quantityToReserve, string reason) : base(aggregateId, reason)
+        public ProductReservationFailed(Guid productId, Guid basketId, uint quantityToReserve, string reason) : base(productId, reason)
         {
             BasketId = basketId;
             QuantityToReserve = quantityToReserve;
@@ -60,7 +55,7 @@ namespace PinetreeShop.Domain.Products.Events
     {
         public uint QuantityToRelease { get; private set; }
 
-        public ProductReservationReleased(Guid aggregateId, uint quantityToRelease) : base(aggregateId)
+        public ProductReservationReleased(Guid productId, uint quantityToRelease) : base(productId)
         {
             QuantityToRelease = quantityToRelease;
         }

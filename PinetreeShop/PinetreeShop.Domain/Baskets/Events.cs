@@ -1,5 +1,4 @@
-﻿using PinetreeShop.CQRS.Infrastructure;
-using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
+﻿using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
 using PinetreeShop.Domain.Types;
 using System;
 
@@ -7,7 +6,7 @@ namespace PinetreeShop.Domain.Baskets.Events
 {
     public class BasketCreated : EventBase
     {
-        public BasketCreated(Guid aggregateId) : base(aggregateId)
+        public BasketCreated(Guid basketId) : base(basketId)
         {
         }
     }
@@ -17,19 +16,19 @@ namespace PinetreeShop.Domain.Baskets.Events
         public Guid ProductId { get; private set; }
         public uint Quantity { get; private set; }
 
-        public ProductAdded(Guid aggregateId, Guid productId, uint quantity) : base(aggregateId)
+        public ProductAdded(Guid basketId, Guid productId, uint quantity) : base(basketId)
         {
             ProductId = productId;
             Quantity = quantity;
         }
     }
 
-    public class AddProductFailed : EventBase
+    public class AddProductFailed : EventFailedBase
     {
         public Guid ProductId { get; private set; }
         public uint Quantity { get; private set; }
        
-        public AddProductFailed(Guid aggregateId, Guid productId, uint quantity) : base(aggregateId)
+        public AddProductFailed(Guid basketId, Guid productId, uint quantity, string reason) : base(basketId, reason)
         {
             ProductId = productId;
             Quantity = quantity;
@@ -41,7 +40,7 @@ namespace PinetreeShop.Domain.Baskets.Events
         public Guid ProductId { get; private set; }
         public uint Quantity { get; private set; }
 
-        public ProductRemoved(Guid aggregateId, Guid productId, uint quantity) : base(aggregateId)
+        public ProductRemoved(Guid basketId, Guid productId, uint quantity) : base(basketId)
         {
             ProductId = productId;
             Quantity = quantity;
@@ -53,7 +52,7 @@ namespace PinetreeShop.Domain.Baskets.Events
         public Guid ProductId { get; private set; }
         public uint Quantity { get; private set; }
 
-        public RemoveProductFailed(Guid aggregateId, Guid productId, uint quantity, string reason) : base(aggregateId, reason)
+        public RemoveProductFailed(Guid basketId, Guid productId, uint quantity, string reason) : base(basketId, reason)
         {
             ProductId = productId;
             Quantity = quantity;
@@ -62,7 +61,7 @@ namespace PinetreeShop.Domain.Baskets.Events
 
     public class Cancelled : EventBase
     {
-        public Cancelled(Guid aggregateId) : base(aggregateId)
+        public Cancelled(Guid basketId) : base(basketId)
         {
         }
     }
@@ -71,7 +70,7 @@ namespace PinetreeShop.Domain.Baskets.Events
     {
         public Address Address { get; private set; }
 
-        public CheckedOut(Guid aggregateId, Address address) : base(aggregateId)
+        public CheckedOut(Guid basketId, Address address) : base(basketId)
         {
             Address = address;
         }
@@ -79,7 +78,7 @@ namespace PinetreeShop.Domain.Baskets.Events
 
     public class CheckOutFailed : EventFailedBase
     {
-        public CheckOutFailed(Guid aggregateId, string reason) : base(aggregateId, reason)
+        public CheckOutFailed(Guid basketId, string reason) : base(basketId, reason)
         {
         }
     }

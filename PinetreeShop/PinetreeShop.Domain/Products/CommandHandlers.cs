@@ -2,6 +2,7 @@
 using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
 using PinetreeShop.CQRS.Infrastructure.Repositories;
 using PinetreeShop.CQRS.Persistence.Exceptions;
+using PinetreeShop.Domain.Exceptions;
 using PinetreeShop.Domain.Products.Commands;
 using PinetreeShop.Domain.Products.Exceptions;
 using System;
@@ -26,7 +27,7 @@ namespace PinetreeShop.Domain.Products.CommandHandlers
             try
             {
                 var product = _aggregateRepository.GetAggregateById<Product>(command.AggregateId);
-                throw new ProductExistsException(command.AggregateId, "Product already exists");
+                throw new AggregateExistsException(command.AggregateId, "Product already exists");
             }
             catch (AggregateNotFoundException)
             {
@@ -38,7 +39,7 @@ namespace PinetreeShop.Domain.Products.CommandHandlers
         public IAggregate Handle(ChangeProductQuantity command)
         {
             var product = _aggregateRepository.GetAggregateById<Product>(command.AggregateId);
-            product.ChangeQuantity(command.Difference);
+            product.ChangeQuantity(command.AggregateId, command.Difference);
             return product;
         }
 

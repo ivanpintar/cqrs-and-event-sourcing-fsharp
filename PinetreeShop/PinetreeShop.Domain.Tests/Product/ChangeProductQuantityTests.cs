@@ -8,12 +8,12 @@ namespace PinetreeShop.Domain.Tests.Product
 {
     public class ChangeProductQuantityTests : TestBase
     {
+        Guid id = Guid.NewGuid();
+
         [Fact]
         public void When_ChangeProductQuantity_ProductQuantityChanged()
         {
-            Guid id = Guid.NewGuid();
-
-            Given(new ProductCreated(id, "quantity test", 2));
+            Given(new ProductCreated(id, "Test Product", 2));
             When(new ChangeProductQuantity(id, 2));
             Then(new ProductQuantityChanged(id, 2));
         }
@@ -21,10 +21,8 @@ namespace PinetreeShop.Domain.Tests.Product
         [Fact]
         public void When_ChangeProductQuantityBelowZero_ThrowQuantityChangeException()
         {
-            Guid id = Guid.NewGuid();
-
-            Given(new ProductCreated(id, "quantity test", 2), new ProductQuantityChanged(id, 2));
-            WhenTrows<QuantityChangeException>(new ChangeProductQuantity(id, -4));
+            Given(new ProductCreated(id, "Test Product", 2), new ProductQuantityChanged(id, 2));
+            WhenThrows<QuantityChangeException>(new ChangeProductQuantity(id, -4));
         }
     }
 }

@@ -9,7 +9,7 @@ namespace PinetreeShop.Domain.Products.Commands
         public string Name { get; private set; }
         public decimal Price { get; private set; }
 
-        public CreateProduct(Guid aggregateId, string name, decimal price) : base(aggregateId)
+        public CreateProduct(Guid productId, string name, decimal price) : base(productId)
         {
             Name = name;
             Price = price;
@@ -20,7 +20,7 @@ namespace PinetreeShop.Domain.Products.Commands
     {
         public int Difference { get; private set; }
 
-        public ChangeProductQuantity(Guid aggregateId, int difference) : base(aggregateId)
+        public ChangeProductQuantity(Guid productId, int difference) : base(productId)
         {
             Difference = difference;
         }
@@ -31,7 +31,7 @@ namespace PinetreeShop.Domain.Products.Commands
         public uint QuantityToReserve { get; private set; }
         public Guid BasketId { get; private set; }
 
-        public ReserveProduct(Guid aggregateId, Guid basketId, uint quantityToReserve) : base(aggregateId)
+        public ReserveProduct(Guid productId, Guid basketId, uint quantityToReserve) : base(productId)
         {
             QuantityToReserve = quantityToReserve;
             BasketId = basketId;
@@ -42,7 +42,7 @@ namespace PinetreeShop.Domain.Products.Commands
     {
         public uint QuantityToRelease { get; private set; }
 
-        public ReleaseProductReservation(Guid aggregateId, uint quantityToRelease) : base(aggregateId)
+        public ReleaseProductReservation(Guid productId, uint quantityToRelease) : base(productId)
         {
             QuantityToRelease = quantityToRelease;
         }

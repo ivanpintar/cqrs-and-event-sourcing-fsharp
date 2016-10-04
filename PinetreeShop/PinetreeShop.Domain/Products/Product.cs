@@ -28,14 +28,16 @@ namespace PinetreeShop.Domain.Products
             RegisterEventHandler<ProductReservationReleased>(Apply);
         }
 
-        private Product(Guid aggregateId, string name, decimal price) : this()
+        private Product(Guid productId, string name, decimal price) : this()
         {
-            RaiseEvent(new ProductCreated(aggregateId, name, price));
+            RaiseEvent(new ProductCreated(productId, name, price));
         }
 
-        internal static IAggregate Create(Guid aggregateId, string name, decimal price)
+        internal static IAggregate Create(Guid productId, string name, decimal price)
         {
-            return new Product(aggregateId, name, price);
+            if (price <= 0) throw new ProductCreationException(productId, $"Price {price} must be a positive value.");
+
+            return new Product(productId, name, price);
         }
 
         private void Apply(ProductReservationReleased evt)
@@ -56,28 +58,28 @@ namespace PinetreeShop.Domain.Products
             Quantity = (uint)((int)Quantity + evt.Difference);
         }
 
-        internal void ChangeQuantity(int difference)
+        internal void ChangeQuantity(Guid productId, int difference)
         {
             if ((int)Quantity + difference < 0) throw new QuantityChangeException(Id, $"Quantity can't be negative. Quantity: {Quantity}, Diff: {difference}");
 
-            RaiseEvent(new ProductQuantityChanged(Id, difference));
+            RaiseEvent(new ProductQuantityChanged(productId, difference));
         }
 
-        internal void ReleaseReservation(Guid aggregateId, uint quantityToRelease)
+        internal void ReleaseReservation(Guid productId, uint quantityToRelease)
         {
             if (quantityToRelease > Reserved) quantityToRelease = Reserved;
-            RaiseEvent(new ProductReservationReleased(aggregateId, quantityToRelease));
+            RaiseEvent(new ProductReservationReleased(productId, quantityToRelease));
         }
 
-        internal void Reserve(Guid aggregateId, Guid basketId, uint quantityToReserve)
+        internal void Reserve(Guid productId, Guid basketId, uint quantityToReserve)
         {
             if (AvailableQuantity < quantityToReserve)
             {
-                RaiseEvent(new ProductReservationFailed(aggregateId, basketId, quantityToReserve, ProductReservationFailed.NotAvailable));
+                RaiseEvent(new ProductReservationFailed(productId, basketId, quantityToReserve, ProductReservationFailed.NotAvailable));
             }
             else
             {
-                RaiseEvent(new ProductReserved(aggregateId, basketId, quantityToReserve));
+                RaiseEvent(new ProductReserved(productId, basketId, quantityToReserve));
             }
         }
 

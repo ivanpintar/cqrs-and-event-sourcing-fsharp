@@ -1,36 +1,34 @@
-﻿using PinetreeShop.Domain.Products.Commands;
+﻿using PinetreeShop.Domain.Exceptions;
+using PinetreeShop.Domain.Products.Commands;
 using PinetreeShop.Domain.Products.Events;
 using PinetreeShop.Domain.Products.Exceptions;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace PinetreeShop.Domain.Tests.Product
 {
     public class CreateProductTests : TestBase
     {
-        [Theory]
-        [InlineData("One", 1)]
-        [InlineData("Two", 2)]
-        [InlineData("Three", 3)]
-        public void When_CreateProduct_ProductCreated(string name, int price)
-        {
-            Guid id = Guid.NewGuid();
+        Guid id = Guid.NewGuid();
 
-            When(new CreateProduct(id, name, price));
-            Then(new ProductCreated(id, name, price));
+        [Fact]
+        public void When_CreateProduct_ProductCreated()
+        {
+            When(new CreateProduct(id, "Test Product", 2));
+            Then(new ProductCreated(id, "Test Product", 2));
         }
 
         [Fact]
-        public void When_CreateProductWithSameGuid_ThrowProducExistsException()
+        public void When_CreateProductWithNegativePrice_ProductCreated()
         {
-            Guid id = Guid.NewGuid();
+            WhenThrows<ProductCreationException>(new CreateProduct(id, "Test Product", -2));
+        }
 
-            Given(new ProductCreated(id, "One", 1));
-            WhenTrows<ProductExistsException>(new CreateProduct(id, "One", 1));
+        [Fact]
+        public void When_CreateProductWithSameGuid_ThrowAggregateExistsException()
+        {
+            Given(new ProductCreated(id, "Test Product", 1));
+            WhenThrows<AggregateExistsException>(new CreateProduct(id, "Test Product", 1));
         }
     }
 }

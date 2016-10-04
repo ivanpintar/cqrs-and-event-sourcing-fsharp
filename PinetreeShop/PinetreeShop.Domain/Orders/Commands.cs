@@ -8,33 +8,35 @@ namespace PinetreeShop.Domain.Orders.Commands
 {
     public class CreateOrder : CommandBase
     {
-        public Guid BasketId { get; set; }
-        public IEnumerable<OrderLine> Lines { get; set; }
+        public Guid BasketId { get; private set; }
+        public IEnumerable<OrderLine> Lines { get; private set; }
+        public Address ShippingAddress { get; private set; }
 
-        public CreateOrder(Guid aggregateId, Guid basketId, IEnumerable<OrderLine> lines) : base(aggregateId)
+        public CreateOrder(Guid orderId, Guid basketId, IEnumerable<OrderLine> lines, Address shippingAddress) : base(orderId)
         {
             BasketId = basketId;
             Lines = lines;
+            ShippingAddress = shippingAddress;
         }
     }
 
     public class CancelOrder : CommandBase
     {
-        public CancelOrder(Guid aggregateId) : base(aggregateId)
+        public CancelOrder(Guid orderId) : base(orderId)
         {
         }
     }
 
     public class ShipOrder : CommandBase
     {
-        public ShipOrder(Guid aggregateId) : base(aggregateId)
+        public ShipOrder(Guid orderId) : base(orderId)
         {
         }
     }
 
     public class DeliverOrder : CommandBase
     {
-        public DeliverOrder(Guid aggregateId) : base(aggregateId)
+        public DeliverOrder(Guid orderId) : base(orderId)
         {
         }
 
