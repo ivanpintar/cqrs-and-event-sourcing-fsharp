@@ -1,4 +1,5 @@
-﻿using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
+﻿using PinetreeShop.CQRS.Infrastructure.Commands;
+using PinetreeShop.CQRS.Infrastructure.Events;
 using PinetreeShop.Domain.Baskets.Commands;
 using PinetreeShop.Domain.Baskets.Events;
 using PinetreeShop.Domain.Baskets.Exceptions;
@@ -19,26 +20,26 @@ namespace PinetreeShop.Domain.Tests.Basket
         public void When_Cancel_Cancelled()
         {
             Given(InitialEvents);
-            When(new Cancel(id));
-            Then(new Cancelled(id));
+            When(new CancelBasket(id));
+            Then(new BaksetCancelled(id));
         }
 
         [Fact]
         public void When_CancelCheckedOut_ThrowsCheckoutException()
         {
             var initialEvents = InitialEvents.ToList();
-            initialEvents.Add(new CheckedOut(id, shippingAddress));
+            initialEvents.Add(new BasketCheckedOut(id, shippingAddress));
             Given(initialEvents.ToArray());
-            WhenThrows<CancellationException>(new Cancel(id));
+            WhenThrows<CancellationException>(new CancelBasket(id));
         }
 
         [Fact]
         public void When_CancelCancelled_NothingHappens()
         {
             var initialEvents = InitialEvents.ToList();
-            initialEvents.Add(new Cancelled(id));
+            initialEvents.Add(new BaksetCancelled(id));
             Given(initialEvents.ToArray());
-            When(new Cancel(id));
+            When(new CancelBasket(id));
             Then();
         }
 
@@ -49,7 +50,7 @@ namespace PinetreeShop.Domain.Tests.Basket
                 return new IEvent[]
                 {
                     new BasketCreated(id),
-                    new ProductAdded(id, productId, "Test Product", 2, 10)
+                    new BasketAddItemTried(id, productId, "Test Product", 2, 10)
                 };
             }
         }

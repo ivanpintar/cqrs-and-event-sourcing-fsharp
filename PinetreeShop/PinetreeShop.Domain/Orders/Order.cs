@@ -36,7 +36,7 @@ namespace PinetreeShop.Domain.Orders
         private void Apply(OrderCreated evt)
         {
             State = OrderState.Pending;
-            Id = evt.AggregateId;
+            AggregateId = evt.AggregateId;
             BasketId = evt.BasketId;
             ShippingAddress = evt.ShippingAddress;
             _orderLines = evt.Lines;
@@ -74,19 +74,19 @@ namespace PinetreeShop.Domain.Orders
 
         private void Apply(OrderCancelled evt)
         {
-            Id = evt.AggregateId;
+            AggregateId = evt.AggregateId;
             State = OrderState.Cancelled;
         }
 
         private void Apply(OrderShipped evt)
         {
-            Id = evt.AggregateId;
+            AggregateId = evt.AggregateId;
             State = OrderState.Shipped;
         }
 
         private void Apply(OrderDelivered evt)
         {
-            Id = evt.AggregateId;
+            AggregateId = evt.AggregateId;
             State = OrderState.Delivered;
         }
 

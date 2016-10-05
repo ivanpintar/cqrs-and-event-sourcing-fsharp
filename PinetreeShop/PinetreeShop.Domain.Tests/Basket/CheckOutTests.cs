@@ -1,5 +1,5 @@
 ﻿using System;
-using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
+using PinetreeShop.CQRS.Infrastructure.Events;
 using PinetreeShop.Domain.Baskets.Events;
 using PinetreeShop.Domain.Types;
 using Xunit;
@@ -19,29 +19,19 @@ namespace PinetreeShop.Domain.Tests.Basket
         public void When_CheckOut_CheckedOut()
         {
             Given(InitialEvents);
-            When(new CheckOut(id, shippingAddress));
-            Then(new CheckedOut(id, shippingAddress));
+            When(new CheckOutBasket(id, shippingAddress));
+            Then(new BasketCheckedOut(id, shippingAddress));
         }
 
         [Fact]
         public void When_CheckOutCancelled_ThrowsCheckoutException()
         {
             var initialEvents = InitialEvents.ToList();
-            initialEvents.Add(new Cancelled(id));
+            initialEvents.Add(new BaksetCancelled(id));
             Given(initialEvents.ToArray());
-            WhenThrows<CheckoutException>(new CheckOut(id, shippingAddress));
+            WhenThrows<CheckoutException>(new CheckOutBasket(id, shippingAddress));
         }
-
-        [Fact]
-        public void When_RevertCheckOut_CheckOutReverted()
-        {
-            var initialEvents = InitialEvents.ToList();
-            initialEvents.Add(new CheckedOut(id, shippingAddress));
-            Given(initialEvents.ToArray());
-            When(new RevertCheckOut(id, "reason"));
-            Then(new CheckOutReverted(id, "reason"));
-        }
-
+        
         private IEvent[] InitialEvents
         {
             get
@@ -49,7 +39,7 @@ namespace PinetreeShop.Domain.Tests.Basket
                 return new IEvent[]
                 {
                     new BasketCreated(id),
-                    new ProductAdded(id, productId, "Test Product", 2, 10)
+                    new BasketAddItemTried(id, productId, "Test Item", 2, 10)
                 };
             }
         }

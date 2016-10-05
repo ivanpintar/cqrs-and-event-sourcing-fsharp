@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace PinetreeShop.CQRS.Infrastructure.CommandsAndEvents
+namespace PinetreeShop.CQRS.Infrastructure.Commands
 {
     public class CommandDispatcher
     {

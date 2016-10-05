@@ -1,4 +1,4 @@
-﻿using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
+﻿using PinetreeShop.CQRS.Infrastructure.Events;
 using System;
 
 namespace PinetreeShop.Domain.Products.Events
@@ -42,22 +42,22 @@ namespace PinetreeShop.Domain.Products.Events
         public static string NotAvailable = "NotAvailable";
 
         public Guid BasketId { get; private set; }
-        public uint QuantityToReserve { get; private set; }
+        public uint Quantity { get; private set; }
 
-        public ProductReservationFailed(Guid productId, Guid basketId, uint quantityToReserve, string reason) : base(productId, reason)
+        public ProductReservationFailed(Guid productId, Guid basketId, uint quantity, string reason) : base(productId, reason)
         {
             BasketId = basketId;
-            QuantityToReserve = quantityToReserve;
+            Quantity = quantity;
         }
     }
 
-    public class ProductReservationReleased : EventBase
+    public class ProductReservationCanceled : EventBase
     {
-        public uint QuantityToRelease { get; private set; }
+        public uint Quantity { get; private set; }
 
-        public ProductReservationReleased(Guid productId, uint quantityToRelease) : base(productId)
+        public ProductReservationCanceled(Guid productId, uint quantity) : base(productId)
         {
-            QuantityToRelease = quantityToRelease;
+            Quantity = quantity;
         }
     }
 }

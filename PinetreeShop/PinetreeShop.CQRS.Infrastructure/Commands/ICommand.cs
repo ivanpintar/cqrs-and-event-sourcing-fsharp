@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PinetreeShop.CQRS.Infrastructure.CommandsAndEvents
+namespace PinetreeShop.CQRS.Infrastructure.Commands
 {
     public interface ICommand
     {

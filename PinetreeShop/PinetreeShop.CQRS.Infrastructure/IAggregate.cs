@@ -1,4 +1,4 @@
-﻿using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
+﻿using PinetreeShop.CQRS.Infrastructure.Events;
 using System;
 using System.Collections.Generic;
 
@@ -6,7 +6,7 @@ namespace PinetreeShop.CQRS.Infrastructure
 {
     public interface IAggregate
     {
-        Guid Id { get; }
+        Guid AggregateId { get; }
         int Version { get; }
         IEnumerable<IEvent> UncommittedEvents { get; }
         void ClearUncommittedEvents();

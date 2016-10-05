@@ -1,19 +1,20 @@
-﻿using PinetreeShop.CQRS.Infrastructure.Repositories;
+﻿using PinetreeShop.CQRS.Infrastructure.Commands;
+using PinetreeShop.CQRS.Infrastructure.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PinetreeShop.CQRS.Infrastructure.CommandsAndEvents
+namespace PinetreeShop.CQRS.Infrastructure.Events
 {
-    public class WorkflowEventListener
+    public class ProcessEventListener
     {
-        private Dictionary<Type, Func<object, IWorkflow>> _eventListeners = new Dictionary<Type, Func<object, IWorkflow>>();
-        private IWorkflowRepository _workflowRepository;
+        private Dictionary<Type, Func<object, IProcess>> _eventListeners = new Dictionary<Type, Func<object, IProcess>>();
+        private IProcessRepository _processRepository;
         private CommandDispatcher _commandDispatcher;
 
-        public WorkflowEventListener(IWorkflowRepository workflowRepository, CommandDispatcher commandDispatcher)
+        public ProcessEventListener(IProcessRepository processRepository, CommandDispatcher commandDispatcher)
         {
-            _workflowRepository = workflowRepository;
+            _processRepository = processRepository;
             _commandDispatcher = commandDispatcher;
         }
 
@@ -28,11 +29,11 @@ namespace PinetreeShop.CQRS.Infrastructure.CommandsAndEvents
 
             if (_eventListeners.ContainsKey(eventType))
             {
-                var workflow = _eventListeners[eventType](evt);
+                var process = _eventListeners[eventType](evt);
 
-                var eventsToSave = workflow.UncommittedEvents.ToList();
-                var commandsToDispatch = workflow.UndispatchedCommands.ToList();
-                _workflowRepository.SaveWorkflow(workflow);
+                var eventsToSave = process.UncommittedEvents.ToList();
+                var commandsToDispatch = process.UndispatchedCommands.ToList();
+                _processRepository.SaveProcess(process);
                 
                 foreach (var command in commandsToDispatch.ToList())
                 {

@@ -1,5 +1,5 @@
 ﻿using PinetreeShop.CQRS.Infrastructure;
-using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
+using PinetreeShop.CQRS.Infrastructure.Commands;
 using PinetreeShop.CQRS.Infrastructure.Repositories;
 using PinetreeShop.CQRS.Persistence.Exceptions;
 using PinetreeShop.Domain.Exceptions;
@@ -13,7 +13,7 @@ namespace PinetreeShop.Domain.Products.CommandHandlers
         IHandleCommand<CreateProduct>,
         IHandleCommand<ChangeProductQuantity>,
         IHandleCommand<ReserveProduct>,
-        IHandleCommand<ReleaseProductReservation>
+        IHandleCommand<CancelProductReservation>
     {
         private IAggregateRepository _aggregateRepository;
 
@@ -46,14 +46,14 @@ namespace PinetreeShop.Domain.Products.CommandHandlers
         public IAggregate Handle(ReserveProduct command)
         {
             var product = _aggregateRepository.GetAggregateById<Product>(command.AggregateId);
-            product.Reserve(command.AggregateId, command.BasketId, command.QuantityToReserve);
+            product.Reserve(command.AggregateId, command.BasketId, command.Quantity);
             return product;
         }
 
-        public IAggregate Handle(ReleaseProductReservation command)
+        public IAggregate Handle(CancelProductReservation command)
         {
             var product = _aggregateRepository.GetAggregateById<Product>(command.AggregateId);
-            product.ReleaseReservation(command.AggregateId, command.QuantityToRelease);
+            product.CancelReservation(command.AggregateId, command.Quantity);
             return product;
         }
     }

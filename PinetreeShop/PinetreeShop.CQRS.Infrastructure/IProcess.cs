@@ -1,12 +1,13 @@
-﻿using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
+﻿using PinetreeShop.CQRS.Infrastructure.Events;
+using PinetreeShop.CQRS.Infrastructure.Commands;
 using System;
 using System.Collections.Generic;
 
 namespace PinetreeShop.CQRS.Infrastructure
 {
-    public interface IWorkflow
+    public interface IProcess
     {
-        Guid Id { get; }
+        Guid ProcessId { get; }
         int Version { get; }
         IEnumerable<IEvent> UncommittedEvents { get; }
         void ClearUncommittedEvents();

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PinetreeShop.CQRS.Infrastructure.CommandsAndEvents
+namespace PinetreeShop.CQRS.Infrastructure.Events
 {
     public interface IEvent
     {
@@ -10,11 +10,13 @@ namespace PinetreeShop.CQRS.Infrastructure.CommandsAndEvents
 
     public class EventBase : IEvent
     {
+        public Guid EventId { get; private set; }
         public Guid AggregateId { get; set; }
         public DateTime Date { get; set; }
 
         public EventBase(Guid aggregateId)
         {
+            EventId = Guid.NewGuid();
             AggregateId = aggregateId;
             Date = DateTime.Now;
         }

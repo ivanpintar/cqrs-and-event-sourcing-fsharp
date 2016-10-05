@@ -1,5 +1,4 @@
-﻿using PinetreeShop.CQRS.Infrastructure;
-using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
+﻿using PinetreeShop.CQRS.Infrastructure.Commands;
 using PinetreeShop.Domain.Types;
 using System;
 
@@ -13,67 +12,74 @@ namespace PinetreeShop.Domain.Baskets.Commands
         }
     }
 
-    public class AddProduct : CommandBase
+    public class TryAddItemToBasket : CommandBase
     {
         public Guid ProductId { get; set; }
         public uint Quantity { get; set; }
         public string ProductName { get; set; }
         public decimal Price { get; set; }
 
-        public AddProduct(Guid basketId, Guid productId, string productName, decimal price, uint quantity) : base(basketId)
+        public TryAddItemToBasket(Guid basketId, Guid productId, string productName, decimal price, uint quantity) : base(basketId)
         {
             ProductId = productId;
             Quantity = quantity;
             ProductName = productName;
             Price = price;
-        }
+        }        
     }
 
-    public class RevertAddProduct : RevertCommandBase
+    public class ConfirmAddItemToBasket : CommandBase
     {
         public Guid ProductId { get; set; }
         public uint Quantity { get; set; }
 
-        public RevertAddProduct(Guid basketId, Guid productId, uint quantity, string reason) : base(basketId, reason)
+        public ConfirmAddItemToBasket(Guid basketId, Guid productId, uint quantity) : base(basketId)
         {
             ProductId = productId;
             Quantity = quantity;
         }
     }
 
-    public class RemoveProduct : CommandBase
+    public class RevertAddItemToBasket : RevertCommandBase
     {
         public Guid ProductId { get; set; }
         public uint Quantity { get; set; }
 
-        public RemoveProduct(Guid basketId, Guid productId, uint quantity) : base(basketId)
+        public RevertAddItemToBasket(Guid basketId, Guid productId, uint quantity, string reason) : base(basketId, reason)
         {
             ProductId = productId;
             Quantity = quantity;
         }
     }
 
-    public class Cancel : CommandBase
+    public class RemoveItemFromBasket : CommandBase
     {
-        public Cancel(Guid basketId) : base(basketId)
+        public Guid ProductId { get; set; }
+        public uint Quantity { get; set; }
+
+        public RemoveItemFromBasket(Guid basketId, Guid productId, uint quantity) : base(basketId)
+        {
+            ProductId = productId;
+            Quantity = quantity;
+        }
+    }
+
+    public class CancelBasket : CommandBase
+    {
+        public CancelBasket(Guid basketId) : base(basketId)
         {
 
         }
     }
 
-    public class CheckOut : CommandBase
+    public class CheckOutBasket : CommandBase
     {
         public Address ShippingAddress { get; set; }
 
-        public CheckOut(Guid basketId, Address shippingAddress) : base(basketId)
+        public CheckOutBasket(Guid basketId, Address shippingAddress) : base(basketId)
         {
             ShippingAddress = shippingAddress;
         }
-    }
-
-    public class RevertCheckOut : RevertCommandBase
-    {
-        public RevertCheckOut(Guid basketId, string reason) : base(basketId, reason) { }
     }
 
 }

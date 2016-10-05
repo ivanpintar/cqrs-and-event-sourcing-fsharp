@@ -53,6 +53,9 @@
     <Compile Include="Orders\Commands.cs" />
     <Compile Include="Orders\Events.cs" />
     <Compile Include="Products\Exceptions.cs" />
+    <Compile Include="ShopProcess\EventListeners.cs" />
+    <Compile Include="ShopProcess\Events.cs" />
+    <Compile Include="ShopProcess\ShopProcess.cs" />
     <Compile Include="Types.cs" />
     <Compile Include="Products\CommandHandlers.cs" />
     <Compile Include="Products\Commands.cs" />

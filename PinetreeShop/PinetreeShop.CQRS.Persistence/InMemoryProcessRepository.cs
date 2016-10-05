@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
-using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
+using PinetreeShop.CQRS.Infrastructure.Commands;
+using PinetreeShop.CQRS.Infrastructure.Events;
 using PinetreeShop.CQRS.Infrastructure.Repositories;
 using PinetreeShop.CQRS.Persistence.Exceptions;
 using System;
@@ -8,14 +9,14 @@ using System.Linq;
 
 namespace PinetreeShop.CQRS.Persistence
 {
-    public class InMemoryWorkflowRepository : WorkflowRepositoryBase
+    public class InMemoryProcessRepository : ProcessRepositoryBase
     {
         public Dictionary<Guid, List<string>> _eventStore = new Dictionary<Guid, List<string>>();
         private List<IEvent> _latestEvents = new List<IEvent>();
         private List<ICommand> _latestCommands = new List<ICommand>();
         private JsonSerializerSettings _serializationSettings;
 
-        public InMemoryWorkflowRepository()
+        public InMemoryProcessRepository()
         {
             _serializationSettings = new JsonSerializerSettings
             {
@@ -23,39 +24,39 @@ namespace PinetreeShop.CQRS.Persistence
             };
         }
 
-        public override TResult GetWorkflowById<TResult>(Guid id)
+        public override TResult GetProcessById<TResult>(Guid id)
         {
             if (_eventStore.ContainsKey(id))
             {
                 var events = _eventStore[id].Select(e => JsonConvert.DeserializeObject(e, _serializationSettings) as IEvent);
-                return BuildWorkflow<TResult>(events);
+                return BuildProcess<TResult>(events);
             }
-            throw new WorkflowNotFoundException($"Could not find workflow {typeof(TResult)}:{id}");
+            throw new ProcessNotFoundException($"Could not find process {typeof(TResult)}:{id}");
         }
 
-        public override void SaveWorkflow<TWorkflow>(TWorkflow workflow)
+        public override void SaveProcess<TProcess>(TProcess process)
         {
-            var eventsToSave = workflow.UncommittedEvents.ToList();
+            var eventsToSave = process.UncommittedEvents.ToList();
             var serializedEvents = eventsToSave.Select(Serialize).ToList();
-            var expectedVersion = CalculateExpectedVersion(workflow, eventsToSave);
+            var expectedVersion = CalculateExpectedVersion(process, eventsToSave);
             if (expectedVersion < 0)
             {
-                _eventStore.Add(workflow.Id, serializedEvents);
+                _eventStore.Add(process.ProcessId, serializedEvents);
             }
             else
             {
-                var existingEvents = _eventStore[workflow.Id];
+                var existingEvents = _eventStore[process.ProcessId];
                 var currentversion = existingEvents.Count - 1;
                 if (currentversion != expectedVersion)
                 {
-                    throw new WrongExpectedVersionException($"{workflow.GetType()}:{workflow.Id}: Expected version {expectedVersion} but the version is {currentversion}");
+                    throw new WrongExpectedVersionException($"{process.GetType()}:{process.ProcessId}: Expected version {expectedVersion} but the version is {currentversion}");
                 }
                 existingEvents.AddRange(serializedEvents);
             }
             _latestEvents.AddRange(eventsToSave);
 
-            workflow.ClearUndispatchedCommands();
-            workflow.ClearUncommittedEvents();
+            process.ClearUndispatchedCommands();
+            process.ClearUncommittedEvents();
         }
 
         public IEnumerable<IEvent> GetLatestEvents()
@@ -63,11 +64,11 @@ namespace PinetreeShop.CQRS.Persistence
             return _latestEvents;
         }
 
-        public void AddEvents(Dictionary<Guid, IEnumerable<IEvent>> eventsForWorflows)
+        public void AddEvents(Dictionary<Guid, IEnumerable<IEvent>> eventsForProcesses)
         {
-            foreach (var eventsForWorflow in eventsForWorflows)
+            foreach (var eventsForProcess in eventsForProcesses)
             {
-                _eventStore.Add(eventsForWorflow.Key, eventsForWorflow.Value.Select(Serialize).ToList());
+                _eventStore.Add(eventsForProcess.Key, eventsForProcess.Value.Select(Serialize).ToList());
             }
         }
 

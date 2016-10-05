@@ -59,18 +59,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Basket\AddProductTests.cs" />
+    <Compile Include="Basket\AddItemTests.cs" />
     <Compile Include="Basket\CancelTests.cs" />
     <Compile Include="Basket\CheckOutTests.cs" />
     <Compile Include="Basket\CreateBasketTests.cs" />
-    <Compile Include="Basket\RemoveProductTests.cs" />
+    <Compile Include="Basket\RemoveItemTests.cs" />
     <Compile Include="Order\CancelOrderTests.cs" />
     <Compile Include="Order\CreateOrderTests.cs" />
     <Compile Include="Order\DeliverOrderTests.cs" />
     <Compile Include="Order\ShipOrderTests.cs" />
     <Compile Include="Product\ChangeProductQuantityTests.cs" />
     <Compile Include="Product\CreateProductTests.cs" />
-    <Compile Include="Product\ReleaseProductReservationsTests.cs" />
+    <Compile Include="Product\CancelProductReservationsTests.cs" />
     <Compile Include="Product\ReserveProductTests.cs" />
     <Compile Include="TestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

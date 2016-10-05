@@ -1,5 +1,5 @@
 ﻿using PinetreeShop.CQRS.Infrastructure;
-using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
+using PinetreeShop.CQRS.Infrastructure.Commands;
 using PinetreeShop.CQRS.Infrastructure.Repositories;
 using PinetreeShop.CQRS.Persistence.Exceptions;
 using PinetreeShop.Domain.Baskets.Commands;
@@ -10,12 +10,12 @@ namespace PinetreeShop.Domain.Baskets
 {
     public class BasketCommandHandler :
         IHandleCommand<CreateBasket>,
-        IHandleCommand<AddProduct>,
-        IHandleCommand<RevertAddProduct>,
-        IHandleCommand<RemoveProduct>,
-        IHandleCommand<Cancel>,
-        IHandleCommand<CheckOut>,
-        IHandleCommand<RevertCheckOut>
+        IHandleCommand<TryAddItemToBasket>,
+        IHandleCommand<ConfirmAddItemToBasket>,
+        IHandleCommand<RevertAddItemToBasket>,
+        IHandleCommand<RemoveItemFromBasket>,
+        IHandleCommand<CancelBasket>,
+        IHandleCommand<CheckOutBasket>
     {
         private IAggregateRepository _aggregateRepository;
 
@@ -24,21 +24,21 @@ namespace PinetreeShop.Domain.Baskets
             _aggregateRepository = aggregateRepository;
         }
 
-        public IAggregate Handle(AddProduct command)
+        public IAggregate Handle(TryAddItemToBasket command)
         {
             var basket = _aggregateRepository.GetAggregateById<Basket>(command.AggregateId);
-            basket.AddProduct(command.AggregateId, command.ProductId, command.ProductName, command.Price, command.Quantity);
+            basket.TryAddProduct(command.AggregateId, command.ProductId, command.ProductName, command.Price, command.Quantity);
             return basket;
         }
 
-        public IAggregate Handle(RevertCheckOut command)
+        public IAggregate Handle(ConfirmAddItemToBasket command)
         {
             var basket = _aggregateRepository.GetAggregateById<Basket>(command.AggregateId);
-            basket.RevertCheckout(command.AggregateId, command.Reason);
+            basket.ConfirmAddItem(command.AggregateId, command.ProductId, command.Quantity);
             return basket;
         }
 
-        public IAggregate Handle(RevertAddProduct command)
+        public IAggregate Handle(RevertAddItemToBasket command)
         {
             var basket = _aggregateRepository.GetAggregateById<Basket>(command.AggregateId);
             basket.RevertAddProduct(command.AggregateId, command.ProductId, command.Quantity, command.Reason);
@@ -59,24 +59,24 @@ namespace PinetreeShop.Domain.Baskets
             return Basket.Create(command.AggregateId);
         }
 
-        public IAggregate Handle(RemoveProduct command)
+        public IAggregate Handle(RemoveItemFromBasket command)
         {
             var basket = _aggregateRepository.GetAggregateById<Basket>(command.AggregateId);
             basket.RemoveProduct(command.AggregateId, command.ProductId, command.Quantity);
             return basket;
         }
 
-        public IAggregate Handle(Cancel command)
+        public IAggregate Handle(CancelBasket command)
         {
             var basket = _aggregateRepository.GetAggregateById<Basket>(command.AggregateId);
             basket.Cancel(command.AggregateId);
             return basket;
         }
 
-        public IAggregate Handle(CheckOut command)
+        public IAggregate Handle(CheckOutBasket command)
         {
             var basket = _aggregateRepository.GetAggregateById<Basket>(command.AggregateId);
-            basket.CheckOut(command.AggregateId, command.ShippingAddress);
+            basket.TryCheckOut(command.AggregateId, command.ShippingAddress);
             return basket;
         }
     }

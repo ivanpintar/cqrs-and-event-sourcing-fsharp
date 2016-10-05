@@ -1,4 +1,5 @@
-﻿using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
+﻿using PinetreeShop.CQRS.Infrastructure.Commands;
+using PinetreeShop.CQRS.Infrastructure.Events;
 using PinetreeShop.CQRS.Persistence;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace PinetreeShop.Domain.Tests
     public class TestBase
     {
         private InMemoryAggregateRepository _aggregateRepository;
-        private InMemoryWorkflowRepository _workflowRepository;
+        private InMemoryProcessRepository _processRepository;
         private Dictionary<Guid, IEnumerable<IEvent>> _preConditions = new Dictionary<Guid, IEnumerable<IEvent>>();
 
         private DomainEntry BuildApplication()
@@ -19,8 +20,8 @@ namespace PinetreeShop.Domain.Tests
             _aggregateRepository = new InMemoryAggregateRepository();
             _aggregateRepository.AddEvents(_preConditions);
 
-            _workflowRepository = new InMemoryWorkflowRepository();
-            return new DomainEntry(_aggregateRepository, _workflowRepository);
+            _processRepository = new InMemoryProcessRepository();
+            return new DomainEntry(_aggregateRepository, _processRepository);
         }
 
         protected void TearDown()
@@ -97,7 +98,7 @@ namespace PinetreeShop.Domain.Tests
         private static List<PropertyInfo> GetProps(IEvent evt)
         {
             return GetProps(evt)
-                .Where(p => p.Name != "Date")
+                .Where(p => p.Name != "Date" && p.Name != "EventId")
                 .ToList();
         }
 

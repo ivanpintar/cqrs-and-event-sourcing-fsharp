@@ -1,4 +1,4 @@
-﻿using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
+﻿using PinetreeShop.CQRS.Infrastructure.Events;
 using PinetreeShop.Domain.Types;
 using System;
 
@@ -11,14 +11,14 @@ namespace PinetreeShop.Domain.Baskets.Events
         }
     }
 
-    public class ProductAdded : EventBase
+    public class BasketAddItemTried : EventBase
     {
         public Guid ProductId { get; private set; }
         public uint Quantity { get; private set; }
         public string ProductName { get; private set; }
         public decimal Price { get; private set; }
 
-        public ProductAdded(Guid basketId, Guid productId, string productName, decimal price, uint quantity) : base(basketId)
+        public BasketAddItemTried(Guid basketId, Guid productId, string productName, decimal price, uint quantity) : base(basketId)
         {
             ProductId = productId;
             ProductName = productName;
@@ -27,51 +27,56 @@ namespace PinetreeShop.Domain.Baskets.Events
         }
     }
 
-    public class AddProductReverted : EventFailedBase
+    public class BasketAddItemConfirmed : EventBase
     {
         public Guid ProductId { get; private set; }
         public uint Quantity { get; private set; }
-       
-        public AddProductReverted(Guid basketId, Guid productId, uint quantity, string reason) : base(basketId, reason)
+
+        public BasketAddItemConfirmed(Guid basketId, Guid productId, uint quantity) : base(basketId)
         {
             ProductId = productId;
             Quantity = quantity;
         }
     }
 
-    public class ProductRemoved : EventBase
+    public class BasketAddItemReverted : EventFailedBase
+    {
+        public Guid ProductId { get; private set; }
+        public uint Quantity { get; private set; }
+       
+        public BasketAddItemReverted(Guid basketId, Guid productId, uint quantity, string reason) : base(basketId, reason)
+        {
+            ProductId = productId;
+            Quantity = quantity;
+        }
+    }
+
+    public class BasketItemRemoved : EventBase
     {
         public Guid ProductId { get; private set; }
         public uint Quantity { get; private set; }
 
-        public ProductRemoved(Guid basketId, Guid productId, uint quantity) : base(basketId)
+        public BasketItemRemoved(Guid basketId, Guid productId, uint quantity) : base(basketId)
         {
             ProductId = productId;
             Quantity = quantity;
         }
     }
     
-    public class Cancelled : EventBase
+    public class BaksetCancelled : EventBase
     {
-        public Cancelled(Guid basketId) : base(basketId)
+        public BaksetCancelled(Guid basketId) : base(basketId)
         {
         }
     }
 
-    public class CheckedOut : EventBase
+    public class BasketCheckedOut : EventBase
     {
         public Address ShippintAddress { get; private set; }
 
-        public CheckedOut(Guid basketId, Address shippingAddress) : base(basketId)
+        public BasketCheckedOut(Guid basketId, Address shippingAddress) : base(basketId)
         {
             ShippintAddress = shippingAddress;
-        }
-    }
-
-    public class CheckOutReverted : EventFailedBase
-    {
-        public CheckOutReverted(Guid basketId, string reason) : base(basketId, reason)
-        {
         }
     }
 }

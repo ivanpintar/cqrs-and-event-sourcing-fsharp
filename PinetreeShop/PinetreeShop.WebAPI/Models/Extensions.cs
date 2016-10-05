@@ -13,7 +13,7 @@ namespace PinetreeShop.WebAPI.Models
         {
             return new BasketModel
             {
-                Id = basket.Id,
+                Id = basket.AggregateId,
                 OrderLines = basket.OrderLines.ToList()
             };
         }
@@ -22,7 +22,7 @@ namespace PinetreeShop.WebAPI.Models
         {
             return new ProductModel
             {
-                Id = product.Id,
+                Id = product.AggregateId,
                 Name = product.Name,
                 Price = product.Price,
                 Quantity = product.Quantity,

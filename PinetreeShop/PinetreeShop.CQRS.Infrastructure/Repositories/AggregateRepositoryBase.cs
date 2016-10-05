@@ -1,4 +1,4 @@
-﻿using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
+﻿using PinetreeShop.CQRS.Infrastructure.Events;
 using System;
 using System.Collections.Generic;
 
@@ -19,6 +19,7 @@ namespace PinetreeShop.CQRS.Infrastructure.Repositories
                 result.ApplyEvent(evt);
             }
 
+            result.ClearUncommittedEvents();
             return result;
         }
 

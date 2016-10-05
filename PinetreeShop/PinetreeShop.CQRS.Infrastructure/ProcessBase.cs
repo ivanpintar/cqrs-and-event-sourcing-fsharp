@@ -1,14 +1,15 @@
-﻿using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
+﻿using PinetreeShop.CQRS.Infrastructure.Events;
+using PinetreeShop.CQRS.Infrastructure.Commands;
 using System;
 using System.Collections.Generic;
 
 namespace PinetreeShop.CQRS.Infrastructure
 {
-    public class WorkflowBase : IWorkflow
+    public class ProcessBase : IProcess
     {
         private Dictionary<Type, Action<IEvent>> _eventHandlers = new Dictionary<Type, Action<IEvent>>();
 
-        public Guid Id { get; protected set; }
+        public Guid ProcessId { get; protected set; }
 
         private int _version = -1;
         public int Version

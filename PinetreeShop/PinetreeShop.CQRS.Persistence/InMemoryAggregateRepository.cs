@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
-using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
+using PinetreeShop.CQRS.Infrastructure.Events;
+using PinetreeShop.CQRS.Infrastructure.Commands;
 using PinetreeShop.CQRS.Infrastructure.Repositories;
 using PinetreeShop.CQRS.Persistence.Exceptions;
 using System;
@@ -40,15 +41,15 @@ namespace PinetreeShop.CQRS.Persistence
             var expectedVersion = CalculateExpectedVersion(aggregate, eventsToSave);
             if (expectedVersion < 0)
             {
-                _eventStore.Add(aggregate.Id, serializedEvents);
+                _eventStore.Add(aggregate.AggregateId, serializedEvents);
             }
             else
             {
-                var existingEvents = _eventStore[aggregate.Id];
+                var existingEvents = _eventStore[aggregate.AggregateId];
                 var currentversion = existingEvents.Count - 1;
                 if (currentversion != expectedVersion)
                 {
-                    throw new WrongExpectedVersionException($"{aggregate.GetType()}:{aggregate.Id}: Expected version {expectedVersion} but the version is {currentversion}");
+                    throw new WrongExpectedVersionException($"{aggregate.GetType()}:{aggregate.AggregateId}: Expected version {expectedVersion} but the version is {currentversion}");
                 }
                 existingEvents.AddRange(serializedEvents);
             }

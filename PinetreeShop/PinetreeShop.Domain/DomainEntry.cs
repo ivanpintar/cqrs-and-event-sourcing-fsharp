@@ -1,5 +1,6 @@
 ﻿using PinetreeShop.CQRS.Infrastructure;
-using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
+using PinetreeShop.CQRS.Infrastructure.Commands;
+using PinetreeShop.CQRS.Infrastructure.Events;
 using PinetreeShop.CQRS.Infrastructure.Repositories;
 using PinetreeShop.Domain.Baskets;
 using PinetreeShop.Domain.Baskets.Commands;
@@ -18,14 +19,14 @@ namespace PinetreeShop.Domain
     public class DomainEntry
     {
         private readonly CommandDispatcher _commandDispatcher;
-        private readonly WorkflowEventListener _workflowEventListener;
+        private readonly ProcessEventListener _processEventListener;
 
         public DomainEntry(
             IAggregateRepository aggregateRepository,
-            IWorkflowRepository workflowRepository)
+            IProcessRepository processRepository)
         {
             _commandDispatcher = CreateCommandDispatcher(aggregateRepository);
-            _workflowEventListener = CreateEventListener(workflowRepository, _commandDispatcher);
+            _processEventListener = CreateEventListener(processRepository, _commandDispatcher);
         }
 
         public void ExecuteCommand<TCommand>(TCommand command) where TCommand : ICommand
@@ -35,12 +36,12 @@ namespace PinetreeShop.Domain
 
         public void HandleEvent<TEvent>(TEvent evt) where TEvent : IEvent
         {
-            _workflowEventListener.HandleEvent(evt);
+            _processEventListener.HandleEvent(evt);
         }
 
-        private WorkflowEventListener CreateEventListener(IWorkflowRepository workflowRepository, CommandDispatcher commandDispatcher)
+        private ProcessEventListener CreateEventListener(IProcessRepository processRepository, CommandDispatcher commandDispatcher)
         {
-            var eventListener = new WorkflowEventListener(workflowRepository, commandDispatcher);
+            var eventListener = new ProcessEventListener(processRepository, commandDispatcher);
 
             return eventListener;
         }
@@ -53,16 +54,16 @@ namespace PinetreeShop.Domain
             commandDispatcher.RegisterHandler<CreateProduct>(productCommandHandler);
             commandDispatcher.RegisterHandler<ChangeProductQuantity>(productCommandHandler);
             commandDispatcher.RegisterHandler<ReserveProduct>(productCommandHandler);
-            commandDispatcher.RegisterHandler<ReleaseProductReservation>(productCommandHandler);
+            commandDispatcher.RegisterHandler<CancelProductReservation>(productCommandHandler);
 
             var basketCommandHandler = new BasketCommandHandler(aggregateRepository);
             commandDispatcher.RegisterHandler<CreateBasket>(basketCommandHandler);
-            commandDispatcher.RegisterHandler<AddProduct>(basketCommandHandler);
-            commandDispatcher.RegisterHandler<RevertAddProduct>(basketCommandHandler);
-            commandDispatcher.RegisterHandler<RemoveProduct>(basketCommandHandler);
-            commandDispatcher.RegisterHandler<Cancel>(basketCommandHandler);
-            commandDispatcher.RegisterHandler<CheckOut>(basketCommandHandler);
-            commandDispatcher.RegisterHandler<RevertCheckOut>(basketCommandHandler);
+            commandDispatcher.RegisterHandler<TryAddItemToBasket>(basketCommandHandler); 
+            commandDispatcher.RegisterHandler<ConfirmAddItemToBasket>(basketCommandHandler);
+            commandDispatcher.RegisterHandler<RevertAddItemToBasket>(basketCommandHandler);
+            commandDispatcher.RegisterHandler<RemoveItemFromBasket>(basketCommandHandler);
+            commandDispatcher.RegisterHandler<CancelBasket>(basketCommandHandler);
+            commandDispatcher.RegisterHandler<CheckOutBasket>(basketCommandHandler);
 
             var orderCommandHandler = new OrderCommandHandler(aggregateRepository);
             commandDispatcher.RegisterHandler<CreateOrder>(orderCommandHandler);

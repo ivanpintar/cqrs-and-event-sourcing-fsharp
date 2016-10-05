@@ -24,62 +24,62 @@ namespace PinetreeShop.Domain.Baskets
         public Basket()
         {
             RegisterEventHandler<BasketCreated>(Apply);
-            RegisterEventHandler<ProductAdded>(Apply);
-            RegisterEventHandler<AddProductReverted>(Apply);
-            RegisterEventHandler<ProductRemoved>(Apply);
-            RegisterEventHandler<Cancelled>(Apply);
-            RegisterEventHandler<CheckedOut>(Apply);
-            RegisterEventHandler<CheckOutReverted>(Apply);
+            RegisterEventHandler<BasketAddItemTried>(Apply);
+            RegisterEventHandler<BasketAddItemConfirmed>(Apply);
+            RegisterEventHandler<BasketAddItemReverted>(Apply);
+            RegisterEventHandler<BasketItemRemoved>(Apply);
+            RegisterEventHandler<BaksetCancelled>(Apply);
+            RegisterEventHandler<BasketCheckedOut>(Apply);
         }
 
-        internal void AddProduct(Guid basketId, Guid productId, string productName, decimal price, uint quantity)
+        private void Apply(BasketAddItemConfirmed evt)
         {
-            RaiseEvent(new ProductAdded(basketId, productId, productName, price, quantity));
+            AggregateId = evt.AggregateId;
+            AddProductToOrderLines(evt.ProductId, evt.Quantity);
         }
 
-        private void Apply(CheckOutReverted evt)
+        internal void TryAddProduct(Guid basketId, Guid productId, string productName, decimal price, uint quantity)
         {
-            Id = evt.AggregateId;
-            State = BasketState.Pending;
+            RaiseEvent(new BasketAddItemTried(basketId, productId, productName, price, quantity));
         }
 
-        private void Apply(AddProductReverted evt)
+        private void Apply(BasketAddItemReverted evt)
         {
-            Id = evt.AggregateId;
+            AggregateId = evt.AggregateId;
             RemoveProductFromOrderLines(evt.ProductId, evt.Quantity);
         }
 
-        internal void RevertCheckout(Guid basketId, string reason)
+        internal void ConfirmAddItem(Guid basketId, Guid productId, uint quantity)
         {
-            RaiseEvent(new CheckOutReverted(basketId, reason));
+            RaiseEvent(new BasketAddItemConfirmed(basketId, productId, quantity));
         }
 
         private void Apply(BasketCreated evt)
         {
-            Id = evt.AggregateId;
+            AggregateId = evt.AggregateId;
             State = BasketState.Pending;
         }
 
-        private void Apply(ProductAdded evt)
+        private void Apply(BasketAddItemTried evt)
         {
-            Id = evt.AggregateId;
-            AddProductToOrderLines(evt.ProductId, evt.ProductName, evt.Price, evt.Quantity);
+            AggregateId = evt.AggregateId;
+            AddProductToOrderLines(evt.ProductId, 0, evt.ProductName, evt.Price); // do not add quantity until items are reserved
         }
 
         internal void RevertAddProduct(Guid basketId, Guid productId, uint quantity, string reason)
         {
-            RaiseEvent(new AddProductReverted(basketId, productId, quantity, reason));
+            RaiseEvent(new BasketAddItemReverted(basketId, productId, quantity, reason));
         }
 
-        private void Apply(ProductRemoved evt)
+        private void Apply(BasketItemRemoved evt)
         {
-            Id = evt.AggregateId;
+            AggregateId = evt.AggregateId;
             RemoveProductFromOrderLines(evt.ProductId, evt.Quantity);
         }
 
-        private void Apply(Cancelled evt)
+        private void Apply(BaksetCancelled evt)
         {
-            Id = evt.AggregateId;
+            AggregateId = evt.AggregateId;
             State = BasketState.Cancelled;
         }
 
@@ -94,13 +94,13 @@ namespace PinetreeShop.Domain.Baskets
             if (orderLine != null)
             {
                 if (orderLine.Quantity < quantity) quantity = orderLine.Quantity;
-                RaiseEvent(new ProductRemoved(basketId, productId, quantity));
+                RaiseEvent(new BasketItemRemoved(basketId, productId, quantity));
             }
         }
 
-        private void Apply(CheckedOut evt)
+        private void Apply(BasketCheckedOut evt)
         {
-            Id = evt.AggregateId;
+            AggregateId = evt.AggregateId;
             State = BasketState.CheckedOut;
         }
 
@@ -109,16 +109,16 @@ namespace PinetreeShop.Domain.Baskets
             if (State == BasketState.Cancelled) return;
 
             if (State != BasketState.Pending) throw new CancellationException(basketId, $"Cannot cancel, basket is {State}");
-            RaiseEvent(new Cancelled(basketId));
+            RaiseEvent(new BaksetCancelled(basketId));
         }
 
-        internal void CheckOut(Guid basketId, Address shippingAddress)
+        internal void TryCheckOut(Guid basketId, Address shippingAddress)
         {
             if (State != BasketState.Pending) throw new CheckoutException(basketId, $"Cannot check out, basket is {State}");
-            RaiseEvent(new CheckedOut(basketId, shippingAddress));
+            RaiseEvent(new BasketCheckedOut(basketId, shippingAddress));
         }
 
-        private void AddProductToOrderLines(Guid productId, string productName, decimal price, uint quantity)
+        private void AddProductToOrderLines(Guid productId, uint quantity, string productName = "", decimal? price = null)
         {
             var orderLine = _orderLines.SingleOrDefault(ol => ol.ProductId == productId);
             if (orderLine == null)
@@ -127,7 +127,7 @@ namespace PinetreeShop.Domain.Baskets
                 {
                     ProductId = productId,
                     ProductName = productName,
-                    Price = price,
+                    Price = price.Value,
                     Quantity = quantity
                 };
                 _orderLines.Add(orderLine);

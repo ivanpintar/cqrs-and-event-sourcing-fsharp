@@ -1,4 +1,4 @@
-﻿using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
+﻿using PinetreeShop.CQRS.Infrastructure.Events;
 using System;
 using System.Collections.Generic;
 
@@ -8,7 +8,7 @@ namespace PinetreeShop.CQRS.Infrastructure
     {
         private Dictionary<Type, Action<IEvent>> _eventHandlers = new Dictionary<Type, Action<IEvent>>();
 
-        public Guid Id { get; protected set; }
+        public Guid AggregateId { get; protected set; }
 
         private int _version = -1;
         public int Version

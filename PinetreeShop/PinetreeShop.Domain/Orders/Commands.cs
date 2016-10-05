@@ -1,5 +1,5 @@
 ﻿using PinetreeShop.CQRS.Infrastructure;
-using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
+using PinetreeShop.CQRS.Infrastructure.Commands;
 using PinetreeShop.Domain.Types;
 using System;
 using System.Collections.Generic;

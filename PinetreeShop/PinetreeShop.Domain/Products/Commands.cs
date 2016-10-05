@@ -1,5 +1,5 @@
 ﻿using PinetreeShop.CQRS.Infrastructure;
-using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
+using PinetreeShop.CQRS.Infrastructure.Commands;
 using System;
 
 namespace PinetreeShop.Domain.Products.Commands
@@ -28,23 +28,23 @@ namespace PinetreeShop.Domain.Products.Commands
 
     public class ReserveProduct : CommandBase
     {
-        public uint QuantityToReserve { get; private set; }
+        public uint Quantity { get; private set; }
         public Guid BasketId { get; private set; }
 
-        public ReserveProduct(Guid productId, Guid basketId, uint quantityToReserve) : base(productId)
+        public ReserveProduct(Guid productId, Guid basketId, uint quantity) : base(productId)
         {
-            QuantityToReserve = quantityToReserve;
+            Quantity = quantity;
             BasketId = basketId;
         }
     }
 
-    public class ReleaseProductReservation : CommandBase
+    public class CancelProductReservation : CommandBase
     {
-        public uint QuantityToRelease { get; private set; }
+        public uint Quantity { get; private set; }
 
-        public ReleaseProductReservation(Guid productId, uint quantityToRelease) : base(productId)
+        public CancelProductReservation(Guid productId, uint quantity) : base(productId)
         {
-            QuantityToRelease = quantityToRelease;
+            Quantity = quantity;
         }
     }
 }

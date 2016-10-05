@@ -1,4 +1,4 @@
-﻿using PinetreeShop.CQRS.Infrastructure.CommandsAndEvents;
+﻿using PinetreeShop.CQRS.Infrastructure.Events;
 using PinetreeShop.Domain.Products.Commands;
 using PinetreeShop.Domain.Products.Events;
 using System;
@@ -6,26 +6,26 @@ using Xunit;
 
 namespace PinetreeShop.Domain.Tests.Product
 {
-    public class ReleaseProductReservationsTests : TestBase
+    public class CancelProductReservationsTests : TestBase
     {
         Guid id = Guid.NewGuid();
         Guid basketId = Guid.NewGuid();
 
         [Fact]
-        public void When_ReleaseProductResevation_NewProductHasNewQuantity()
+        public void When_CancelProductResevation_ProductReservationCancelled()
         {
 
             Given(InitialEvents);
-            When(new ReleaseProductReservation(id, 2));
-            Then(new ProductReservationReleased(id, 2));
+            When(new CancelProductReservation(id, 2));
+            Then(new ProductReservationCanceled(id, 2));
         }
 
         [Fact]
-        public void When_ReleaseProductReservationLessThanReserved_ThrowQuantityChangeException()
+        public void When_CancelProductReservationLessThanReserved_ProductReservationCanceled()
         {
             Given(InitialEvents);
-            When(new ReleaseProductReservation(id, 10));
-            Then(new ProductReservationReleased(id, 2));
+            When(new CancelProductReservation(id, 10));
+            Then(new ProductReservationCanceled(id, 2));
         }
 
         private IEvent[] InitialEvents
