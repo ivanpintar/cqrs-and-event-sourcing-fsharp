@@ -25,7 +25,7 @@ namespace PinetreeShop.Domain.Tests.Product
         {
             Given(InitialEvents);
             When(new CancelProductReservation(id, 10));
-            Then(new ProductReservationCanceled(id, 2));
+            Then(new ProductReservationCanceled(id, 3));
         }
 
         private IEvent[] InitialEvents

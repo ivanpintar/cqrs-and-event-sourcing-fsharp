@@ -16,6 +16,7 @@ namespace PinetreeShop.Domain.Tests.Order
         Guid id = Guid.NewGuid();
         Guid basketId = Guid.NewGuid();
         Address shippingAddress = new Address { Country = "US", StateOrProvince = "CA", StreetAndNumber = "A2", ZipAndCity = "LA" };
+        Guid productId = Guid.NewGuid();
 
         [Fact]
         public void When_CreateOrder_OrderCreated()
@@ -51,7 +52,7 @@ namespace PinetreeShop.Domain.Tests.Order
                 {
                     new OrderLine
                     {
-                        ProductId = Guid.NewGuid(),
+                        ProductId = productId,
                         ProductName = "Test Product",
                         Price = 2,
                         Quantity = 2

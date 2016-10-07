@@ -1,4 +1,5 @@
-﻿using PinetreeShop.CQRS.Infrastructure.Commands;
+﻿using Newtonsoft.Json;
+using PinetreeShop.CQRS.Infrastructure.Commands;
 using PinetreeShop.CQRS.Infrastructure.Events;
 using PinetreeShop.CQRS.Persistence;
 using System;
@@ -61,66 +62,20 @@ namespace PinetreeShop.Domain.Tests
 
             foreach (var le in latestAndExpected)
             {
-                Assert.True(ObjectsAreEqual(le.L, le.E));
+                Assert.True(EventsAreEqual(le.L, le.E));
             }
         }
 
-        private bool ObjectsAreEqual(object evt1, object evt2)
+        private bool EventsAreEqual(IEvent evt1, IEvent evt2)
         {
-            if (evt1.GetType() != evt2.GetType()) return false;
+            // exclude metadata from comparison
+            evt1.GetType().GetProperties().Single(p => p.Name == "Metadata").SetValue(evt1, null);
+            evt2.GetType().GetProperties().Single(p => p.Name == "Metadata").SetValue(evt2, null);
 
-            var props1 = GetProps(evt1);
-            var props2 = GetProps(evt2);
+            var json1 = JsonConvert.SerializeObject(evt1);
+            var json2 = JsonConvert.SerializeObject(evt2);
 
-            if (props1.Count != props2.Count) return false;
-
-            var allProps = props1.Zip(props2, (p1, p2) => new { P1 = p1, P2 = p2 });
-
-            foreach (var p in allProps)
-            {
-                var p1 = p.P1;
-                var p2 = p.P2;
-
-                if (p1.PropertyType != p2.PropertyType) return false;
-                if (p1.Name != p2.Name) return false;
-
-
-                var val1 = p1.GetValue(evt1);
-                var val2 = p2.GetValue(evt2);
-
-                if (IsSimple(p1.PropertyType) && (val1 != val2)) return false;
-                if (!ObjectsAreEqual(val1, val2)) return false;
-            }
-
-            return true;
-        }
-
-        private static List<PropertyInfo> GetProps(IEvent evt)
-        {
-            return GetProps(evt)
-                .Where(p => p.Name != "Date" && p.Name != "EventId")
-                .ToList();
-        }
-
-        private static List<PropertyInfo> GetProps(object evt)
-        {
-            return evt.GetType()
-                .GetProperties(BindingFlags.Instance)
-                .OrderBy(p => p.Name)
-                .ToList();
-        }
-
-        private bool IsSimple(Type type)
-        {
-            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
-            {
-                // nullable type, check if the nested type is simple.
-                return IsSimple(type.GetGenericArguments()[0]);
-            }
-            return type.IsPrimitive
-              || type.IsEnum
-              || type.Equals(typeof(string))
-              || type.Equals(typeof(decimal));
+            return json1 == json2;
         }
     }
 }

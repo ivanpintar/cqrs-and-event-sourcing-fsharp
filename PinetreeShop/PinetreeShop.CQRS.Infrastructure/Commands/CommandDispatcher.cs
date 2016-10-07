@@ -29,6 +29,12 @@ namespace PinetreeShop.CQRS.Infrastructure.Commands
             }
 
             var aggregate = _commandHandlers[commandType](command);
+            foreach(var evt in aggregate.UncommittedEvents)
+            {
+                evt.Metadata.CausationId = command.Metadata.CommandId;
+                evt.Metadata.CorrelationId = command.Metadata.CorrelationId;
+            }
+
             _domainRepository.SaveAggregate(aggregate);
         }
     }

@@ -33,6 +33,13 @@ namespace PinetreeShop.CQRS.Infrastructure.Events
 
                 var eventsToSave = process.UncommittedEvents.ToList();
                 var commandsToDispatch = process.UndispatchedCommands.ToList();
+
+                foreach(var cmd in commandsToDispatch)
+                {
+                    cmd.Metadata.CausationId = evt.Metadata.EventId;
+                    cmd.Metadata.CorrelationId = evt.Metadata.CorrelationId;
+                }
+
                 _processRepository.SaveProcess(process);
                 
                 foreach (var command in commandsToDispatch.ToList())

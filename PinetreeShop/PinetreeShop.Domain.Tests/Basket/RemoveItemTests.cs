@@ -36,7 +36,8 @@ namespace PinetreeShop.Domain.Tests.Basket
                 return new IEvent[]
                 {
                     new BasketCreated(id),
-                    new BasketAddItemTried(id, productId, "Test Item", 2, 10)
+                    new BasketAddItemTried(id, productId, "Test Item", 2, 10),
+                    new BasketAddItemConfirmed(id, productId, 10)
                 };
             }
         }

@@ -35,7 +35,7 @@ namespace PinetreeShop.Domain.Tests.Order
         [Fact]
         public void When_CancelOrderWhenDelivered_CancelOrderFailed()
         {
-            Given(InitialEvents.Take(2).ToArray());
+            Given(InitialEvents);
             When(new CancelOrder(id));
             Then(new CancelOrderFailed(id, CancelOrderFailed.OrderDelivered));
         }
