@@ -9,7 +9,7 @@ using PinetreeShop.Domain.Baskets.Exceptions;
 
 namespace PinetreeShop.Domain.Tests.Basket
 {
-    public class CheckOutTests : TestBase
+    public class CheckOutTests : AggregateTestBase
     {
         Guid id = Guid.NewGuid();
         Guid productId = Guid.NewGuid();

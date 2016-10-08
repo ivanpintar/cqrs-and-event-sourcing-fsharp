@@ -2,6 +2,7 @@
 using PinetreeShop.CQRS.Infrastructure.Commands;
 using PinetreeShop.CQRS.Infrastructure.Events;
 using PinetreeShop.CQRS.Persistence;
+using PinetreeShop.CQRS.Persistence.InMemory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,15 +11,16 @@ using Xunit;
 
 namespace PinetreeShop.Domain.Tests
 {
-    public class TestBase
+    public class AggregateTestBase
     {
-        private InMemoryAggregateRepository _aggregateRepository;
+        private TestEventStore _eventStore = new TestEventStore();
+        private AggregateRepository _aggregateRepository;
         private List<IEvent> _preConditions = new List<IEvent>();
 
         private DomainEntry BuildApplication()
         {
-            _aggregateRepository = new InMemoryAggregateRepository();
-            _aggregateRepository.AddEvents(_preConditions);
+            _eventStore.AddPreviousEvents(_preConditions);
+            _aggregateRepository = new AggregateRepository(_eventStore);
             
             return new DomainEntry(_aggregateRepository);
         }
@@ -46,7 +48,7 @@ namespace PinetreeShop.Domain.Tests
 
         protected void Then(params IEvent[] expectedEvents)
         {
-            var latestEvents = _aggregateRepository.GetLatestEvents().ToList();
+            var latestEvents = _eventStore.GetLatestEvents().ToList();
             var expectedEventsList = expectedEvents != null
                 ? expectedEvents.ToList()
                 : new List<IEvent>();

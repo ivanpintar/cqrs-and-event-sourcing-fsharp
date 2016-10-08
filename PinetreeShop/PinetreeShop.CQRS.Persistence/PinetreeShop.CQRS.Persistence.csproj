@@ -44,9 +44,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Exceptions\ProcessNotFoundException.cs" />
+    <Compile Include="Exceptions\IEventStore.cs" />
+    <Compile Include="Exceptions\ProcessManagerNotFoundException.cs" />
     <Compile Include="Exceptions\AggregateNotFoundException.cs" />
-    <Compile Include="InMemoryAggregateRepository.cs" />
+    <Compile Include="AggregateRepository.cs" />
+    <Compile Include="InMemory\EventStore.cs" />
+    <Compile Include="ProcessManagerRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Exceptions\WrongExpectedVersionException.cs" />
   </ItemGroup>

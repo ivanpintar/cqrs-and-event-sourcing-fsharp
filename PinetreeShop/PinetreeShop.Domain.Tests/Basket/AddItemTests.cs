@@ -7,7 +7,7 @@ using Xunit;
 
 namespace PinetreeShop.Domain.Tests.Basket
 {
-    public class AddItemTests :TestBase
+    public class AddItemTests :AggregateTestBase
     {
         Guid id = Guid.NewGuid();
         Guid productId = Guid.NewGuid();

@@ -6,7 +6,7 @@ using Xunit;
 
 namespace PinetreeShop.Domain.Tests.Product
 {
-    public class CancelProductReservationsTests : TestBase
+    public class CancelProductReservationsTests : AggregateTestBase
     {
         Guid id = Guid.NewGuid();
         Guid basketId = Guid.NewGuid();

@@ -10,7 +10,7 @@ using PinetreeShop.CQRS.Infrastructure.Events;
 
 namespace PinetreeShop.Domain.Tests.Order
 {
-    public class ShipOrderTests : TestBase
+    public class ShipOrderTests : AggregateTestBase
     {
         Guid id = Guid.NewGuid();
         Guid basketId = Guid.NewGuid();

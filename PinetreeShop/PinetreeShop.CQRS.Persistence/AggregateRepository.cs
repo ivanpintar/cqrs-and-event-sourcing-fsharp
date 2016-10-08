@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-using PinetreeShop.CQRS.Infrastructure.Events;
-using PinetreeShop.CQRS.Infrastructure.Commands;
+﻿using PinetreeShop.CQRS.Infrastructure.Events;
 using PinetreeShop.CQRS.Infrastructure.Repositories;
 using PinetreeShop.CQRS.Persistence.Exceptions;
 using System;
@@ -9,15 +7,18 @@ using System.Linq;
 
 namespace PinetreeShop.CQRS.Persistence
 {
-    public class InMemoryAggregateRepository : AggregateRepositoryBase
+    public class AggregateRepository : AggregateRepositoryBase
     {
-        public List<IEvent> _eventStore = new List<IEvent>();
-        private List<IEvent> _latestEvents = new List<IEvent>();
-        private List<ICommand> _latestCommands = new List<ICommand>();
+        private IEventStore _eventStore;
+
+        public AggregateRepository(IEventStore eventStore)
+        {
+            _eventStore = eventStore;
+        }
 
         public override TResult GetAggregateById<TResult>(Guid id)
         {
-            var events = _eventStore.Where(e => e.AggregateId == id);
+            var events = GetEventsForAggregate(id);
             if (events.Any())
             {
                 return BuildAggregate<TResult>(events);
@@ -29,11 +30,8 @@ namespace PinetreeShop.CQRS.Persistence
         {
             var eventsToSave = aggregate.UncommittedEvents.ToList();
             var expectedVersion = CalculateExpectedVersion(aggregate, eventsToSave);
-            if (expectedVersion < 0)
-            {
-                _eventStore.AddRange(eventsToSave);
-            }
-            else
+
+            if (expectedVersion >= 0)
             {
                 var existingEvents = GetEventsForAggregate(aggregate.AggregateId);
                 var currentversion = existingEvents.Count - 1;
@@ -41,25 +39,15 @@ namespace PinetreeShop.CQRS.Persistence
                 {
                     throw new WrongExpectedVersionException($"{aggregate.GetType()}:{aggregate.AggregateId}: Expected version {expectedVersion} but the version is {currentversion}");
                 }
-                existingEvents.AddRange(eventsToSave);
             }
-            _latestEvents.AddRange(eventsToSave);
-            aggregate.ClearUncommittedEvents();
-        }
-       
-        public IEnumerable<IEvent> GetLatestEvents()
-        {
-            return _latestEvents;
-        }
 
-        public void AddEvents(IEnumerable<IEvent> events)
-        {
-            _eventStore.AddRange(events);
+            _eventStore.CommitEvents(eventsToSave);
+            aggregate.ClearUncommittedEvents();
         }
 
         private List<IEvent> GetEventsForAggregate(Guid aggregateId)
         {
-            return _eventStore.Where(e => e.AggregateId == aggregateId).ToList();
+            return _eventStore.Events.Where(e => e.AggregateId == aggregateId).ToList();
         }
     }
 }

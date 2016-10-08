@@ -6,7 +6,7 @@ using PinetreeShop.CQRS.Infrastructure.Events;
 
 namespace PinetreeShop.Domain.Tests.Product
 {
-    public class ReserveProductTests : TestBase
+    public class ReserveProductTests : AggregateTestBase
     {
         Guid id = Guid.NewGuid();
         Guid basketId = Guid.NewGuid();

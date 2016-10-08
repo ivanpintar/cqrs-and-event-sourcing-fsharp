@@ -76,7 +76,7 @@
     <Compile Include="Product\CreateProductTests.cs" />
     <Compile Include="Product\CancelProductReservationsTests.cs" />
     <Compile Include="Product\ReserveProductTests.cs" />
-    <Compile Include="TestBase.cs" />
+    <Compile Include="AggregateTestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

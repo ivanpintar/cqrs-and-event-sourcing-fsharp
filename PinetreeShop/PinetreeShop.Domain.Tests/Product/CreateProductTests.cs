@@ -7,7 +7,7 @@ using Xunit;
 
 namespace PinetreeShop.Domain.Tests.Product
 {
-    public class CreateProductTests : TestBase
+    public class CreateProductTests : AggregateTestBase
     {
         Guid id = Guid.NewGuid();
         Guid causationAndCorrelationId = Guid.NewGuid();

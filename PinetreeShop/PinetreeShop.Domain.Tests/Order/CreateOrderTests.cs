@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace PinetreeShop.Domain.Tests.Order
 {
-    public class CreateOrderTests : TestBase
+    public class CreateOrderTests : AggregateTestBase
     {
         Guid id = Guid.NewGuid();
         Guid basketId = Guid.NewGuid();

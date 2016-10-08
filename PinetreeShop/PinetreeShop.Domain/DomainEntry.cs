@@ -1,6 +1,4 @@
-﻿using PinetreeShop.CQRS.Infrastructure;
-using PinetreeShop.CQRS.Infrastructure.Commands;
-using PinetreeShop.CQRS.Infrastructure.Events;
+﻿using PinetreeShop.CQRS.Infrastructure.Commands;
 using PinetreeShop.CQRS.Infrastructure.Repositories;
 using PinetreeShop.Domain.Baskets;
 using PinetreeShop.Domain.Baskets.Commands;
@@ -8,12 +6,6 @@ using PinetreeShop.Domain.Orders;
 using PinetreeShop.Domain.Orders.Commands;
 using PinetreeShop.Domain.Products;
 using PinetreeShop.Domain.Products.Commands;
-using PinetreeShop.Domain.ShopProcess;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PinetreeShop.Domain
 {
