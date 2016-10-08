@@ -17,12 +17,22 @@ namespace PinetreeShop.Domain.Tests.Order
         Guid basketId = Guid.NewGuid();
         Address shippingAddress = new Address { Country = "US", StateOrProvince = "CA", StreetAndNumber = "A2", ZipAndCity = "LA" };
         Guid productId = Guid.NewGuid();
+        Guid causationAndCorrelationId = Guid.NewGuid();
 
         [Fact]
         public void When_CreateOrder_OrderCreated()
         {
-            When(new CreateOrder(id, basketId, OrderLines, shippingAddress));
-            Then(new OrderCreated(id, basketId, OrderLines, shippingAddress));
+            var command = new CreateOrder(id, basketId, OrderLines, shippingAddress);
+            command.Metadata.CausationId = command.CommandId;
+            command.Metadata.CorrelationId = causationAndCorrelationId;
+
+            When(command);
+
+            var expectedEvent = new OrderCreated(id, basketId, OrderLines, shippingAddress);
+            expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
+            expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
+
+            Then(expectedEvent);
         }
 
         [Fact]

@@ -14,30 +14,61 @@ namespace PinetreeShop.Domain.Tests.Order
         Guid id = Guid.NewGuid();
         Guid basketId = Guid.NewGuid();
         Guid productId = Guid.NewGuid();
+        Guid causationAndCorrelationId = Guid.NewGuid();
         Address shippingAddress = new Address { Country = "US", StateOrProvince = "CA", StreetAndNumber = "A2", ZipAndCity = "LA" };
 
         [Fact]
         public void When_CancelOrder_OrderCancelled()
         {
             Given(InitialEvents.Take(1).ToArray());
-            When(new CancelOrder(id));
-            Then(new OrderCancelled(id));
+
+            var command = new CancelOrder(id);
+            command.Metadata.CausationId = command.CommandId;
+            command.Metadata.CorrelationId = causationAndCorrelationId;
+
+            When(command);
+
+            var expectedEvent = new OrderCancelled(id);
+            expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
+            expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
+
+            Then(expectedEvent);
         }
 
         [Fact]
         public void When_CancelOrderWhenShipped_CancelOrderFailed()
         {
             Given(InitialEvents.Take(2).ToArray());
-            When(new CancelOrder(id));
-            Then(new CancelOrderFailed(id, CancelOrderFailed.OrderShipped));
+
+            var command = new CancelOrder(id);
+            command.Metadata.CausationId = command.CommandId;
+            command.Metadata.CorrelationId = causationAndCorrelationId;
+
+            When(command);
+
+            var expectedEvent = new CancelOrderFailed(id, CancelOrderFailed.OrderShipped);
+            expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
+            expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
+
+            Then(expectedEvent);
         }
 
         [Fact]
         public void When_CancelOrderWhenDelivered_CancelOrderFailed()
         {
             Given(InitialEvents);
-            When(new CancelOrder(id));
-            Then(new CancelOrderFailed(id, CancelOrderFailed.OrderDelivered));
+
+            var command = new CancelOrder(id);
+            command.Metadata.CausationId = command.CommandId;
+            command.Metadata.CorrelationId = causationAndCorrelationId;
+
+            When(command);
+
+            var expectedEvent = new CancelOrderFailed(id, CancelOrderFailed.OrderDelivered);
+            expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
+            expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
+
+            Then(expectedEvent);
         }
 
         private IEvent[] InitialEvents

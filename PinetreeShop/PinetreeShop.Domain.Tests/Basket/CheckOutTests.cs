@@ -13,21 +13,32 @@ namespace PinetreeShop.Domain.Tests.Basket
     {
         Guid id = Guid.NewGuid();
         Guid productId = Guid.NewGuid();
+        Guid causationAndCorrelationId = Guid.NewGuid();
         Address shippingAddress = new Address { Country = "US", StateOrProvince = "CA", StreetAndNumber = "A2", ZipAndCity = "LA" };
 
         [Fact]
         public void When_CheckOut_CheckedOut()
         {
             Given(InitialEvents);
-            When(new CheckOutBasket(id, shippingAddress));
-            Then(new BasketCheckedOut(id, shippingAddress));
+
+            var command = new CheckOutBasket(id, shippingAddress);
+            command.Metadata.CausationId = command.CommandId;
+            command.Metadata.CorrelationId = causationAndCorrelationId;
+
+            When(command);
+
+            var expectedEvent = new BasketCheckedOut(id, shippingAddress);
+            expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
+            expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
+
+            Then(expectedEvent);
         }
 
         [Fact]
         public void When_CheckOutCancelled_ThrowsCheckoutException()
         {
             var initialEvents = InitialEvents.ToList();
-            initialEvents.Add(new BaksetCancelled(id));
+            initialEvents.Add(new BasketCancelled(id));
             Given(initialEvents.ToArray());
             WhenThrows<CheckoutException>(new CheckOutBasket(id, shippingAddress));
         }

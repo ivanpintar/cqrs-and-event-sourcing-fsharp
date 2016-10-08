@@ -9,13 +9,24 @@ namespace PinetreeShop.Domain.Tests.Product
     public class ChangeProductQuantityTests : TestBase
     {
         Guid id = Guid.NewGuid();
+        Guid causationAndCorrelationId = Guid.NewGuid();
 
         [Fact]
         public void When_ChangeProductQuantity_ProductQuantityChanged()
         {
             Given(new ProductCreated(id, "Test Product", 2));
-            When(new ChangeProductQuantity(id, 2));
-            Then(new ProductQuantityChanged(id, 2));
+
+            var command = new ChangeProductQuantity(id, 2);
+            command.Metadata.CausationId = command.CommandId;
+            command.Metadata.CorrelationId = causationAndCorrelationId;
+
+            When(command);
+
+            var expectedEvent = new ProductQuantityChanged (id, 2);
+            expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
+            expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
+
+            Then(expectedEvent);
         }
 
         [Fact]

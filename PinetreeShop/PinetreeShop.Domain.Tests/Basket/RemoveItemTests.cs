@@ -11,21 +11,42 @@ namespace PinetreeShop.Domain.Tests.Basket
     {
         Guid id = Guid.NewGuid();
         Guid productId = Guid.NewGuid();
+        Guid causationAndCorrelationId = Guid.NewGuid();
 
         [Fact]
         public void When_RemoveItem_ItemRemoved()
         {
             Given(InitialEvents);
-            When(new RemoveItemFromBasket(id, productId, 5));
-            Then(new BasketItemRemoved(id, productId, 5));
+
+            var command = new RemoveItemFromBasket(id, productId, 5);
+            command.Metadata.CausationId = command.CommandId;
+            command.Metadata.CorrelationId = causationAndCorrelationId;
+
+            When(command);
+
+            var expectedEvent = new BasketItemRemoved(id, productId, 5);
+            expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
+            expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
+
+            Then(expectedEvent);
         }
 
         [Fact]
         public void When_RemoveItemBelowZero_ItemRemoved()
         {
             Given(InitialEvents);
-            When(new RemoveItemFromBasket(id, productId, 15));
-            Then(new BasketItemRemoved(id, productId, 10));
+
+            var command = new RemoveItemFromBasket(id, productId, 15);
+            command.Metadata.CausationId = command.CommandId;
+            command.Metadata.CorrelationId = causationAndCorrelationId;
+
+            When(command);
+
+            var expectedEvent = new BasketItemRemoved(id, productId, 10);
+            expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
+            expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
+
+            Then(expectedEvent);
         }
         
 

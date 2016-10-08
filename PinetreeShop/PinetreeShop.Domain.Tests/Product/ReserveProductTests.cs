@@ -10,21 +10,42 @@ namespace PinetreeShop.Domain.Tests.Product
     {
         Guid id = Guid.NewGuid();
         Guid basketId = Guid.NewGuid();
+        Guid causationAndCorrelationId = Guid.NewGuid();
 
         [Fact]
         public void When_ReserveProduct_NewProductHasNewQuantity()
         {
             Given(InitialEvents);
-            When(new ReserveProduct(id, basketId, 3));
-            Then(new ProductReserved(id, basketId, 3));
+            
+            var command = new ReserveProduct(id, basketId, 3);
+            command.Metadata.CausationId = command.CommandId;
+            command.Metadata.CorrelationId = causationAndCorrelationId;
+
+            When(command);
+
+            var expectedEvent = new ProductReserved(id, basketId, 3);
+            expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
+            expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
+
+            Then(expectedEvent);
         }
 
         [Fact]
         public void When_ReserveProductLessThanAvailable_ThrowQuantityChangeException()
         {
             Given(InitialEvents);
-            When(new ReserveProduct(id, basketId, 10));
-            Then(new ProductReservationFailed(id, basketId, 10, ProductReservationFailed.NotAvailable));
+
+            var command = new ReserveProduct(id, basketId, 10);
+            command.Metadata.CausationId = command.CommandId;
+            command.Metadata.CorrelationId = causationAndCorrelationId;
+
+            When(command);
+
+            var expectedEvent = new ProductReservationFailed(id, basketId, 10, ProductReservationFailed.NotAvailable);
+            expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
+            expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
+
+            Then(expectedEvent);
         }
 
         private IEvent[] InitialEvents

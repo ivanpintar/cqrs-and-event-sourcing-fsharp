@@ -6,8 +6,9 @@ using PinetreeShop.Domain.Baskets;
 using PinetreeShop.Domain.Baskets.Commands;
 using PinetreeShop.Domain.Orders;
 using PinetreeShop.Domain.Orders.Commands;
-using PinetreeShop.Domain.Products.CommandHandlers;
+using PinetreeShop.Domain.Products;
 using PinetreeShop.Domain.Products.Commands;
+using PinetreeShop.Domain.ShopProcess;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,31 +20,16 @@ namespace PinetreeShop.Domain
     public class DomainEntry
     {
         private readonly CommandDispatcher _commandDispatcher;
-        private readonly ProcessEventListener _processEventListener;
 
         public DomainEntry(
-            IAggregateRepository aggregateRepository,
-            IProcessRepository processRepository)
+            IAggregateRepository aggregateRepository)
         {
             _commandDispatcher = CreateCommandDispatcher(aggregateRepository);
-            _processEventListener = CreateEventListener(processRepository, _commandDispatcher);
         }
 
         public void ExecuteCommand<TCommand>(TCommand command) where TCommand : ICommand
         {
             _commandDispatcher.ExecuteCommand(command);
-        }
-
-        public void HandleEvent<TEvent>(TEvent evt) where TEvent : IEvent
-        {
-            _processEventListener.HandleEvent(evt);
-        }
-
-        private ProcessEventListener CreateEventListener(IProcessRepository processRepository, CommandDispatcher commandDispatcher)
-        {
-            var eventListener = new ProcessEventListener(processRepository, commandDispatcher);
-
-            return eventListener;
         }
 
         private CommandDispatcher CreateCommandDispatcher(IAggregateRepository aggregateRepository)

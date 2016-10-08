@@ -11,13 +11,24 @@ namespace PinetreeShop.Domain.Tests.Basket
     {
         Guid id = Guid.NewGuid();
         Guid productId = Guid.NewGuid();
+        Guid causationAndCorrelationId = Guid.NewGuid();
 
         [Fact]
         public void When_TryAddItem_AddItemTried()
         {
             Given(InitialEvents);
-            When(new TryAddItemToBasket(id, productId, "Test Item", 2, 10));
-            Then(new BasketAddItemTried(id, productId, "Test Item", 2, 10));
+
+            var command = new TryAddItemToBasket(id, productId, "Test Item", 2, 10);
+            command.Metadata.CausationId = command.CommandId;
+            command.Metadata.CorrelationId = causationAndCorrelationId;
+
+            When(command);
+
+            var expectedEvent = new BasketAddItemTried(id, productId, "Test Item", 2, 10);
+            expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
+            expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
+
+            Then(expectedEvent);
         }
 
         [Fact]
@@ -26,8 +37,18 @@ namespace PinetreeShop.Domain.Tests.Basket
             var events = InitialEvents.ToList();
             events.Add(new BasketAddItemTried(id, productId, "Test Item", 2, 10));
             Given(events.ToArray());
-            When(new ConfirmAddItemToBasket(id, productId, 10));
-            Then(new BasketAddItemConfirmed(id, productId, 10));
+
+            var command = new ConfirmAddItemToBasket(id, productId, 10);
+            command.Metadata.CausationId = command.CommandId;
+            command.Metadata.CorrelationId = causationAndCorrelationId;
+
+            When(command);
+
+            var expectedEvent = new BasketAddItemConfirmed(id, productId, 10);
+            expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
+            expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
+
+            Then(expectedEvent);
         }
 
         [Fact]
@@ -36,8 +57,18 @@ namespace PinetreeShop.Domain.Tests.Basket
             var events = InitialEvents.ToList();
             events.Add(new BasketAddItemTried(id, productId, "Test Item", 2, 10));
             Given(events.ToArray());
-            When(new RevertAddItemToBasket(id, productId, 10, "reason"));
-            Then(new BasketAddItemReverted(id, productId, 10, "reason"));
+          
+            var command = new RevertAddItemToBasket(id, productId, 10, "reason");
+            command.Metadata.CausationId = command.CommandId;
+            command.Metadata.CorrelationId = causationAndCorrelationId;
+
+            When(command);
+
+            var expectedEvent = new BasketAddItemReverted(id, productId, 10, "reason");
+            expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
+            expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
+
+            Then(expectedEvent);
         }
 
         private IEvent[] InitialEvents

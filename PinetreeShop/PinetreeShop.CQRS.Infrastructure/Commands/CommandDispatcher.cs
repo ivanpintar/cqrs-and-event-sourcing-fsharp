@@ -7,11 +7,11 @@ namespace PinetreeShop.CQRS.Infrastructure.Commands
     public class CommandDispatcher
     {
         private Dictionary<Type, Func<object, IAggregate>> _commandHandlers = new Dictionary<Type, Func<object, IAggregate>>();
-        private IAggregateRepository _domainRepository;
+        private IAggregateRepository _aggregateRepository;
 
         public CommandDispatcher(IAggregateRepository aggregateRepository)
         {
-            _domainRepository = aggregateRepository;
+            _aggregateRepository = aggregateRepository;
         }
 
         public void RegisterHandler<TCommand>(IHandleCommand<TCommand> handler) where TCommand : class, ICommand
@@ -35,7 +35,7 @@ namespace PinetreeShop.CQRS.Infrastructure.Commands
                 evt.Metadata.CorrelationId = command.Metadata.CorrelationId;
             }
 
-            _domainRepository.SaveAggregate(aggregate);
+            _aggregateRepository.SaveAggregate(aggregate);
         }
     }
 }

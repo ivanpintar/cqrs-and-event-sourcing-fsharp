@@ -11,21 +11,21 @@ namespace PinetreeShop.Domain.Products
 {
     public class Product : AggregateBase
     {
-        public string Name { get; private set; }
-        public decimal Price { get; private set; }
-        public uint Quantity { get; private set; }
-        public uint Reserved { get; private set; }
-        public uint AvailableQuantity { get { return Quantity - Reserved; } }
+        private string _name;
+        private decimal _price;
+        private uint _quantity;
+        private uint _reserved;
+        private uint AvailableQuantity { get { return _quantity - _reserved; } }
 
         public Product()
         {
-            Quantity = 0;
-            Reserved = 0;
+            _quantity = 0;
+            _reserved = 0;
 
             RegisterEventHandler<ProductCreated>(Apply);
             RegisterEventHandler<ProductQuantityChanged>(Apply);
             RegisterEventHandler<ProductReserved>(Apply);
-            RegisterEventHandler<ProductReservationCanceled>(Apply);
+            RegisterEventHandler<ProductReservationCancelled>(Apply);
         }
 
         private Product(Guid productId, string name, decimal price) : this()
@@ -40,35 +40,35 @@ namespace PinetreeShop.Domain.Products
             return new Product(productId, name, price);
         }
 
-        private void Apply(ProductReservationCanceled evt)
+        private void Apply(ProductReservationCancelled evt)
         {
             AggregateId = evt.AggregateId;
-            Reserved = Reserved - evt.Quantity;
+            _reserved = _reserved - evt.Quantity;
         }
 
         private void Apply(ProductReserved evt)
         {
             AggregateId = evt.AggregateId;
-            Reserved = Reserved + evt.QuantityToReserve;
+            _reserved = _reserved + evt.QuantityToReserve;
         }
 
         private void Apply(ProductQuantityChanged evt)
         {
             AggregateId = evt.AggregateId;
-            Quantity = (uint)((int)Quantity + evt.Difference);
+            _quantity = (uint)((int)_quantity + evt.Difference);
         }
 
         internal void ChangeQuantity(Guid productId, int difference)
         {
-            if ((int)Quantity + difference < 0) throw new QuantityChangeException(AggregateId, $"Quantity can't be negative. Quantity: {Quantity}, Diff: {difference}");
+            if ((int)_quantity + difference < 0) throw new QuantityChangeException(AggregateId, $"Quantity can't be negative. Quantity: {_quantity}, Diff: {difference}");
 
             RaiseEvent(new ProductQuantityChanged(productId, difference));
         }
 
         internal void CancelReservation(Guid productId, uint quantity)
         {
-            if (quantity > Reserved) quantity = Reserved;
-            RaiseEvent(new ProductReservationCanceled(productId, quantity));
+            if (quantity > _reserved) quantity = _reserved;
+            RaiseEvent(new ProductReservationCancelled(productId, quantity));
         }
 
         internal void Reserve(Guid productId, Guid basketId, uint quantity)
@@ -86,8 +86,8 @@ namespace PinetreeShop.Domain.Products
         private void Apply(ProductCreated evt)
         {
             AggregateId = evt.AggregateId;
-            Name = evt.Name;
-            Price = evt.Price;
+            _name = evt.Name;
+            _price = evt.Price;
         }
     }
 }

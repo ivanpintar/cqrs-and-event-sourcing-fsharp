@@ -10,12 +10,22 @@ namespace PinetreeShop.Domain.Tests.Product
     public class CreateProductTests : TestBase
     {
         Guid id = Guid.NewGuid();
+        Guid causationAndCorrelationId = Guid.NewGuid();
 
         [Fact]
         public void When_CreateProduct_ProductCreated()
         {
-            When(new CreateProduct(id, "Test Product", 2));
-            Then(new ProductCreated(id, "Test Product", 2));
+            var command = new CreateProduct(id, "Test Product", 2);
+            command.Metadata.CausationId = command.CommandId;
+            command.Metadata.CorrelationId = causationAndCorrelationId;
+
+            When(command);
+
+            var expectedEvent = new ProductCreated(id, "Test Product", 2);
+            expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
+            expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
+
+            Then(expectedEvent);
         }
 
         [Fact]

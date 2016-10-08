@@ -2,6 +2,6 @@
 {
     public interface IHandleEvent<in TEvent> where TEvent : IEvent
     {
-        IProcess Handle(TEvent evt);
+        void Handle(TEvent evt);
     }
 }

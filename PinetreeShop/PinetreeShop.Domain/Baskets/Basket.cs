@@ -10,11 +10,9 @@ namespace PinetreeShop.Domain.Baskets
 {
     public class Basket : AggregateBase
     {
-        public enum BasketState { Pending, Cancelled, CheckedOut };
-        public BasketState State { get; private set; }
-
+        private enum BasketState { Pending, Cancelled, CheckedOut };
+        private BasketState _state;
         private List<OrderLine> _orderLines = new List<OrderLine>();
-        public IEnumerable<OrderLine> OrderLines { get { return _orderLines; } }
 
         private Basket(Guid basketId) : this()
         {
@@ -28,7 +26,7 @@ namespace PinetreeShop.Domain.Baskets
             RegisterEventHandler<BasketAddItemConfirmed>(Apply);
             RegisterEventHandler<BasketAddItemReverted>(Apply);
             RegisterEventHandler<BasketItemRemoved>(Apply);
-            RegisterEventHandler<BaksetCancelled>(Apply);
+            RegisterEventHandler<BasketCancelled>(Apply);
             RegisterEventHandler<BasketCheckedOut>(Apply);
         }
 
@@ -57,7 +55,7 @@ namespace PinetreeShop.Domain.Baskets
         private void Apply(BasketCreated evt)
         {
             AggregateId = evt.AggregateId;
-            State = BasketState.Pending;
+            _state = BasketState.Pending;
         }
 
         private void Apply(BasketAddItemTried evt)
@@ -77,10 +75,10 @@ namespace PinetreeShop.Domain.Baskets
             RemoveProductFromOrderLines(evt.ProductId, evt.Quantity);
         }
 
-        private void Apply(BaksetCancelled evt)
+        private void Apply(BasketCancelled evt)
         {
             AggregateId = evt.AggregateId;
-            State = BasketState.Cancelled;
+            _state = BasketState.Cancelled;
         }
 
         internal static IAggregate Create(Guid basketId)
@@ -101,20 +99,20 @@ namespace PinetreeShop.Domain.Baskets
         private void Apply(BasketCheckedOut evt)
         {
             AggregateId = evt.AggregateId;
-            State = BasketState.CheckedOut;
+            _state = BasketState.CheckedOut;
         }
 
         internal void Cancel(Guid basketId)
         {
-            if (State == BasketState.Cancelled) return;
+            if (_state == BasketState.Cancelled) return;
 
-            if (State != BasketState.Pending) throw new CancellationException(basketId, $"Cannot cancel, basket is {State}");
-            RaiseEvent(new BaksetCancelled(basketId));
+            if (_state != BasketState.Pending) throw new CancellationException(basketId, $"Cannot cancel, basket is {_state}");
+            RaiseEvent(new BasketCancelled(basketId));
         }
 
         internal void TryCheckOut(Guid basketId, Address shippingAddress)
         {
-            if (State != BasketState.Pending) throw new CheckoutException(basketId, $"Cannot check out, basket is {State}");
+            if (_state != BasketState.Pending) throw new CheckoutException(basketId, $"Cannot check out, basket is {_state}");
             RaiseEvent(new BasketCheckedOut(basketId, shippingAddress));
         }
 

@@ -11,11 +11,11 @@ namespace PinetreeShop.Domain.Orders
 {
     public class Order : AggregateBase
     {
-        public enum OrderState { Pending, Shipped, Cancelled, Delivered };
-        public OrderState State { get; private set; }
-        public IEnumerable<OrderLine> _orderLines = new List<OrderLine>();
-        public Guid BasketId { get; private set; }
-        public Address ShippingAddress { get; private set; }
+        private enum OrderState { Pending, Shipped, Cancelled, Delivered };
+        private OrderState _state;
+        private IEnumerable<OrderLine> _orderLines = new List<OrderLine>();
+        private Guid _basketId { get; set; }
+        private Address _shippingAddress { get; set; }
 
         public Order()
         {
@@ -35,16 +35,16 @@ namespace PinetreeShop.Domain.Orders
 
         private void Apply(OrderCreated evt)
         {
-            State = OrderState.Pending;
+            _state = OrderState.Pending;
             AggregateId = evt.AggregateId;
-            BasketId = evt.BasketId;
-            ShippingAddress = evt.ShippingAddress;
+            _basketId = evt.BasketId;
+            _shippingAddress = evt.ShippingAddress;
             _orderLines = evt.Lines;
         }
 
         internal void Cancel(Guid aggregateId)
         {
-            switch (State)
+            switch (_state)
             {
                 case OrderState.Shipped:
                     RaiseEvent(new CancelOrderFailed(aggregateId, CancelOrderFailed.OrderShipped));
@@ -60,34 +60,34 @@ namespace PinetreeShop.Domain.Orders
 
         internal void Ship(Guid aggregateId)
         {
-            if (State != OrderState.Pending) throw new InvalidOrderStateException(aggregateId, $"State should be {OrderState.Pending} but is {State}");
+            if (_state != OrderState.Pending) throw new InvalidOrderStateException(aggregateId, $"State should be {OrderState.Pending} but is {_state}");
 
-            RaiseEvent(new OrderShipped(aggregateId, ShippingAddress));
+            RaiseEvent(new OrderShipped(aggregateId, _shippingAddress));
         }
 
         internal void Deliver(Guid aggregateId)
         {
-            if (State != OrderState.Shipped) throw new InvalidOrderStateException(aggregateId, $"State should be {OrderState.Shipped} but is {State}");
+            if (_state != OrderState.Shipped) throw new InvalidOrderStateException(aggregateId, $"State should be {OrderState.Shipped} but is {_state}");
 
-            RaiseEvent(new OrderDelivered(aggregateId, ShippingAddress));
+            RaiseEvent(new OrderDelivered(aggregateId, _shippingAddress));
         }
 
         private void Apply(OrderCancelled evt)
         {
             AggregateId = evt.AggregateId;
-            State = OrderState.Cancelled;
+            _state = OrderState.Cancelled;
         }
 
         private void Apply(OrderShipped evt)
         {
             AggregateId = evt.AggregateId;
-            State = OrderState.Shipped;
+            _state = OrderState.Shipped;
         }
 
         private void Apply(OrderDelivered evt)
         {
             AggregateId = evt.AggregateId;
-            State = OrderState.Delivered;
+            _state = OrderState.Delivered;
         }
 
         internal static IAggregate Create(Guid orderId, Guid basketId, IEnumerable<OrderLine> lines, Address shippingAddress)

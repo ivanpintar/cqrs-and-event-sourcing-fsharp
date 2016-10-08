@@ -14,14 +14,25 @@ namespace PinetreeShop.Domain.Tests.Basket
     {
         Guid id = Guid.NewGuid();
         Guid productId = Guid.NewGuid();
+        Guid causationAndCorrelationId = Guid.NewGuid();
         Address shippingAddress = new Address { Country = "US", StateOrProvince = "CA", StreetAndNumber = "A2", ZipAndCity = "LA" };
 
         [Fact]
         public void When_Cancel_Cancelled()
         {
             Given(InitialEvents);
-            When(new CancelBasket(id));
-            Then(new BaksetCancelled(id));
+
+            var command = new CancelBasket(id);
+            command.Metadata.CausationId = command.CommandId;
+            command.Metadata.CorrelationId = causationAndCorrelationId;
+
+            When(command);
+
+            var expectedEvent = new BasketCancelled(id);
+            expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
+            expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
+
+            Then(expectedEvent);
         }
 
         [Fact]
@@ -37,7 +48,7 @@ namespace PinetreeShop.Domain.Tests.Basket
         public void When_CancelCancelled_NothingHappens()
         {
             var initialEvents = InitialEvents.ToList();
-            initialEvents.Add(new BaksetCancelled(id));
+            initialEvents.Add(new BasketCancelled(id));
             Given(initialEvents.ToArray());
             When(new CancelBasket(id));
             Then();

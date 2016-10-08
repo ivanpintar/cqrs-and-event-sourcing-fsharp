@@ -51,11 +51,11 @@ namespace PinetreeShop.Domain.Products.Events
         }
     }
 
-    public class ProductReservationCanceled : EventBase
+    public class ProductReservationCancelled : EventBase
     {
         public uint Quantity { get; private set; }
 
-        public ProductReservationCanceled(Guid productId, uint quantity) : base(productId)
+        public ProductReservationCancelled(Guid productId, uint quantity) : base(productId)
         {
             Quantity = quantity;
         }

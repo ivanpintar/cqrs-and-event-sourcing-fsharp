@@ -11,24 +11,15 @@ namespace PinetreeShop.CQRS.Persistence
 {
     public class InMemoryAggregateRepository : AggregateRepositoryBase
     {
-        public Dictionary<Guid, List<string>> _eventStore = new Dictionary<Guid, List<string>>();
+        public List<IEvent> _eventStore = new List<IEvent>();
         private List<IEvent> _latestEvents = new List<IEvent>();
         private List<ICommand> _latestCommands = new List<ICommand>();
-        private JsonSerializerSettings _serializationSettings;
-
-        public InMemoryAggregateRepository()
-        {
-            _serializationSettings = new JsonSerializerSettings
-            {
-                TypeNameHandling = TypeNameHandling.All
-            };
-        }
 
         public override TResult GetAggregateById<TResult>(Guid id)
         {
-            if (_eventStore.ContainsKey(id))
+            var events = _eventStore.Where(e => e.AggregateId == id);
+            if (events.Any())
             {
-                var events = _eventStore[id].Select(e => JsonConvert.DeserializeObject(e, _serializationSettings) as IEvent);
                 return BuildAggregate<TResult>(events);
             }
             throw new AggregateNotFoundException($"Could not find aggregate {typeof(TResult)}:{id}");
@@ -37,21 +28,20 @@ namespace PinetreeShop.CQRS.Persistence
         public override void SaveAggregate<TAggregate>(TAggregate aggregate)
         {
             var eventsToSave = aggregate.UncommittedEvents.ToList();
-            var serializedEvents = eventsToSave.Select(Serialize).ToList();
             var expectedVersion = CalculateExpectedVersion(aggregate, eventsToSave);
             if (expectedVersion < 0)
             {
-                _eventStore.Add(aggregate.AggregateId, serializedEvents);
+                _eventStore.AddRange(eventsToSave);
             }
             else
             {
-                var existingEvents = _eventStore[aggregate.AggregateId];
+                var existingEvents = GetEventsForAggregate(aggregate.AggregateId);
                 var currentversion = existingEvents.Count - 1;
                 if (currentversion != expectedVersion)
                 {
                     throw new WrongExpectedVersionException($"{aggregate.GetType()}:{aggregate.AggregateId}: Expected version {expectedVersion} but the version is {currentversion}");
                 }
-                existingEvents.AddRange(serializedEvents);
+                existingEvents.AddRange(eventsToSave);
             }
             _latestEvents.AddRange(eventsToSave);
             aggregate.ClearUncommittedEvents();
@@ -62,17 +52,14 @@ namespace PinetreeShop.CQRS.Persistence
             return _latestEvents;
         }
 
-        public void AddEvents(Dictionary<Guid, IEnumerable<IEvent>> eventsForAggregates)
+        public void AddEvents(IEnumerable<IEvent> events)
         {
-            foreach (var eventsForAggregate in eventsForAggregates)
-            {
-                _eventStore.Add(eventsForAggregate.Key, eventsForAggregate.Value.Select(Serialize).ToList());
-            }
+            _eventStore.AddRange(events);
         }
 
-        private string Serialize(IEvent arg)
+        private List<IEvent> GetEventsForAggregate(Guid aggregateId)
         {
-            return JsonConvert.SerializeObject(arg, _serializationSettings);
+            return _eventStore.Where(e => e.AggregateId == aggregateId).ToList();
         }
     }
 }

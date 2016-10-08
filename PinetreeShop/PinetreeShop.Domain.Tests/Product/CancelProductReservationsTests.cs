@@ -10,22 +10,43 @@ namespace PinetreeShop.Domain.Tests.Product
     {
         Guid id = Guid.NewGuid();
         Guid basketId = Guid.NewGuid();
+        Guid causationAndCorrelationId = Guid.NewGuid();
 
         [Fact]
         public void When_CancelProductResevation_ProductReservationCancelled()
         {
 
             Given(InitialEvents);
-            When(new CancelProductReservation(id, 2));
-            Then(new ProductReservationCanceled(id, 2));
+
+            var command = new CancelProductReservation(id, 2);
+            command.Metadata.CausationId = command.CommandId;
+            command.Metadata.CorrelationId = causationAndCorrelationId;
+
+            When(command);
+
+            var expectedEvent = new ProductReservationCancelled(id, 2);
+            expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
+            expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
+
+            Then(expectedEvent);
         }
 
         [Fact]
         public void When_CancelProductReservationLessThanReserved_ProductReservationCanceled()
         {
             Given(InitialEvents);
-            When(new CancelProductReservation(id, 10));
-            Then(new ProductReservationCanceled(id, 3));
+
+            var command = new CancelProductReservation(id, 10);
+            command.Metadata.CausationId = command.CommandId;
+            command.Metadata.CorrelationId = causationAndCorrelationId;
+
+            When(command);
+
+            var expectedEvent = new ProductReservationCancelled(id, 3);
+            expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
+            expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
+
+            Then(expectedEvent);
         }
 
         private IEvent[] InitialEvents

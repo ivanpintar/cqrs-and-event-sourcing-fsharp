@@ -47,7 +47,6 @@
     <Compile Include="Exceptions\ProcessNotFoundException.cs" />
     <Compile Include="Exceptions\AggregateNotFoundException.cs" />
     <Compile Include="InMemoryAggregateRepository.cs" />
-    <Compile Include="InMemoryProcessRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Exceptions\WrongExpectedVersionException.cs" />
   </ItemGroup>

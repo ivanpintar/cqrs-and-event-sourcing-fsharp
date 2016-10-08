@@ -40,22 +40,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Events\ProcessEventListener.cs" />
     <Compile Include="Events\IHandleEvent.cs" />
-    <Compile Include="Repositories\IProcessRepository.cs" />
-    <Compile Include="ProcessBase.cs" />
     <Compile Include="AggregateBase.cs" />
     <Compile Include="Commands\CommandDispatcher.cs" />
     <Compile Include="Repositories\AggregateRepositoryBase.cs" />
     <Compile Include="IAggregate.cs" />
     <Compile Include="Commands\ICommand.cs" />
-    <Compile Include="IdGenerator.cs" />
     <Compile Include="Repositories\IAggregateRepository.cs" />
     <Compile Include="Events\IEvent.cs" />
     <Compile Include="Commands\IHandleCommand.cs" />
-    <Compile Include="IProcess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repositories\ProcessRepositoryBase.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

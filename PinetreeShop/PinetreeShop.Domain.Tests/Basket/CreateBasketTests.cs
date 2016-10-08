@@ -8,13 +8,23 @@ namespace PinetreeShop.Domain.Tests.Basket
 {
     public class CreateBasketTests : TestBase
     {
-        private Guid id = Guid.NewGuid();
+        Guid id = Guid.NewGuid();
+        Guid causationAndCorrelationId = Guid.NewGuid();
 
         [Fact]
         public void When_CreateBasket_BasketCreated()
         {
-            When(new CreateBasket(id));
-            Then(new BasketCreated(id));
+            var command = new CreateBasket(id);
+            command.Metadata.CausationId = command.CommandId;
+            command.Metadata.CorrelationId = causationAndCorrelationId;
+
+            When(command);
+
+            var expectedEvent = new BasketCreated(id);
+            expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
+            expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
+
+            Then(expectedEvent);
         }
 
 

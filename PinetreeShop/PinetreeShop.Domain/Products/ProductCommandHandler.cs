@@ -4,10 +4,8 @@ using PinetreeShop.CQRS.Infrastructure.Repositories;
 using PinetreeShop.CQRS.Persistence.Exceptions;
 using PinetreeShop.Domain.Exceptions;
 using PinetreeShop.Domain.Products.Commands;
-using PinetreeShop.Domain.Products.Exceptions;
-using System;
 
-namespace PinetreeShop.Domain.Products.CommandHandlers
+namespace PinetreeShop.Domain.Products
 {
     public class ProductCommandHandler :
         IHandleCommand<CreateProduct>,

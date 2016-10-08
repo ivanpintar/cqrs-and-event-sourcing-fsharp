@@ -13,28 +13,24 @@ namespace PinetreeShop.Domain.Tests
     public class TestBase
     {
         private InMemoryAggregateRepository _aggregateRepository;
-        private InMemoryProcessRepository _processRepository;
-        private Dictionary<Guid, IEnumerable<IEvent>> _preConditions = new Dictionary<Guid, IEnumerable<IEvent>>();
+        private List<IEvent> _preConditions = new List<IEvent>();
 
         private DomainEntry BuildApplication()
         {
             _aggregateRepository = new InMemoryAggregateRepository();
             _aggregateRepository.AddEvents(_preConditions);
-
-            _processRepository = new InMemoryProcessRepository();
-            return new DomainEntry(_aggregateRepository, _processRepository);
+            
+            return new DomainEntry(_aggregateRepository);
         }
 
         protected void TearDown()
         {
-            _preConditions = new Dictionary<Guid, IEnumerable<IEvent>>();
+            _preConditions.Clear();
         }
 
         protected void Given(params IEvent[] existingEvents)
         {
-            _preConditions = existingEvents
-                .GroupBy(e => e.AggregateId)
-                .ToDictionary(g => g.Key, g => g.AsEnumerable());
+            _preConditions = existingEvents.ToList();
         }
 
         protected void When(ICommand command)
@@ -68,12 +64,23 @@ namespace PinetreeShop.Domain.Tests
 
         private bool EventsAreEqual(IEvent evt1, IEvent evt2)
         {
-            // exclude metadata from comparison
-            evt1.GetType().GetProperties().Single(p => p.Name == "Metadata").SetValue(evt1, null);
-            evt2.GetType().GetProperties().Single(p => p.Name == "Metadata").SetValue(evt2, null);
+            var evtId = Guid.NewGuid();
+            var now = DateTime.Now;
 
-            var json1 = JsonConvert.SerializeObject(evt1);
-            var json2 = JsonConvert.SerializeObject(evt2);
+            // copy events to compare
+            var obj1 = (dynamic)JsonConvert.DeserializeObject(JsonConvert.SerializeObject(evt1));
+            var obj2 = (dynamic)JsonConvert.DeserializeObject(JsonConvert.SerializeObject(evt2));
+
+            // since we're creating expected products manually, these won't ever match
+            obj1.Metadata.Date = null; 
+            obj2.Metadata.Date = null;
+
+            // this guid is created automatically, and we're comparing different objects, these will never match
+            obj1.Metadata.EventId = null; 
+            obj2.Metadata.EventId = null;
+
+            var json1 = JsonConvert.SerializeObject(obj1);
+            var json2 = JsonConvert.SerializeObject(obj2);
 
             return json1 == json2;
         }

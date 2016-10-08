@@ -63,9 +63,9 @@ namespace PinetreeShop.Domain.Baskets.Events
         }
     }
     
-    public class BaksetCancelled : EventBase
+    public class BasketCancelled : EventBase
     {
-        public BaksetCancelled(Guid basketId) : base(basketId)
+        public BasketCancelled(Guid basketId) : base(basketId)
         {
         }
     }
