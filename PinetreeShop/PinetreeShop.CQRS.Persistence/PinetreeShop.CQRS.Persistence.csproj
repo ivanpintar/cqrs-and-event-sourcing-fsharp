@@ -44,7 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Exceptions\IEventStore.cs" />
+    <Compile Include="IEventStore.cs" />
     <Compile Include="Exceptions\ProcessManagerNotFoundException.cs" />
     <Compile Include="Exceptions\AggregateNotFoundException.cs" />
     <Compile Include="AggregateRepository.cs" />

@@ -16,7 +16,7 @@ namespace PinetreeShop.Domain.Tests.Product
         public void When_CreateProduct_ProductCreated()
         {
             var command = new CreateProduct(id, "Test Product", 2);
-            command.Metadata.CausationId = command.CommandId;
+            command.Metadata.CausationId = command.Metadata.CommandId;
             command.Metadata.CorrelationId = causationAndCorrelationId;
 
             When(command);

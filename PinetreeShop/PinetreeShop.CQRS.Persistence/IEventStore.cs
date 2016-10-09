@@ -2,7 +2,7 @@
 using PinetreeShop.CQRS.Infrastructure.Events;
 using System.Collections.Generic;
 
-namespace PinetreeShop.CQRS.Persistence.Exceptions
+namespace PinetreeShop.CQRS.Persistence
 {
     public interface IEventStore
     {

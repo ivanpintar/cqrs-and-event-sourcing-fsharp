@@ -19,7 +19,7 @@ namespace PinetreeShop.Domain.Tests.Product
             Given(InitialEvents);
 
             var command = new CancelProductReservation(id, 2);
-            command.Metadata.CausationId = command.CommandId;
+            command.Metadata.CausationId = command.Metadata.CommandId;
             command.Metadata.CorrelationId = causationAndCorrelationId;
 
             When(command);
@@ -37,7 +37,7 @@ namespace PinetreeShop.Domain.Tests.Product
             Given(InitialEvents);
 
             var command = new CancelProductReservation(id, 10);
-            command.Metadata.CausationId = command.CommandId;
+            command.Metadata.CausationId = command.Metadata.CommandId;
             command.Metadata.CorrelationId = causationAndCorrelationId;
 
             When(command);

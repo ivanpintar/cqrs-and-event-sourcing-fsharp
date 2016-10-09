@@ -15,7 +15,7 @@ namespace PinetreeShop.Domain.Tests.Basket
         public void When_CreateBasket_BasketCreated()
         {
             var command = new CreateBasket(id);
-            command.Metadata.CausationId = command.CommandId;
+            command.Metadata.CausationId = command.Metadata.CommandId;
             command.Metadata.CorrelationId = causationAndCorrelationId;
 
             When(command);

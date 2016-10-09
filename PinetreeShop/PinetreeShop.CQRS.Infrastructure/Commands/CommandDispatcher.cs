@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace PinetreeShop.CQRS.Infrastructure.Commands
 {
-    public class CommandDispatcher
+    public class CommandDispatcher : ICommandDispatcher
     {
         private Dictionary<Type, Func<object, IAggregate>> _commandHandlers = new Dictionary<Type, Func<object, IAggregate>>();
         private IAggregateRepository _aggregateRepository;

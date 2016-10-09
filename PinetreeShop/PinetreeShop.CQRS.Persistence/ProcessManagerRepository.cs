@@ -10,15 +10,17 @@ namespace PinetreeShop.CQRS.Persistence
 {
     public class ProcessManagerRepository : ProcessManagerRepositoryBase
     {
-        private CommandDispatcher _commandDispatcher;
+        private ICommandDispatcher _commandDispatcher;
         private IEventStore _eventStore;
+        public List<ICommand> LatestCommands { get; private set; }
 
-        public ProcessManagerRepository(IEventStore eventStore, CommandDispatcher commandDispatcher)
+        public ProcessManagerRepository(IEventStore eventStore, ICommandDispatcher commandDispatcher)
         {
+            LatestCommands = new List<ICommand>();
             _eventStore = eventStore;
             _commandDispatcher = commandDispatcher;
         }
-
+        
         public override TResult GetProcessManagerById<TResult>(Guid id)
         {
             var events = GetEventsForProcessManager(id);
@@ -45,15 +47,16 @@ namespace PinetreeShop.CQRS.Persistence
                 }                
             }
 
+            // only dispatch commands, events were saved by the aggregates
             DispatchCommands(commandsToDispatch);
-            
-            // do not save the events, they were saved by the aggregates
+
             processManager.ClearUncommittedEvents();
             processManager.ClearUndispatchedCommands();
         }
 
         private void DispatchCommands(List<ICommand> commandsToDispatch)
         {
+            LatestCommands = commandsToDispatch;
             foreach(var command in commandsToDispatch)
             {
                 _commandDispatcher.ExecuteCommand(command);

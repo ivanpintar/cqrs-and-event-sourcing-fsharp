@@ -26,22 +26,22 @@ namespace PinetreeShop.Domain.Baskets
 
         public IAggregate Handle(TryAddItemToBasket command)
         {
-            var basket = _aggregateRepository.GetAggregateById<Basket>(command.AggregateId);
-            basket.TryAddProduct(command.AggregateId, command.ProductId, command.ProductName, command.Price, command.Quantity);
+            var basket = _aggregateRepository.GetAggregateById<BasketAggregate>(command.AggregateId);
+            basket.TryAddItemToBasket(command);
             return basket;
         }
 
         public IAggregate Handle(ConfirmAddItemToBasket command)
         {
-            var basket = _aggregateRepository.GetAggregateById<Basket>(command.AggregateId);
-            basket.ConfirmAddItem(command.AggregateId, command.ProductId, command.Quantity);
+            var basket = _aggregateRepository.GetAggregateById<BasketAggregate>(command.AggregateId);
+            basket.ConfirmAddItem(command);
             return basket;
         }
 
         public IAggregate Handle(RevertAddItemToBasket command)
         {
-            var basket = _aggregateRepository.GetAggregateById<Basket>(command.AggregateId);
-            basket.RevertAddProduct(command.AggregateId, command.ProductId, command.Quantity, command.Reason);
+            var basket = _aggregateRepository.GetAggregateById<BasketAggregate>(command.AggregateId);
+            basket.RevertAddProduct(command);
             return basket;
         }
 
@@ -49,34 +49,34 @@ namespace PinetreeShop.Domain.Baskets
         {
             try
             {
-                var basket = _aggregateRepository.GetAggregateById<Basket>(command.AggregateId);
+                var basket = _aggregateRepository.GetAggregateById<BasketAggregate>(command.AggregateId);
                 throw new AggregateExistsException(command.AggregateId, "Order already exists");
             }
             catch (AggregateNotFoundException)
             {
                 // We expect not to find anything
             }
-            return Basket.Create(command.AggregateId);
+            return BasketAggregate.Create(command);
         }
 
         public IAggregate Handle(RemoveItemFromBasket command)
         {
-            var basket = _aggregateRepository.GetAggregateById<Basket>(command.AggregateId);
-            basket.RemoveProduct(command.AggregateId, command.ProductId, command.Quantity);
+            var basket = _aggregateRepository.GetAggregateById<BasketAggregate>(command.AggregateId);
+            basket.RemoveItemFromBasket(command);
             return basket;
         }
 
         public IAggregate Handle(CancelBasket command)
         {
-            var basket = _aggregateRepository.GetAggregateById<Basket>(command.AggregateId);
-            basket.Cancel(command.AggregateId);
+            var basket = _aggregateRepository.GetAggregateById<BasketAggregate>(command.AggregateId);
+            basket.Cancel(command);
             return basket;
         }
 
         public IAggregate Handle(CheckOutBasket command)
         {
-            var basket = _aggregateRepository.GetAggregateById<Basket>(command.AggregateId);
-            basket.TryCheckOut(command.AggregateId, command.ShippingAddress);
+            var basket = _aggregateRepository.GetAggregateById<BasketAggregate>(command.AggregateId);
+            basket.CheckOut(command);
             return basket;
         }
     }

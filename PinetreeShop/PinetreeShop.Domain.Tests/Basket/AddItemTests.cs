@@ -19,7 +19,7 @@ namespace PinetreeShop.Domain.Tests.Basket
             Given(InitialEvents);
 
             var command = new TryAddItemToBasket(id, productId, "Test Item", 2, 10);
-            command.Metadata.CausationId = command.CommandId;
+            command.Metadata.CausationId = command.Metadata.CommandId;
             command.Metadata.CorrelationId = causationAndCorrelationId;
 
             When(command);
@@ -39,7 +39,7 @@ namespace PinetreeShop.Domain.Tests.Basket
             Given(events.ToArray());
 
             var command = new ConfirmAddItemToBasket(id, productId, 10);
-            command.Metadata.CausationId = command.CommandId;
+            command.Metadata.CausationId = command.Metadata.CommandId;
             command.Metadata.CorrelationId = causationAndCorrelationId;
 
             When(command);
@@ -59,7 +59,7 @@ namespace PinetreeShop.Domain.Tests.Basket
             Given(events.ToArray());
           
             var command = new RevertAddItemToBasket(id, productId, 10, "reason");
-            command.Metadata.CausationId = command.CommandId;
+            command.Metadata.CausationId = command.Metadata.CommandId;
             command.Metadata.CorrelationId = causationAndCorrelationId;
 
             When(command);

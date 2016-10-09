@@ -40,7 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\ICommandDispatcher.cs" />
     <Compile Include="Events\EventListener.cs" />
+    <Compile Include="Events\IEventListener.cs" />
     <Compile Include="Events\IHandleEvent.cs" />
     <Compile Include="AggregateBase.cs" />
     <Compile Include="Commands\CommandDispatcher.cs" />

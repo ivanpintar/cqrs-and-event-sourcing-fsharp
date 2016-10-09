@@ -25,35 +25,35 @@ namespace PinetreeShop.Domain.Orders
         {
             try
             {
-                var order = _aggregateRepository.GetAggregateById<Order>(command.AggregateId);
+                var order = _aggregateRepository.GetAggregateById<OrderAggregate>(command.AggregateId);
                 throw new AggregateExistsException(command.AggregateId, "Order already exists");
             }
             catch (AggregateNotFoundException)
             {
                 // We expect not to find anything
             }
-            return Order.Create(command.AggregateId, command.BasketId, command.Lines, command.ShippingAddress);
+            return OrderAggregate.Create(command);
         }
 
         public IAggregate Handle(CancelOrder command)
         {
-            var order = _aggregateRepository.GetAggregateById<Order>(command.AggregateId);
-            order.Cancel(command.AggregateId);
+            var order = _aggregateRepository.GetAggregateById<OrderAggregate>(command.AggregateId);
+            order.Cancel(command);
             return order;
         }
 
         public IAggregate Handle(ShipOrder command)
         {
-            var order = _aggregateRepository.GetAggregateById<Order>(command.AggregateId);
-            order.Ship(command.AggregateId);
+            var order = _aggregateRepository.GetAggregateById<OrderAggregate>(command.AggregateId);
+            order.Ship(command);
             return order;
         }
 
         public IAggregate Handle(DeliverOrder command)
         {
 
-            var order = _aggregateRepository.GetAggregateById<Order>(command.AggregateId);
-            order.Deliver(command.AggregateId);
+            var order = _aggregateRepository.GetAggregateById<OrderAggregate>(command.AggregateId);
+            order.Deliver(command);
             return order;
         }
     }

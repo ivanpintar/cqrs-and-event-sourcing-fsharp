@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PinetreeShop.CQRS.Infrastructure.Events
 {
-    public class EventListener
+    public class EventListener : IEventListener
     {
         private Dictionary<Type, Func<object, IProcessManager>> _eventHandlers = new Dictionary<Type, Func<object, IProcessManager>>();
         private IProcessManagerRepository _processManagerRepository;

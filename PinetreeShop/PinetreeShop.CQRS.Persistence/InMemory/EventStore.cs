@@ -1,11 +1,6 @@
-﻿using PinetreeShop.CQRS.Infrastructure.Commands;
-using PinetreeShop.CQRS.Infrastructure.Events;
-using PinetreeShop.CQRS.Persistence.Exceptions;
-using System;
+﻿using PinetreeShop.CQRS.Infrastructure.Events;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PinetreeShop.CQRS.Persistence.InMemory
 {

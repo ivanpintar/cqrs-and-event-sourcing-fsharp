@@ -63,11 +63,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ProcessManagerTestBase.cs" />
     <Compile Include="Basket\AddItemTests.cs" />
     <Compile Include="Basket\CancelTests.cs" />
     <Compile Include="Basket\CheckOutTests.cs" />
     <Compile Include="Basket\CreateBasketTests.cs" />
     <Compile Include="Basket\RemoveItemTests.cs" />
+    <Compile Include="MockCommandDispatcher.cs" />
     <Compile Include="Order\CancelOrderTests.cs" />
     <Compile Include="Order\CreateOrderTests.cs" />
     <Compile Include="Order\DeliverOrderTests.cs" />
@@ -78,6 +80,9 @@
     <Compile Include="Product\ReserveProductTests.cs" />
     <Compile Include="AggregateTestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShoppingProcess\AddItemTests.cs" />
+    <Compile Include="ShoppingProcess\ProductReservationTests.cs" />
+    <Compile Include="TestBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -23,7 +23,7 @@ namespace PinetreeShop.Domain.Tests.Order
         public void When_CreateOrder_OrderCreated()
         {
             var command = new CreateOrder(id, basketId, OrderLines, shippingAddress);
-            command.Metadata.CausationId = command.CommandId;
+            command.Metadata.CausationId = command.Metadata.CommandId;
             command.Metadata.CorrelationId = causationAndCorrelationId;
 
             When(command);

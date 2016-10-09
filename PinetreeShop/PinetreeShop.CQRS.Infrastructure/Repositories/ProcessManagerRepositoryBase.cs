@@ -11,13 +11,16 @@ namespace PinetreeShop.CQRS.Infrastructure.Repositories
             return processManager.Version - events.Count;
         }
 
-        protected TResult BuildProcessManager<TResult>(IEnumerable<IEvent> events) where TResult : IProcessManager, new()
+        protected TResult BuildProcessManager<TResult>(IEnumerable<Events.IEvent> events) where TResult : IProcessManager, new()
         {
             var result = new TResult();
             foreach(var evt in events)
             {
                 result.Transition(evt);
             }
+            
+            result.ClearUncommittedEvents();
+            result.ClearUndispatchedCommands();
             return result;
         }
 

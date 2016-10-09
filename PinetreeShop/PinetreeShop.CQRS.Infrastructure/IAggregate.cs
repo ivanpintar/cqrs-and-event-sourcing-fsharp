@@ -8,8 +8,8 @@ namespace PinetreeShop.CQRS.Infrastructure
     {
         Guid AggregateId { get; }
         int Version { get; }
-        IEnumerable<IEvent> UncommittedEvents { get; }
+        IEnumerable<Events.IEvent> UncommittedEvents { get; }
         void ClearUncommittedEvents();
-        void ApplyEvent(IEvent evt);
+        void ApplyEvent(Events.IEvent evt);
     }
 }

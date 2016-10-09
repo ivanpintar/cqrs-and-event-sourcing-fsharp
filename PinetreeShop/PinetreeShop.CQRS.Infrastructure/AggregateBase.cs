@@ -6,7 +6,7 @@ namespace PinetreeShop.CQRS.Infrastructure
 {
     public class AggregateBase : IAggregate
     {
-        private Dictionary<Type, Action<IEvent>> _eventHandlers = new Dictionary<Type, Action<IEvent>>();
+        private Dictionary<Type, Action<Events.IEvent>> _eventHandlers = new Dictionary<Type, Action<Events.IEvent>>();
 
         public Guid AggregateId { get; protected set; }
 
@@ -16,15 +16,15 @@ namespace PinetreeShop.CQRS.Infrastructure
             get { return _version; }
         }
 
-        private List<IEvent> _uncommittedEvents = new List<IEvent>();
-        public IEnumerable<IEvent> UncommittedEvents { get { return _uncommittedEvents; } }
+        private List<Events.IEvent> _uncommittedEvents = new List<Events.IEvent>();
+        public IEnumerable<Events.IEvent> UncommittedEvents { get { return _uncommittedEvents; } }
 
         public void ClearUncommittedEvents()
         {
             _uncommittedEvents.Clear();
         }
 
-        public void ApplyEvent(IEvent evt)
+        public void ApplyEvent(Events.IEvent evt)
         {
             var eventType = evt.GetType();
             if (_eventHandlers.ContainsKey(eventType))
@@ -34,7 +34,7 @@ namespace PinetreeShop.CQRS.Infrastructure
             _version++;
         }
 
-        protected void RaiseEvent(IEvent evt)
+        protected void RaiseEvent(Events.IEvent evt)
         {
             ApplyEvent(evt);
             _uncommittedEvents.Add(evt);

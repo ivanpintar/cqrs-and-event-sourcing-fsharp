@@ -1,4 +1,6 @@
-﻿using PinetreeShop.CQRS.Infrastructure.Commands;
+﻿using System;
+using PinetreeShop.CQRS.Infrastructure.Commands;
+using PinetreeShop.CQRS.Infrastructure.Events;
 using PinetreeShop.CQRS.Infrastructure.Repositories;
 using PinetreeShop.Domain.Baskets;
 using PinetreeShop.Domain.Baskets.Commands;
@@ -6,17 +8,31 @@ using PinetreeShop.Domain.Orders;
 using PinetreeShop.Domain.Orders.Commands;
 using PinetreeShop.Domain.Products;
 using PinetreeShop.Domain.Products.Commands;
+using PinetreeShop.Domain.ShoppingProcess;
+using PinetreeShop.Domain.Baskets.Events;
+using PinetreeShop.Domain.Products.Events;
 
 namespace PinetreeShop.Domain
 {
     public class DomainEntry
     {
-        private readonly CommandDispatcher _commandDispatcher;
+        private IAggregateRepository _aggregateRepository;
+        private IProcessManagerRepository _processManagerRepository;
+        private ICommandDispatcher _commandDispatcher;
+        private IEventListener _eventListener;
 
         public DomainEntry(
-            IAggregateRepository aggregateRepository)
+            ICommandDispatcher commandDispatcher, 
+            IEventListener eventListener,
+            IAggregateRepository aggregateRepository, 
+            IProcessManagerRepository processManagerRepository)
         {
-            _commandDispatcher = CreateCommandDispatcher(aggregateRepository);
+            _commandDispatcher = commandDispatcher;
+            _eventListener = eventListener;
+            _aggregateRepository = aggregateRepository;
+            _processManagerRepository = processManagerRepository;
+            InitializeCommandDispatcher();
+            InitializeEventListener();
         }
 
         public void ExecuteCommand<TCommand>(TCommand command) where TCommand : ICommand
@@ -24,32 +40,45 @@ namespace PinetreeShop.Domain
             _commandDispatcher.ExecuteCommand(command);
         }
 
-        private CommandDispatcher CreateCommandDispatcher(IAggregateRepository aggregateRepository)
+        public void HandleEvent<TEvent>(TEvent evt) where TEvent : IEvent
         {
-            var commandDispatcher = new CommandDispatcher(aggregateRepository);
+            _eventListener.HandleEvent(evt);
+        }
 
-            var productCommandHandler = new ProductCommandHandler(aggregateRepository);
-            commandDispatcher.RegisterHandler<CreateProduct>(productCommandHandler);
-            commandDispatcher.RegisterHandler<ChangeProductQuantity>(productCommandHandler);
-            commandDispatcher.RegisterHandler<ReserveProduct>(productCommandHandler);
-            commandDispatcher.RegisterHandler<CancelProductReservation>(productCommandHandler);
+        private void InitializeCommandDispatcher()
+        {
+            var productCommandHandler = new ProductCommandHandler(_aggregateRepository);
+            _commandDispatcher.RegisterHandler<CreateProduct>(productCommandHandler);
+            _commandDispatcher.RegisterHandler<ChangeProductQuantity>(productCommandHandler);
+            _commandDispatcher.RegisterHandler<ReserveProduct>(productCommandHandler);
+            _commandDispatcher.RegisterHandler<CancelProductReservation>(productCommandHandler);
 
-            var basketCommandHandler = new BasketCommandHandler(aggregateRepository);
-            commandDispatcher.RegisterHandler<CreateBasket>(basketCommandHandler);
-            commandDispatcher.RegisterHandler<TryAddItemToBasket>(basketCommandHandler); 
-            commandDispatcher.RegisterHandler<ConfirmAddItemToBasket>(basketCommandHandler);
-            commandDispatcher.RegisterHandler<RevertAddItemToBasket>(basketCommandHandler);
-            commandDispatcher.RegisterHandler<RemoveItemFromBasket>(basketCommandHandler);
-            commandDispatcher.RegisterHandler<CancelBasket>(basketCommandHandler);
-            commandDispatcher.RegisterHandler<CheckOutBasket>(basketCommandHandler);
+            var basketCommandHandler = new BasketCommandHandler(_aggregateRepository);
+            _commandDispatcher.RegisterHandler<CreateBasket>(basketCommandHandler);
+            _commandDispatcher.RegisterHandler<TryAddItemToBasket>(basketCommandHandler);
+            _commandDispatcher.RegisterHandler<ConfirmAddItemToBasket>(basketCommandHandler);
+            _commandDispatcher.RegisterHandler<RevertAddItemToBasket>(basketCommandHandler);
+            _commandDispatcher.RegisterHandler<RemoveItemFromBasket>(basketCommandHandler);
+            _commandDispatcher.RegisterHandler<CancelBasket>(basketCommandHandler);
+            _commandDispatcher.RegisterHandler<CheckOutBasket>(basketCommandHandler);
 
-            var orderCommandHandler = new OrderCommandHandler(aggregateRepository);
-            commandDispatcher.RegisterHandler<CreateOrder>(orderCommandHandler);
-            commandDispatcher.RegisterHandler<CancelOrder>(orderCommandHandler);
-            commandDispatcher.RegisterHandler<ShipOrder>(orderCommandHandler);
-            commandDispatcher.RegisterHandler<DeliverOrder>(orderCommandHandler);
+            var orderCommandHandler = new OrderCommandHandler(_aggregateRepository);
+            _commandDispatcher.RegisterHandler<CreateOrder>(orderCommandHandler);
+            _commandDispatcher.RegisterHandler<CancelOrder>(orderCommandHandler);
+            _commandDispatcher.RegisterHandler<ShipOrder>(orderCommandHandler);
+            _commandDispatcher.RegisterHandler<DeliverOrder>(orderCommandHandler);
+        }
 
-            return commandDispatcher;
+        private void InitializeEventListener()
+        {
+            var shoppingProcessEventHandler = new ShoppingProcessEventHandler(_processManagerRepository);
+            _eventListener.RegisterHandler<BasketCreated>(shoppingProcessEventHandler);
+            _eventListener.RegisterHandler<BasketAddItemTried>(shoppingProcessEventHandler);
+            _eventListener.RegisterHandler<ProductReserved>(shoppingProcessEventHandler);
+            _eventListener.RegisterHandler<ProductReservationFailed>(shoppingProcessEventHandler);
+            _eventListener.RegisterHandler<BasketItemRemoved>(shoppingProcessEventHandler);
+            _eventListener.RegisterHandler<BasketCancelled>(shoppingProcessEventHandler);
+            _eventListener.RegisterHandler<BasketCheckedOut>(shoppingProcessEventHandler);
         }
     }
 }

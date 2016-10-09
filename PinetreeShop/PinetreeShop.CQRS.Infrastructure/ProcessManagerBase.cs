@@ -7,7 +7,7 @@ namespace PinetreeShop.CQRS.Infrastructure
 {
     public class ProcessManagerBase : IProcessManager
     {
-        private Dictionary<Type, Action<IEvent>> _eventHandlers = new Dictionary<Type, Action<IEvent>>();
+        private Dictionary<Type, Action<Events.IEvent>> _eventHandlers = new Dictionary<Type, Action<Events.IEvent>>();
 
         public Guid ProcessId { get; protected set; }
 
@@ -17,8 +17,8 @@ namespace PinetreeShop.CQRS.Infrastructure
             get { return _version; }
         }
 
-        private List<IEvent> _uncommittedEvents = new List<IEvent>();
-        public IEnumerable<IEvent> UncommittedEvents { get { return _uncommittedEvents; } }
+        private List<Events.IEvent> _uncommittedEvents = new List<Events.IEvent>();
+        public IEnumerable<Events.IEvent> UncommittedEvents { get { return _uncommittedEvents; } }
 
         public void ClearUncommittedEvents()
         {
@@ -33,7 +33,7 @@ namespace PinetreeShop.CQRS.Infrastructure
             _undispatchedCommands.Clear();
         }
 
-        public void Transition(IEvent evt)
+        public void Transition(Events.IEvent evt)
         {
             var eventType = evt.GetType();
             if (_eventHandlers.ContainsKey(eventType))
@@ -41,6 +41,17 @@ namespace PinetreeShop.CQRS.Infrastructure
                 _eventHandlers[eventType](evt);
             }
             _version++;
+        }
+
+        protected void HandleEvent(Events.IEvent evt)
+        {
+            Transition(evt);
+            _uncommittedEvents.Add(evt);
+        }
+
+        protected void DispatchCommand(ICommand command)
+        {
+            _undispatchedCommands.Add(command);
         }
 
         protected void RegisterEventHandler<T>(Action<T> handler) where T : class

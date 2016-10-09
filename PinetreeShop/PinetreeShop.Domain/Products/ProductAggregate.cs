@@ -1,4 +1,5 @@
 ﻿using PinetreeShop.CQRS.Infrastructure;
+using PinetreeShop.Domain.Products.Commands;
 using PinetreeShop.Domain.Products.Events;
 using PinetreeShop.Domain.Products.Exceptions;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace PinetreeShop.Domain.Products
 {
-    public class Product : AggregateBase
+    public class ProductAggregate : AggregateBase
     {
         private string _name;
         private decimal _price;
@@ -17,7 +18,7 @@ namespace PinetreeShop.Domain.Products
         private uint _reserved;
         private uint AvailableQuantity { get { return _quantity - _reserved; } }
 
-        public Product()
+        public ProductAggregate()
         {
             _quantity = 0;
             _reserved = 0;
@@ -28,51 +29,58 @@ namespace PinetreeShop.Domain.Products
             RegisterEventHandler<ProductReservationCancelled>(Apply);
         }
 
-        private Product(Guid productId, string name, decimal price) : this()
+        private ProductAggregate(CreateProduct cmd) : this()
         {
-            RaiseEvent(new ProductCreated(productId, name, price));
+            RaiseEvent(new ProductCreated(cmd.AggregateId, cmd.Name, cmd.Price));
         }
 
-        internal static IAggregate Create(Guid productId, string name, decimal price)
+        internal static IAggregate Create(CreateProduct cmd)
         {
-            if (price <= 0) throw new ProductCreationException(productId, $"Price {price} must be a positive value.");
+            if (cmd.Price <= 0) throw new ProductCreationException(cmd.AggregateId, $"Price {cmd.Price} must be a positive value.");
 
-            return new Product(productId, name, price);
+            return new ProductAggregate(cmd);
         }
 
         private void Apply(ProductReservationCancelled evt)
         {
-            AggregateId = evt.AggregateId;
             _reserved = _reserved - evt.Quantity;
         }
 
         private void Apply(ProductReserved evt)
         {
-            AggregateId = evt.AggregateId;
             _reserved = _reserved + evt.QuantityToReserve;
         }
 
         private void Apply(ProductQuantityChanged evt)
         {
-            AggregateId = evt.AggregateId;
             _quantity = (uint)((int)_quantity + evt.Difference);
         }
 
-        internal void ChangeQuantity(Guid productId, int difference)
+        internal void ChangeQuantity(ChangeProductQuantity cmd)
         {
+            var productId = cmd.AggregateId;
+            var difference = cmd.Difference;
+
             if ((int)_quantity + difference < 0) throw new QuantityChangeException(AggregateId, $"Quantity can't be negative. Quantity: {_quantity}, Diff: {difference}");
 
             RaiseEvent(new ProductQuantityChanged(productId, difference));
         }
 
-        internal void CancelReservation(Guid productId, uint quantity)
+        internal void CancelReservation(CancelProductReservation cmd)
         {
+            var productId = cmd.AggregateId;
+            var quantity = cmd.Quantity;
+
             if (quantity > _reserved) quantity = _reserved;
             RaiseEvent(new ProductReservationCancelled(productId, quantity));
         }
 
-        internal void Reserve(Guid productId, Guid basketId, uint quantity)
+        internal void Reserve(ReserveProduct cmd)
         {
+            var productId = cmd.AggregateId;
+            var basketId = cmd.BasketId;
+            var quantity = cmd.Quantity;
+
             if (AvailableQuantity < quantity)
             {
                 RaiseEvent(new ProductReservationFailed(productId, basketId, quantity, ProductReservationFailed.NotAvailable));

@@ -24,34 +24,34 @@ namespace PinetreeShop.Domain.Products
         {
             try
             {
-                var product = _aggregateRepository.GetAggregateById<Product>(command.AggregateId);
+                var product = _aggregateRepository.GetAggregateById<ProductAggregate>(command.AggregateId);
                 throw new AggregateExistsException(command.AggregateId, "Product already exists");
             }
             catch (AggregateNotFoundException)
             {
                 // We expect not to find anything
             }
-            return Product.Create(command.AggregateId, command.Name, command.Price);
+            return ProductAggregate.Create(command);
         }
 
         public IAggregate Handle(ChangeProductQuantity command)
         {
-            var product = _aggregateRepository.GetAggregateById<Product>(command.AggregateId);
-            product.ChangeQuantity(command.AggregateId, command.Difference);
+            var product = _aggregateRepository.GetAggregateById<ProductAggregate>(command.AggregateId);
+            product.ChangeQuantity(command);
             return product;
         }
 
         public IAggregate Handle(ReserveProduct command)
         {
-            var product = _aggregateRepository.GetAggregateById<Product>(command.AggregateId);
-            product.Reserve(command.AggregateId, command.BasketId, command.Quantity);
+            var product = _aggregateRepository.GetAggregateById<ProductAggregate>(command.AggregateId);
+            product.Reserve(command);
             return product;
         }
 
         public IAggregate Handle(CancelProductReservation command)
         {
-            var product = _aggregateRepository.GetAggregateById<Product>(command.AggregateId);
-            product.CancelReservation(command.AggregateId, command.Quantity);
+            var product = _aggregateRepository.GetAggregateById<ProductAggregate>(command.AggregateId);
+            product.CancelReservation(command);
             return product;
         }
     }

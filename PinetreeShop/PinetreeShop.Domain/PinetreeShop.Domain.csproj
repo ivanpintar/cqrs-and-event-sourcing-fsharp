@@ -43,21 +43,23 @@
     <Compile Include="Baskets\BasketCommandHandler.cs" />
     <Compile Include="Baskets\Commands.cs" />
     <Compile Include="Baskets\Events.cs" />
-    <Compile Include="Baskets\Basket.cs" />
+    <Compile Include="Baskets\BasketAggregate.cs" />
     <Compile Include="Baskets\Exceptions.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="Orders\OrderCommandHandler.cs" />
     <Compile Include="Orders\Exceptions.cs" />
-    <Compile Include="Orders\Order.cs" />
+    <Compile Include="Orders\OrderAggregate.cs" />
     <Compile Include="DomainEntry.cs" />
     <Compile Include="Orders\Commands.cs" />
     <Compile Include="Orders\Events.cs" />
     <Compile Include="Products\Exceptions.cs" />
+    <Compile Include="ShoppingProcess\ShoppingProcessEventHandler.cs" />
+    <Compile Include="ShoppingProcess\ShoppingProcessManager.cs" />
     <Compile Include="Types.cs" />
     <Compile Include="Products\ProductCommandHandler.cs" />
     <Compile Include="Products\Commands.cs" />
     <Compile Include="Products\Events.cs" />
-    <Compile Include="Products\Product.cs" />
+    <Compile Include="Products\ProductAggregate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
