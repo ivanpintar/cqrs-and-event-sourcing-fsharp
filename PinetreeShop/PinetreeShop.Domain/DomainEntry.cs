@@ -8,7 +8,7 @@ using PinetreeShop.Domain.Orders;
 using PinetreeShop.Domain.Orders.Commands;
 using PinetreeShop.Domain.Products;
 using PinetreeShop.Domain.Products.Commands;
-using PinetreeShop.Domain.ShoppingProcess;
+using PinetreeShop.Domain.OrderProcess;
 using PinetreeShop.Domain.Baskets.Events;
 using PinetreeShop.Domain.Products.Events;
 
@@ -69,14 +69,9 @@ namespace PinetreeShop.Domain
 
         private void InitializeEventListener()
         {
-            var shoppingProcessEventHandler = new ShoppingProcessEventHandler(_processManagerRepository);
-            //_eventListener.RegisterHandler<BasketCreated>(shoppingProcessEventHandler);
-            //_eventListener.RegisterHandler<BasketItemAdded>(shoppingProcessEventHandler);
-            //_eventListener.RegisterHandler<ProductReserved>(shoppingProcessEventHandler);
-            //_eventListener.RegisterHandler<ProductReservationFailed>(shoppingProcessEventHandler);
-            //_eventListener.RegisterHandler<BasketItemRemoved>(shoppingProcessEventHandler);
-            //_eventListener.RegisterHandler<BasketCancelled>(shoppingProcessEventHandler);
-            //_eventListener.RegisterHandler<BasketCheckedOut>(shoppingProcessEventHandler);
+            var orderProcessEventHandler = new OrderProcessEventHandler(_processManagerRepository);
+            _eventListener.RegisterHandler<BasketCheckedOut>(orderProcessEventHandler);
+            _eventListener.RegisterHandler<ProductReserved>(orderProcessEventHandler);
         }
     }
 }

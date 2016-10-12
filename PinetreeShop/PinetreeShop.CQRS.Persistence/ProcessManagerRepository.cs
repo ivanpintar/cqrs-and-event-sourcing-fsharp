@@ -40,14 +40,13 @@ namespace PinetreeShop.CQRS.Persistence
             if(expectedVersion >= 0)
             {
                 var existingEvents = GetEventsForProcessManager(processManager.ProcessId);
-                var currentversion = existingEvents.Count - 1;
+                var currentversion = existingEvents.Count;
                 if (currentversion != expectedVersion)
                 {
                     throw new WrongExpectedVersionException($"{processManager.GetType()}:{processManager.ProcessId}: Expected version {expectedVersion} but the version is {currentversion}");
                 }                
             }
 
-            // only dispatch commands, events were saved by the aggregates
             DispatchCommands(commandsToDispatch);
 
             processManager.ClearUncommittedEvents();

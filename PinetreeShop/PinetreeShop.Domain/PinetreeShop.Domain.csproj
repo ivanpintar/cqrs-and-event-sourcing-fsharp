@@ -53,8 +53,8 @@
     <Compile Include="Orders\Commands.cs" />
     <Compile Include="Orders\Events.cs" />
     <Compile Include="Products\Exceptions.cs" />
-    <Compile Include="ShoppingProcess\ShoppingProcessEventHandler.cs" />
-    <Compile Include="ShoppingProcess\ShoppingProcessManager.cs" />
+    <Compile Include="OrderProcess\OrderProcessEventHandler.cs" />
+    <Compile Include="OrderProcess\OrderProcessManager.cs" />
     <Compile Include="Types.cs" />
     <Compile Include="Products\ProductCommandHandler.cs" />
     <Compile Include="Products\Commands.cs" />

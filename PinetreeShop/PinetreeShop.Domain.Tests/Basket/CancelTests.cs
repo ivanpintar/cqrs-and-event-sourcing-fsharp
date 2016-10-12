@@ -1,5 +1,4 @@
-﻿using PinetreeShop.CQRS.Infrastructure.Commands;
-using PinetreeShop.CQRS.Infrastructure.Events;
+﻿using PinetreeShop.CQRS.Infrastructure.Events;
 using PinetreeShop.Domain.Baskets.Commands;
 using PinetreeShop.Domain.Baskets.Events;
 using PinetreeShop.Domain.Baskets.Exceptions;

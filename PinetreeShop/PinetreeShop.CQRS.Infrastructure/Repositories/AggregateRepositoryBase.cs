@@ -5,7 +5,9 @@ using System.Collections.Generic;
 namespace PinetreeShop.CQRS.Infrastructure.Repositories
 {
     public abstract class AggregateRepositoryBase : IAggregateRepository
-    {       
+    {
+        public static Func<Guid> CreateGuid = () => Guid.NewGuid();
+
         protected int CalculateExpectedVersion<T>(IAggregate aggregate, List<T> events)
         {
             return aggregate.Version - events.Count;
@@ -18,8 +20,6 @@ namespace PinetreeShop.CQRS.Infrastructure.Repositories
             {
                 result.ApplyEvent(evt);
             }
-
-            result.ClearUncommittedEvents();
             return result;
         }
 

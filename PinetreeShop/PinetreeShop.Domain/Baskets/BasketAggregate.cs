@@ -15,6 +15,7 @@ namespace PinetreeShop.Domain.Baskets
         private BasketState _state;
         private List<OrderLine> _orderLines = new List<OrderLine>();
 
+
         private BasketAggregate(CreateBasket cmd) : this()
         {
             RaiseEvent(new BasketCreated(cmd.AggregateId));
@@ -50,7 +51,7 @@ namespace PinetreeShop.Domain.Baskets
 
         private void Apply(BasketItemAdded evt)
         {
-            AddProductToOrderLines(evt.ProductId, evt.Quantity, evt.ProductName, evt.Price);
+            AddProductToOrderLines(evt);
         }
 
         internal void RemoveItemFromBasket(RemoveItemFromBasket cmd)
@@ -71,7 +72,7 @@ namespace PinetreeShop.Domain.Baskets
 
         private void Apply(BasketItemRemoved evt)
         {
-            RemoveProductFromOrderLines(evt.ProductId, evt.Quantity);
+            RemoveProductFromOrderLines(evt);
         }
 
         internal void Cancel(CancelBasket cmd)
@@ -104,8 +105,12 @@ namespace PinetreeShop.Domain.Baskets
             _state = BasketState.CheckedOut;
         }
 
-        private void AddProductToOrderLines(Guid productId, uint quantity, string productName = "", decimal? price = null)
+        private void AddProductToOrderLines(BasketItemAdded evt)
         {
+            var productId = evt.ProductId;
+            var productName = evt.ProductName;
+            var price = evt.Price;
+            var quantity = evt.Quantity;
             var orderLine = _orderLines.SingleOrDefault(ol => ol.ProductId == productId);
             if (orderLine == null)
             {
@@ -113,7 +118,7 @@ namespace PinetreeShop.Domain.Baskets
                 {
                     ProductId = productId,
                     ProductName = productName,
-                    Price = price.Value,
+                    Price = price,
                     Quantity = quantity
                 };
                 _orderLines.Add(orderLine);
@@ -124,8 +129,10 @@ namespace PinetreeShop.Domain.Baskets
             }
         }
 
-        private void RemoveProductFromOrderLines(Guid productId, uint quantity)
+        private void RemoveProductFromOrderLines(BasketItemRemoved evt)
         {
+            var productId = evt.ProductId;
+            var quantity = evt.Quantity;
             var orderLine = _orderLines.Single(ol => ol.ProductId == productId);
             orderLine.Quantity = orderLine.Quantity - quantity;
 

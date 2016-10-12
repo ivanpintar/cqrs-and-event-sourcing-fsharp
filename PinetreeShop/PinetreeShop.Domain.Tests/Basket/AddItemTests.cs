@@ -5,7 +5,6 @@ using PinetreeShop.Domain.Baskets.Exceptions;
 using PinetreeShop.Domain.Types;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 
 namespace PinetreeShop.Domain.Tests.Basket
