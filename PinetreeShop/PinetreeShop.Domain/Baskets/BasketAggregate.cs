@@ -23,32 +23,15 @@ namespace PinetreeShop.Domain.Baskets
         public BasketAggregate()
         {
             RegisterEventHandler<BasketCreated>(Apply);
-            RegisterEventHandler<BasketAddItemTried>(Apply);
-            RegisterEventHandler<BasketAddItemConfirmed>(Apply);
-            RegisterEventHandler<BasketAddItemReverted>(Apply);
+            RegisterEventHandler<BasketItemAdded>(Apply);
             RegisterEventHandler<BasketItemRemoved>(Apply);
             RegisterEventHandler<BasketCancelled>(Apply);
             RegisterEventHandler<BasketCheckedOut>(Apply);
         }
 
-        private void Apply(BasketAddItemConfirmed evt)
+        internal static IAggregate Create(CreateBasket cmd)
         {
-            AddProductToOrderLines(evt.ProductId, evt.Quantity);
-        }
-
-        internal void TryAddItemToBasket(TryAddItemToBasket cmd)
-        {
-            RaiseEvent(new BasketAddItemTried(cmd.AggregateId, cmd.ProductId, cmd.ProductName, cmd.Price, cmd.Quantity));
-        }
-
-        private void Apply(BasketAddItemReverted evt)
-        {
-            RemoveProductFromOrderLines(evt.ProductId, evt.Quantity);
-        }
-
-        internal void ConfirmAddItem(ConfirmAddItemToBasket cmd)
-        {
-            RaiseEvent(new BasketAddItemConfirmed(cmd.AggregateId, cmd.ProductId, cmd.Quantity));
+            return new BasketAggregate(cmd);
         }
 
         private void Apply(BasketCreated evt)
@@ -57,33 +40,23 @@ namespace PinetreeShop.Domain.Baskets
             _state = BasketState.Pending;
         }
 
-        private void Apply(BasketAddItemTried evt)
+        internal void AddItemToBasket(AddItemToBasket cmd)
         {
-            AddProductToOrderLines(evt.ProductId, 0, evt.ProductName, evt.Price); // do not add quantity until items are reserved
+            if (_state != BasketState.Pending)
+                throw new InvalidStateException(AggregateId, $"Cannot add item. Basket is {_state}");
+
+            RaiseEvent(new BasketItemAdded(cmd.AggregateId, cmd.ProductId, cmd.ProductName, cmd.Price, cmd.Quantity));
         }
 
-        internal void RevertAddProduct(RevertAddItemToBasket cmd)
+        private void Apply(BasketItemAdded evt)
         {
-            RaiseEvent(new BasketAddItemReverted(cmd.AggregateId, cmd.ProductId, cmd.Quantity, cmd.Reason));
-        }
-
-        private void Apply(BasketItemRemoved evt)
-        {
-            RemoveProductFromOrderLines(evt.ProductId, evt.Quantity);
-        }
-
-        private void Apply(BasketCancelled evt)
-        {
-            _state = BasketState.Cancelled;
-        }
-
-        internal static IAggregate Create(CreateBasket cmd)
-        {
-            return new BasketAggregate(cmd);
+            AddProductToOrderLines(evt.ProductId, evt.Quantity, evt.ProductName, evt.Price);
         }
 
         internal void RemoveItemFromBasket(RemoveItemFromBasket cmd)
         {
+            if (_state != BasketState.Pending) throw new InvalidStateException(AggregateId, $"Cannot remove item. Basket is {_state}");
+
             var basketId = cmd.AggregateId;
             var productId = cmd.ProductId;
             var quantity = cmd.Quantity;
@@ -96,23 +69,39 @@ namespace PinetreeShop.Domain.Baskets
             }
         }
 
-        private void Apply(BasketCheckedOut evt)
+        private void Apply(BasketItemRemoved evt)
         {
-            _state = BasketState.CheckedOut;
+            RemoveProductFromOrderLines(evt.ProductId, evt.Quantity);
         }
 
         internal void Cancel(CancelBasket cmd)
         {
             if (_state == BasketState.Cancelled) return;
 
-            if (_state != BasketState.Pending) throw new CancellationException(cmd.AggregateId, $"Cannot cancel, basket is {_state}");
+            if (_state != BasketState.Pending)
+                throw new InvalidStateException(cmd.AggregateId, $"Cannot cancel, basket is {_state}");
+
             RaiseEvent(new BasketCancelled(cmd.AggregateId));
+        }
+
+        private void Apply(BasketCancelled evt)
+        {
+            _state = BasketState.Cancelled;
         }
 
         internal void CheckOut(CheckOutBasket cmd)
         {
-            if (_state != BasketState.Pending) throw new CheckoutException(cmd.AggregateId, $"Cannot check out, basket is {_state}");
+            if (_state == BasketState.CheckedOut || !_orderLines.Any()) return;
+
+            if (_state != BasketState.Pending)
+                throw new InvalidStateException(cmd.AggregateId, $"Cannot check out, basket is {_state}");
+
             RaiseEvent(new BasketCheckedOut(cmd.AggregateId, cmd.ShippingAddress));
+        }
+
+        private void Apply(BasketCheckedOut evt)
+        {
+            _state = BasketState.CheckedOut;
         }
 
         private void AddProductToOrderLines(Guid productId, uint quantity, string productName = "", decimal? price = null)

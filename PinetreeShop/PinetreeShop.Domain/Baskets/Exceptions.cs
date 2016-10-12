@@ -3,16 +3,16 @@ using System;
 
 namespace PinetreeShop.Domain.Baskets.Exceptions
 {
-    public class CheckoutException : DomainException
+    public class InvalidStateException : DomainException
     {
-        public CheckoutException(Guid id, string message) : base(id, message)
+        public InvalidStateException(Guid id, string message) : base(id, message)
         {
         }
     }
 
-    public class CancellationException : DomainException
+    public class EmtpyBasketException : DomainException
     {
-        public CancellationException(Guid id, string message) : base(id, message)
+        public EmtpyBasketException(Guid id, string message) : base(id, message)
         {
         }
     }

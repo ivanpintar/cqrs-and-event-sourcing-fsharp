@@ -2,7 +2,10 @@
 using PinetreeShop.Domain.Baskets.Commands;
 using PinetreeShop.Domain.Baskets.Events;
 using PinetreeShop.Domain.Baskets.Exceptions;
+using PinetreeShop.Domain.Types;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace PinetreeShop.Domain.Tests.Basket
@@ -16,7 +19,7 @@ namespace PinetreeShop.Domain.Tests.Basket
         [Fact]
         public void When_RemoveItem_ItemRemoved()
         {
-            Given(InitialEvents);
+            Given(InitialEvents.ToArray());
 
             var command = new RemoveItemFromBasket(id, productId, 5);
             command.Metadata.CausationId = command.Metadata.CommandId;
@@ -34,7 +37,7 @@ namespace PinetreeShop.Domain.Tests.Basket
         [Fact]
         public void When_RemoveItemBelowZero_ItemRemoved()
         {
-            Given(InitialEvents);
+            Given(InitialEvents.ToArray());
 
             var command = new RemoveItemFromBasket(id, productId, 15);
             command.Metadata.CausationId = command.Metadata.CommandId;
@@ -48,18 +51,46 @@ namespace PinetreeShop.Domain.Tests.Basket
 
             Then(expectedEvent);
         }
-        
 
-        private IEvent[] InitialEvents
+        [Theory]
+        [InlineData("checkedOut")]
+        [InlineData("cancelled")]
+        public void When_RemoveItemNotPending_ThrowsInvalidStateException(string checkedOutOrCancelled)
+        {
+            IEvent evt = new BasketCheckedOut(id, new Address());
+            if (checkedOutOrCancelled == "cancelled")
+                evt = new BasketCancelled(id);
+
+            InitialEvents.Add(evt);
+
+            Given(InitialEvents.ToArray());
+
+            WhenThrows<InvalidStateException>(new RemoveItemFromBasket(id, productId, 10));
+        }
+
+        [Fact]
+        public void When_RemoveItemEmptyBasket_NothingHappens()
+        {
+            Given(InitialEvents.Take(1).ToArray());
+            When(new RemoveItemFromBasket(id, productId, 10));
+            Then(new IEvent[] { });
+        }
+
+
+        private List<IEvent> _initialEvents = null;
+        private List<IEvent> InitialEvents
         {
             get
             {
-                return new IEvent[]
+                if (_initialEvents == null)
                 {
-                    new BasketCreated(id),
-                    new BasketAddItemTried(id, productId, "Test Item", 2, 10),
-                    new BasketAddItemConfirmed(id, productId, 10)
-                };
+                    _initialEvents = new List<IEvent>
+                    {
+                        new BasketCreated(id),
+                        new BasketItemAdded(id, productId, "Test Item", 2, 10),
+                    };
+                }
+                return _initialEvents;
             }
         }
     }

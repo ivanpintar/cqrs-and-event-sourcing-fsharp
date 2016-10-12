@@ -10,9 +10,7 @@ namespace PinetreeShop.Domain.Baskets
 {
     public class BasketCommandHandler :
         IHandleCommand<CreateBasket>,
-        IHandleCommand<TryAddItemToBasket>,
-        IHandleCommand<ConfirmAddItemToBasket>,
-        IHandleCommand<RevertAddItemToBasket>,
+        IHandleCommand<AddItemToBasket>,
         IHandleCommand<RemoveItemFromBasket>,
         IHandleCommand<CancelBasket>,
         IHandleCommand<CheckOutBasket>
@@ -24,24 +22,10 @@ namespace PinetreeShop.Domain.Baskets
             _aggregateRepository = aggregateRepository;
         }
 
-        public IAggregate Handle(TryAddItemToBasket command)
+        public IAggregate Handle(AddItemToBasket command)
         {
             var basket = _aggregateRepository.GetAggregateById<BasketAggregate>(command.AggregateId);
-            basket.TryAddItemToBasket(command);
-            return basket;
-        }
-
-        public IAggregate Handle(ConfirmAddItemToBasket command)
-        {
-            var basket = _aggregateRepository.GetAggregateById<BasketAggregate>(command.AggregateId);
-            basket.ConfirmAddItem(command);
-            return basket;
-        }
-
-        public IAggregate Handle(RevertAddItemToBasket command)
-        {
-            var basket = _aggregateRepository.GetAggregateById<BasketAggregate>(command.AggregateId);
-            basket.RevertAddProduct(command);
+            basket.AddItemToBasket(command);
             return basket;
         }
 

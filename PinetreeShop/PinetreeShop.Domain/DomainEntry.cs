@@ -55,9 +55,7 @@ namespace PinetreeShop.Domain
 
             var basketCommandHandler = new BasketCommandHandler(_aggregateRepository);
             _commandDispatcher.RegisterHandler<CreateBasket>(basketCommandHandler);
-            _commandDispatcher.RegisterHandler<TryAddItemToBasket>(basketCommandHandler);
-            _commandDispatcher.RegisterHandler<ConfirmAddItemToBasket>(basketCommandHandler);
-            _commandDispatcher.RegisterHandler<RevertAddItemToBasket>(basketCommandHandler);
+            _commandDispatcher.RegisterHandler<AddItemToBasket>(basketCommandHandler);
             _commandDispatcher.RegisterHandler<RemoveItemFromBasket>(basketCommandHandler);
             _commandDispatcher.RegisterHandler<CancelBasket>(basketCommandHandler);
             _commandDispatcher.RegisterHandler<CheckOutBasket>(basketCommandHandler);
@@ -72,13 +70,13 @@ namespace PinetreeShop.Domain
         private void InitializeEventListener()
         {
             var shoppingProcessEventHandler = new ShoppingProcessEventHandler(_processManagerRepository);
-            _eventListener.RegisterHandler<BasketCreated>(shoppingProcessEventHandler);
-            _eventListener.RegisterHandler<BasketAddItemTried>(shoppingProcessEventHandler);
-            _eventListener.RegisterHandler<ProductReserved>(shoppingProcessEventHandler);
-            _eventListener.RegisterHandler<ProductReservationFailed>(shoppingProcessEventHandler);
-            _eventListener.RegisterHandler<BasketItemRemoved>(shoppingProcessEventHandler);
-            _eventListener.RegisterHandler<BasketCancelled>(shoppingProcessEventHandler);
-            _eventListener.RegisterHandler<BasketCheckedOut>(shoppingProcessEventHandler);
+            //_eventListener.RegisterHandler<BasketCreated>(shoppingProcessEventHandler);
+            //_eventListener.RegisterHandler<BasketItemAdded>(shoppingProcessEventHandler);
+            //_eventListener.RegisterHandler<ProductReserved>(shoppingProcessEventHandler);
+            //_eventListener.RegisterHandler<ProductReservationFailed>(shoppingProcessEventHandler);
+            //_eventListener.RegisterHandler<BasketItemRemoved>(shoppingProcessEventHandler);
+            //_eventListener.RegisterHandler<BasketCancelled>(shoppingProcessEventHandler);
+            //_eventListener.RegisterHandler<BasketCheckedOut>(shoppingProcessEventHandler);
         }
     }
 }

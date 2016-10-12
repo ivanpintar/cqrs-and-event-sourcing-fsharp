@@ -36,12 +36,12 @@ namespace PinetreeShop.Domain.Tests.Basket
         }
 
         [Fact]
-        public void When_CancelCheckedOut_ThrowsCheckoutException()
+        public void When_CancelCheckedOut_ThrowsInvalidStateException()
         {
             var initialEvents = InitialEvents.ToList();
             initialEvents.Add(new BasketCheckedOut(id, shippingAddress));
             Given(initialEvents.ToArray());
-            WhenThrows<CancellationException>(new CancelBasket(id));
+            WhenThrows<InvalidStateException>(new CancelBasket(id));
         }
 
         [Fact]
@@ -61,7 +61,7 @@ namespace PinetreeShop.Domain.Tests.Basket
                 return new IEvent[]
                 {
                     new BasketCreated(id),
-                    new BasketAddItemTried(id, productId, "Test Product", 2, 10)
+                    new BasketItemAdded(id, productId, "Test Product", 2, 10)
                 };
             }
         }

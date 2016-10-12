@@ -1,84 +1,69 @@
 ﻿using PinetreeShop.CQRS.Infrastructure.Events;
 using PinetreeShop.Domain.Baskets.Commands;
 using PinetreeShop.Domain.Baskets.Events;
+using PinetreeShop.Domain.Baskets.Exceptions;
+using PinetreeShop.Domain.Types;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
 namespace PinetreeShop.Domain.Tests.Basket
 {
-    public class AddItemTests :AggregateTestBase
+    public class AddItemTests : AggregateTestBase
     {
         Guid id = Guid.NewGuid();
         Guid productId = Guid.NewGuid();
         Guid causationAndCorrelationId = Guid.NewGuid();
 
         [Fact]
-        public void When_TryAddItem_AddItemTried()
+        public void When_AddItem_BasketAddItemAdded()
         {
-            Given(InitialEvents);
+            Given(InitialEvents.ToArray());
 
-            var command = new TryAddItemToBasket(id, productId, "Test Item", 2, 10);
+            var command = new AddItemToBasket(id, productId, "Test Item", 2, 10);
             command.Metadata.CausationId = command.Metadata.CommandId;
             command.Metadata.CorrelationId = causationAndCorrelationId;
 
             When(command);
 
-            var expectedEvent = new BasketAddItemTried(id, productId, "Test Item", 2, 10);
+            var expectedEvent = new BasketItemAdded(id, productId, "Test Item", 2, 10);
             expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
             expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
 
             Then(expectedEvent);
         }
 
-        [Fact]
-        public void When_ConfirmAddItem_AddItemReverted()
+        [Theory]
+        [InlineData("checkedOut")]
+        [InlineData("cancelled")]
+        public void When_AddItemNotPending_ThrowsInvalidStateException(string checkedOutOrCancelled)
         {
-            var events = InitialEvents.ToList();
-            events.Add(new BasketAddItemTried(id, productId, "Test Item", 2, 10));
-            Given(events.ToArray());
+            IEvent evt = new BasketCheckedOut(id, new Address());
+            if (checkedOutOrCancelled == "cancelled")
+                evt = new BasketCancelled(id);
 
-            var command = new ConfirmAddItemToBasket(id, productId, 10);
-            command.Metadata.CausationId = command.Metadata.CommandId;
-            command.Metadata.CorrelationId = causationAndCorrelationId;
+            InitialEvents.Add(evt);
 
-            When(command);
+            Given(InitialEvents.ToArray());
 
-            var expectedEvent = new BasketAddItemConfirmed(id, productId, 10);
-            expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
-            expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
-
-            Then(expectedEvent);
+            WhenThrows<InvalidStateException>(new AddItemToBasket(id, productId, "Test Product", 2, 10));
         }
 
-        [Fact]
-        public void When_RevertAddItem_AddItemReverted()
-        {
-            var events = InitialEvents.ToList();
-            events.Add(new BasketAddItemTried(id, productId, "Test Item", 2, 10));
-            Given(events.ToArray());
-          
-            var command = new RevertAddItemToBasket(id, productId, 10, "reason");
-            command.Metadata.CausationId = command.Metadata.CommandId;
-            command.Metadata.CorrelationId = causationAndCorrelationId;
 
-            When(command);
-
-            var expectedEvent = new BasketAddItemReverted(id, productId, 10, "reason");
-            expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
-            expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
-
-            Then(expectedEvent);
-        }
-
-        private IEvent[] InitialEvents
+        private List<IEvent> _initialEvents = null;
+        private List<IEvent> InitialEvents
         {
             get
             {
-                return new IEvent[]
+                if (_initialEvents == null)
                 {
-                    new BasketCreated(id)
-                };
+                    _initialEvents = new List<IEvent>
+                    {
+                        new BasketCreated(id)
+                    };
+                }
+                return _initialEvents;
             }
         }
     }
