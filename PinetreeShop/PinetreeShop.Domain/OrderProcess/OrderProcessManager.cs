@@ -12,6 +12,9 @@ using PinetreeShop.Domain.Baskets;
 using PinetreeShop.Domain.Orders.Commands;
 using PinetreeShop.Domain.Types;
 using PinetreeShop.CQRS.Infrastructure.Repositories;
+using PinetreeShop.Domain.Orders;
+using PinetreeShop.Domain.Orders.Events;
+using PinetreeShop.Domain.OrderProcess.Commands;
 
 namespace PinetreeShop.Domain.OrderProcess
 {
@@ -21,11 +24,19 @@ namespace PinetreeShop.Domain.OrderProcess
         private Dictionary<Guid, bool> _reservations = new Dictionary<Guid, bool>();
         private List<OrderLine> _orderLines = new List<OrderLine>();
         private Address _shippingAddress;
+        private OrderAggregate.OrderState _orderState;
+        private Guid _orderId;
 
         public OrderProcessManager()
         {
             RegisterEventHandler<BasketCheckedOut>(Apply);
             RegisterEventHandler<ProductReserved>(Apply);
+            RegisterEventHandler<ProductReservationFailed>(Apply);
+            RegisterEventHandler<OrderCreated>(Apply);
+            RegisterEventHandler<CreateOrderFailed>(Apply);
+            RegisterEventHandler<OrderShipped>(Apply);
+            RegisterEventHandler<OrderDelivered>(Apply);
+            RegisterEventHandler<OrderCancelled>(Apply);
         }
 
         internal void BasketCheckedOut(BasketCheckedOut evt)
@@ -61,6 +72,77 @@ namespace PinetreeShop.Domain.OrderProcess
             {
                 DispatchCommand(new CreateOrder(AggregateRepositoryBase.CreateGuid(), _basketId, _orderLines, _shippingAddress));
             }
+        }
+
+        internal void ProductReservationFailed(ProductReservationFailed evt)
+        {
+            HandleEvent(evt);
+        }
+
+        private void Apply(ProductReservationFailed obj)
+        {
+            DispatchCommand(new NotifyAdmin(AggregateRepositoryBase.CreateGuid()));
+        }
+
+        internal void OrderCreated(OrderCreated evt)
+        {
+            HandleEvent(evt);
+        }
+
+        private void Apply(OrderCreated evt)
+        {
+            _orderState = OrderAggregate.OrderState.Pending;
+            _orderId = evt.AggregateId;
+        }
+
+        internal void CreateOrderFailed(CreateOrderFailed evt)
+        {
+            HandleEvent(evt);
+        }
+
+        private void Apply(CreateOrderFailed obj)
+        {
+            DispatchCommand(new NotifyAdmin(AggregateRepositoryBase.CreateGuid()));
+        }
+
+        internal void OrderCancelled(OrderCancelled evt)
+        {
+            HandleEvent(evt);
+        }
+
+        private void Apply(OrderCancelled obj)
+        {
+            _orderState = OrderAggregate.OrderState.Cancelled;
+            foreach (var ol in _orderLines)
+            {
+                DispatchCommand(new CancelProductReservation(ol.ProductId, ol.Quantity));
+            }
+            DispatchCommand(new NotifyCustomer(AggregateRepositoryBase.CreateGuid()));
+        }
+
+        internal void OrderShipped(OrderShipped evt)
+        {
+            HandleEvent(evt);
+        }
+
+        private void Apply(OrderShipped evt)
+        {
+            foreach(var ol in _orderLines)
+            {
+                DispatchCommand(new ChangeProductQuantity(ol.ProductId, -(int)ol.Quantity));
+            }
+            DispatchCommand(new NotifyCustomer(AggregateRepositoryBase.CreateGuid()));
+        }
+
+        internal void OrderDelivered(OrderDelivered evt)
+        {
+            HandleEvent(evt);
+        }
+
+        private void Apply(OrderDelivered obj)
+        {
+            _orderState = OrderAggregate.OrderState.Delivered;
+            DispatchCommand(new NotifyAdmin(AggregateRepositoryBase.CreateGuid()));
         }
 
         private void BuildOrderLines()

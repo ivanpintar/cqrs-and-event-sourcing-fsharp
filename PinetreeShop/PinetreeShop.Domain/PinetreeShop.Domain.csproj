@@ -46,6 +46,7 @@
     <Compile Include="Baskets\BasketAggregate.cs" />
     <Compile Include="Baskets\Exceptions.cs" />
     <Compile Include="Exceptions.cs" />
+    <Compile Include="OrderProcess\Commands.cs" />
     <Compile Include="Orders\OrderCommandHandler.cs" />
     <Compile Include="Orders\Exceptions.cs" />
     <Compile Include="Orders\OrderAggregate.cs" />

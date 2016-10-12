@@ -11,6 +11,7 @@ using PinetreeShop.Domain.Products.Commands;
 using PinetreeShop.Domain.OrderProcess;
 using PinetreeShop.Domain.Baskets.Events;
 using PinetreeShop.Domain.Products.Events;
+using PinetreeShop.Domain.Orders.Events;
 
 namespace PinetreeShop.Domain
 {
@@ -72,6 +73,12 @@ namespace PinetreeShop.Domain
             var orderProcessEventHandler = new OrderProcessEventHandler(_processManagerRepository);
             _eventListener.RegisterHandler<BasketCheckedOut>(orderProcessEventHandler);
             _eventListener.RegisterHandler<ProductReserved>(orderProcessEventHandler);
+            _eventListener.RegisterHandler<ProductReservationFailed>(orderProcessEventHandler);
+            _eventListener.RegisterHandler<OrderCreated>(orderProcessEventHandler);
+            _eventListener.RegisterHandler<CreateOrderFailed>(orderProcessEventHandler);
+            _eventListener.RegisterHandler<OrderCancelled>(orderProcessEventHandler);
+            _eventListener.RegisterHandler<OrderShipped>(orderProcessEventHandler);
+            _eventListener.RegisterHandler<OrderDelivered>(orderProcessEventHandler);
         }
     }
 }

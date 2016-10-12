@@ -2,7 +2,9 @@
 using PinetreeShop.CQRS.Infrastructure.Events;
 using PinetreeShop.CQRS.Infrastructure.Repositories;
 using PinetreeShop.Domain.Baskets.Events;
+using PinetreeShop.Domain.OrderProcess.Commands;
 using PinetreeShop.Domain.Orders.Commands;
+using PinetreeShop.Domain.Orders.Events;
 using PinetreeShop.Domain.Products.Commands;
 using PinetreeShop.Domain.Products.Events;
 using PinetreeShop.Domain.Types;
@@ -84,25 +86,161 @@ namespace PinetreeShop.Domain.Tests.OrderProcess
         }
 
         [Fact]
-        public void When_SomeProductsReservedOrderCancelled_CancelProductReservation()
+        public void When_SomeProductReservationFailed_NotifyAdmin()
         {
-            
+            var notificationId = Guid.NewGuid();
+            AggregateRepositoryBase.CreateGuid = () => notificationId;
+            InitialEvents.Add(new BasketCheckedOut(basketId, shippingAddress));
+            InitialEvents.Add(new ProductReserved(productTwoId, basketId, 20));
+            InitialEvents.ForEach(e => e.Metadata.CorrelationId = causationAndCorrelationId);
+
+            Given(InitialEvents.ToArray());
+
+            var evt = new ProductReservationFailed(productOneId, basketId, 10, ProductReservationFailed.NotAvailable);
+            evt.Metadata.CorrelationId = causationAndCorrelationId;
+
+            When(evt);
+
+            var expectedCommand = new NotifyAdmin(notificationId);
+            expectedCommand.Metadata.CausationId = evt.Metadata.EventId;
+            expectedCommand.Metadata.CorrelationId = evt.Metadata.CorrelationId;
+
+            Then(expectedCommand);
         }
 
         [Fact]
-        public void When_SomeProductReservationFailed_NotifyAdmin() { }
+        public void When_CreateOrderFailed_NotifyAdmin()
+        {
+            var notificationId = Guid.NewGuid();
+            AggregateRepositoryBase.CreateGuid = () => notificationId;
+            InitialEvents.Add(new BasketCheckedOut(basketId, shippingAddress));
+            InitialEvents.Add(new ProductReserved(productOneId, basketId, 10));
+            InitialEvents.Add(new ProductReserved(productTwoId, basketId, 20));
+            InitialEvents.ForEach(e => e.Metadata.CorrelationId = causationAndCorrelationId);
+
+            Given(InitialEvents.ToArray());
+
+            var evt = new CreateOrderFailed(orderId, basketId, EventFailedBase.UnknownError);
+            evt.Metadata.CorrelationId = causationAndCorrelationId;
+
+            When(evt);
+
+            var expectedCommand = new NotifyAdmin(notificationId);
+            expectedCommand.Metadata.CausationId = evt.Metadata.EventId;
+            expectedCommand.Metadata.CorrelationId = evt.Metadata.CorrelationId;
+
+            Then(expectedCommand);
+        }
+        
+        [Fact]
+        public void When_OrderCreated_DoNothing()
+        {
+            var notificationId = Guid.NewGuid();
+            AggregateRepositoryBase.CreateGuid = () => notificationId;
+            InitialEvents.Add(new BasketCheckedOut(basketId, shippingAddress));
+            InitialEvents.Add(new ProductReserved(productOneId, basketId, 10));
+            InitialEvents.Add(new ProductReserved(productTwoId, basketId, 20));
+            InitialEvents.ForEach(e => e.Metadata.CorrelationId = causationAndCorrelationId);
+
+            Given(InitialEvents.ToArray());
+
+            var evt = new OrderCreated(orderId, basketId, OrderLines, shippingAddress);
+            evt.Metadata.CorrelationId = causationAndCorrelationId;
+
+            When(evt);
+            Then(new ICommand[] { });
+        }
 
         [Fact]
-        public void When_OrderCreated_NotifyCustomer() { }
+        public void When_OrderCancelled_CancelProductReservation_And_NotifyCustomer()
+        {
+            var notificationId = Guid.NewGuid();
+            AggregateRepositoryBase.CreateGuid = () => notificationId;
+            InitialEvents.Add(new BasketCheckedOut(basketId, shippingAddress));
+            InitialEvents.Add(new ProductReserved(productOneId, basketId, 10));
+            InitialEvents.Add(new ProductReserved(productTwoId, basketId, 20));
+            InitialEvents.ForEach(e => e.Metadata.CorrelationId = causationAndCorrelationId);
+
+            Given(InitialEvents.ToArray());
+
+            var evt = new OrderCancelled(orderId);
+            evt.Metadata.CorrelationId = causationAndCorrelationId;
+
+            When(evt);
+
+            var expectedCommands = new List<ICommand>
+            {
+                new CancelProductReservation(productOneId, 10),
+                new CancelProductReservation(productTwoId, 20),
+                new NotifyCustomer(notificationId)
+            };
+            expectedCommands.ForEach(c =>
+            {
+                c.Metadata.CausationId = evt.Metadata.EventId;
+                c.Metadata.CorrelationId = evt.Metadata.CorrelationId;
+            });
+
+            Then(expectedCommands.ToArray());
+        }
 
         [Fact]
-        public void When_OrderCancelled_CancelProductReservation_And_NotifyCustomer() { }
+        public void When_OrderShipped_DecreaseProductQuantity_And_NotifyCustomer()
+        {
+            var notificationId = Guid.NewGuid();
+            AggregateRepositoryBase.CreateGuid = () => notificationId;
+            InitialEvents.Add(new BasketCheckedOut(basketId, shippingAddress));
+            InitialEvents.Add(new ProductReserved(productOneId, basketId, 10));
+            InitialEvents.Add(new ProductReserved(productTwoId, basketId, 20));
+            InitialEvents.Add(new OrderCreated(orderId, basketId, OrderLines, shippingAddress));
+            InitialEvents.ForEach(e => e.Metadata.CorrelationId = causationAndCorrelationId);
+
+            Given(InitialEvents.ToArray());
+
+            var evt = new OrderShipped(orderId, shippingAddress);
+            evt.Metadata.CorrelationId = causationAndCorrelationId;
+
+            When(evt);
+
+            var expectedCommands = new List<ICommand>
+            {
+                new ChangeProductQuantity(productOneId, -10),
+                new ChangeProductQuantity(productTwoId, -20),
+                new NotifyCustomer(notificationId)
+            };
+            expectedCommands.ForEach(c =>
+            {
+                c.Metadata.CausationId = evt.Metadata.EventId;
+                c.Metadata.CorrelationId = evt.Metadata.CorrelationId;
+            });
+
+            Then(expectedCommands.ToArray());
+        }
 
         [Fact]
-        public void When_OrderShipped_DecreaseProductQuantity() { }
+        public void When_OrderDelivered_NotifyAdmin()
+        {
+            var notificationId = Guid.NewGuid();
+            AggregateRepositoryBase.CreateGuid = () => notificationId;
+            InitialEvents.Add(new BasketCheckedOut(basketId, shippingAddress));
+            InitialEvents.Add(new ProductReserved(productOneId, basketId, 10));
+            InitialEvents.Add(new ProductReserved(productTwoId, basketId, 20));
+            InitialEvents.Add(new OrderCreated(orderId, basketId, OrderLines, shippingAddress));
+            InitialEvents.Add(new OrderShipped(orderId, shippingAddress));
+            InitialEvents.ForEach(e => e.Metadata.CorrelationId = causationAndCorrelationId);
 
-        [Fact]
-        public void When_OrderDelivered_NotifyAdmin() { }
+            Given(InitialEvents.ToArray());
+
+            var evt = new OrderDelivered(orderId, shippingAddress);
+            evt.Metadata.CorrelationId = causationAndCorrelationId;
+
+            When(evt);
+
+            var expectedCommand = new NotifyAdmin(notificationId);
+            expectedCommand.Metadata.CausationId = evt.Metadata.EventId;
+            expectedCommand.Metadata.CorrelationId = evt.Metadata.CorrelationId;
+
+            Then(expectedCommand);
+        }
 
         private List<IEvent> _initialEvents = null;
         private List<IEvent> InitialEvents

@@ -12,7 +12,7 @@ namespace PinetreeShop.Domain.Orders
 {
     public class OrderAggregate : AggregateBase
     {
-        private enum OrderState { Pending, Shipped, Cancelled, Delivered };
+        public enum OrderState { Pending, Shipped, Cancelled, Delivered };
         private OrderState _state;
         private IEnumerable<OrderLine> _orderLines = new List<OrderLine>();
         private Guid _basketId { get; set; }
