@@ -10,12 +10,12 @@ namespace PinetreeShop.CQRS.Infrastructure
         Guid ProcessId { get; }
         int Version { get; }
 
-        IEnumerable<Events.IEvent> UncommittedEvents { get; }
+        IEnumerable<IEvent> UncommittedEvents { get; }
         void ClearUncommittedEvents();
 
         IEnumerable<ICommand> UndispatchedCommands { get; }
         void ClearUndispatchedCommands();
 
-        void Transition(Events.IEvent evt);    
+        void Transition(IEvent evt);    
     }
 }
