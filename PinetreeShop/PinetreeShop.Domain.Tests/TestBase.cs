@@ -10,14 +10,23 @@ using Xunit;
 
 namespace PinetreeShop.Domain.Tests
 {
-    public abstract class TestBase
+    public class TestBase
     {
         protected TestEventStore _eventStore = new TestEventStore();
         protected AggregateRepository _aggregateRepository;
         protected List<IEvent> _preConditions = new List<IEvent>();
         protected ProcessManagerRepository _processManagerRepository;
 
-        protected abstract DomainEntry BuildApplication();
+        protected DomainEntry BuildApplication()
+        {
+            _eventStore.AddPreviousEvents(_preConditions);
+            _aggregateRepository = new AggregateRepository(_eventStore);
+            var commandDispatcher = new CommandDispatcher(_aggregateRepository);
+            _processManagerRepository = new ProcessManagerRepository(_eventStore);
+            var eventListener = new EventListener(_processManagerRepository);
+
+            return new DomainEntry(commandDispatcher, eventListener, _aggregateRepository, _processManagerRepository);
+        }
 
         protected void TearDown()
         {

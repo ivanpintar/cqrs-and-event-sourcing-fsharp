@@ -6,7 +6,7 @@ using Xunit;
 
 namespace PinetreeShop.Domain.Tests.Basket
 {
-    public class CreateBasketTests : AggregateTestBase
+    public class CreateBasketTests : TestBase
     {
         Guid id = Guid.NewGuid();
         Guid causationAndCorrelationId = Guid.NewGuid();

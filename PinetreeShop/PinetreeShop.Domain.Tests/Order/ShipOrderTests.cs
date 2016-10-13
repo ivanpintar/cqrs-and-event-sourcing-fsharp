@@ -10,7 +10,7 @@ using PinetreeShop.Domain.Shared.Types;
 
 namespace PinetreeShop.Domain.Tests.Order
 {
-    public class ShipOrderTests : AggregateTestBase
+    public class ShipOrderTests : TestBase
     {
         Guid id = Guid.NewGuid();
         Guid basketId = Guid.NewGuid();

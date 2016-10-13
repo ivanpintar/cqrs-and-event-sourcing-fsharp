@@ -10,7 +10,7 @@ using PinetreeShop.Domain.Shared.Exceptions;
 
 namespace PinetreeShop.Domain.Tests.Order
 {
-    public class CreateOrderTests : AggregateTestBase
+    public class CreateOrderTests : TestBase
     {
         Guid id = Guid.NewGuid();
         Guid basketId = Guid.NewGuid();

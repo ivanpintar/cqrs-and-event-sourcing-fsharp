@@ -14,7 +14,7 @@ using Xunit;
 
 namespace PinetreeShop.Domain.Tests.OrderProcess
 {
-    public class OrderProcessTests : ProcessManagerTestBase
+    public class OrderProcessTests : TestBase
     {
         Guid orderId = Guid.NewGuid();
         Guid basketId = Guid.NewGuid();
