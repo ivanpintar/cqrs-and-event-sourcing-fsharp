@@ -2,11 +2,6 @@
 using PinetreeShop.Domain.Products.Commands;
 using PinetreeShop.Domain.Products.Events;
 using PinetreeShop.Domain.Products.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PinetreeShop.Domain.Products
 {

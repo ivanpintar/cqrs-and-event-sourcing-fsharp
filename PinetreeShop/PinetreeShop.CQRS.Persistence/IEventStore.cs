@@ -8,5 +8,8 @@ namespace PinetreeShop.CQRS.Persistence
     {
         IEnumerable<IEvent> Events { get; }
         void CommitEvents(IEnumerable<IEvent> events);
+
+        IEnumerable<ICommand> Commands { get; }
+        void DispatchCommands(IEnumerable<ICommand> commands);
     }
 }

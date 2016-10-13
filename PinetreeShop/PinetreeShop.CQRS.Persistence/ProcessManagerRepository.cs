@@ -10,15 +10,11 @@ namespace PinetreeShop.CQRS.Persistence
 {
     public class ProcessManagerRepository : ProcessManagerRepositoryBase
     {
-        private ICommandDispatcher _commandDispatcher;
         private IEventStore _eventStore;
-        public List<ICommand> LatestCommands { get; private set; }
 
-        public ProcessManagerRepository(IEventStore eventStore, ICommandDispatcher commandDispatcher)
+        public ProcessManagerRepository(IEventStore eventStore)
         {
-            LatestCommands = new List<ICommand>();
             _eventStore = eventStore;
-            _commandDispatcher = commandDispatcher;
         }
         
         public override TResult GetProcessManagerById<TResult>(Guid id)
@@ -55,11 +51,7 @@ namespace PinetreeShop.CQRS.Persistence
 
         private void DispatchCommands(List<ICommand> commandsToDispatch)
         {
-            LatestCommands = commandsToDispatch;
-            foreach(var command in commandsToDispatch)
-            {
-                _commandDispatcher.ExecuteCommand(command);
-            }
+            _eventStore.DispatchCommands(commandsToDispatch);
         }
 
         private List<IEvent> GetEventsForProcessManager(Guid processManagerId)

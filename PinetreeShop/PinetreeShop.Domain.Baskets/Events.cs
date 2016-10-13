@@ -1,7 +1,6 @@
 ﻿using PinetreeShop.CQRS.Infrastructure.Events;
-using PinetreeShop.Domain.Types;
+using PinetreeShop.Domain.Shared.Types;
 using System;
-using System.Collections.Generic;
 
 namespace PinetreeShop.Domain.Baskets.Events
 {

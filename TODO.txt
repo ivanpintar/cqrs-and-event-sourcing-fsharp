@@ -1,0 +1,4 @@
+split domain into separate services with their own REST apis for updating state
+create a SQL based event store
+create "event listener" apps
+create read parts for each service

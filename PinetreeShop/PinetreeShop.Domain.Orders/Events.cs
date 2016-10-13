@@ -1,6 +1,5 @@
-﻿using PinetreeShop.CQRS.Infrastructure;
-using PinetreeShop.CQRS.Infrastructure.Events;
-using PinetreeShop.Domain.Types;
+﻿using PinetreeShop.CQRS.Infrastructure.Events;
+using PinetreeShop.Domain.Shared.Types;
 using System;
 using System.Collections.Generic;
 
@@ -9,7 +8,7 @@ namespace PinetreeShop.Domain.Orders.Events
     public class OrderCreated : EventBase
     {
         public Guid BasketId { get; private set; }
-        public IEnumerable<Types.OrderLine> Lines { get; private set; }
+        public IEnumerable<OrderLine> Lines { get; private set; }
         public Address ShippingAddress { get; private set; }
 
         public OrderCreated(Guid aggregateId, Guid basketId, IEnumerable<OrderLine> lines, Address shippingAddress) : base(aggregateId)

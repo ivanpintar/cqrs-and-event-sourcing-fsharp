@@ -2,7 +2,7 @@
 using PinetreeShop.Domain.Baskets.Commands;
 using PinetreeShop.Domain.Baskets.Events;
 using PinetreeShop.Domain.Baskets.Exceptions;
-using PinetreeShop.Domain.Types;
+using PinetreeShop.Domain.Shared.Types;
 using System;
 using System.Collections.Generic;
 using Xunit;

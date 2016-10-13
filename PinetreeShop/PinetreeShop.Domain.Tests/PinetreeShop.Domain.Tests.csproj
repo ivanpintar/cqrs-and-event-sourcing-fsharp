@@ -95,12 +95,31 @@
       <Project>{0E2B6EBB-B5EA-4FF4-833F-AD02F424A7FB}</Project>
       <Name>PinetreeShop.CQRS.Persistence</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PinetreeShop.Domain.Baskets\PinetreeShop.Domain.Baskets.csproj">
+      <Project>{73fb242d-8716-47a9-99c0-f288d4d6b021}</Project>
+      <Name>PinetreeShop.Domain.Baskets</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PinetreeShop.Domain.OrderProcess\PinetreeShop.Domain.OrderProcess.csproj">
+      <Project>{81ad4126-2867-42ae-bdb5-4cdec584114a}</Project>
+      <Name>PinetreeShop.Domain.OrderProcess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PinetreeShop.Domain.Orders\PinetreeShop.Domain.Orders.csproj">
+      <Project>{92f861bf-b68b-426a-8d6f-be03aba5c836}</Project>
+      <Name>PinetreeShop.Domain.Orders</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PinetreeShop.Domain.Products\PinetreeShop.Domain.Products.csproj">
+      <Project>{b7147caf-cdf3-459a-82b8-ece194143ba9}</Project>
+      <Name>PinetreeShop.Domain.Products</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PinetreeShop.Domain.Shared\PinetreeShop.Domain.Shared.csproj">
+      <Project>{2248252d-5385-42b4-bcd4-281ca370087e}</Project>
+      <Name>PinetreeShop.Domain.Shared</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PinetreeShop.Domain\PinetreeShop.Domain.csproj">
       <Project>{8604EBD4-4C55-46BA-B7BA-2CA6153B56FA}</Project>
       <Name>PinetreeShop.Domain</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>

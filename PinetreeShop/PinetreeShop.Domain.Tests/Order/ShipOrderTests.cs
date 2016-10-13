@@ -1,12 +1,12 @@
 ﻿using System;
 using Xunit;
 using PinetreeShop.Domain.Orders.Events;
-using PinetreeShop.Domain.Types;
 using System.Collections.Generic;
 using PinetreeShop.Domain.Orders.Commands;
 using PinetreeShop.Domain.Tests.Order.Exceptions;
 using System.Linq;
 using PinetreeShop.CQRS.Infrastructure.Events;
+using PinetreeShop.Domain.Shared.Types;
 
 namespace PinetreeShop.Domain.Tests.Order
 {

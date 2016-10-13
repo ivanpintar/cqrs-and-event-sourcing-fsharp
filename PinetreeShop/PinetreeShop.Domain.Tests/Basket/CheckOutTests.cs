@@ -1,12 +1,12 @@
 ﻿using System;
 using PinetreeShop.CQRS.Infrastructure.Events;
 using PinetreeShop.Domain.Baskets.Events;
-using PinetreeShop.Domain.Types;
 using Xunit;
 using PinetreeShop.Domain.Baskets.Commands;
 using System.Linq;
 using PinetreeShop.Domain.Baskets.Exceptions;
 using System.Collections.Generic;
+using PinetreeShop.Domain.Shared.Types;
 
 namespace PinetreeShop.Domain.Tests.Basket
 {

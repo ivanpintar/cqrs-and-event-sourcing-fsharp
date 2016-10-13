@@ -2,9 +2,8 @@
 using PinetreeShop.CQRS.Infrastructure.Commands;
 using PinetreeShop.CQRS.Infrastructure.Repositories;
 using PinetreeShop.CQRS.Persistence.Exceptions;
-using PinetreeShop.Domain.Exceptions;
 using PinetreeShop.Domain.Orders.Commands;
-using System;
+using PinetreeShop.Domain.Shared.Exceptions;
 
 namespace PinetreeShop.Domain.Orders
 {

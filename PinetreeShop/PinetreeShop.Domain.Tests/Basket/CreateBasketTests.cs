@@ -1,6 +1,6 @@
 ﻿using PinetreeShop.Domain.Baskets.Commands;
 using PinetreeShop.Domain.Baskets.Events;
-using PinetreeShop.Domain.Exceptions;
+using PinetreeShop.Domain.Shared.Exceptions;
 using System;
 using Xunit;
 

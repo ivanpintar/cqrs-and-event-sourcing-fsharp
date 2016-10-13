@@ -159,7 +159,6 @@
     <Compile Include="Controllers\OrdersController.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
     <Compile Include="Models\Basket.cs" />
-    <Compile Include="Models\Extensions.cs" />
     <Compile Include="Models\Product.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -168,6 +167,10 @@
     <ProjectReference Include="..\PinetreeShop.CQRS.Infrastructure\PinetreeShop.CQRS.Infrastructure.csproj">
       <Project>{1f715587-ccce-4289-b3b7-fd3299475337}</Project>
       <Name>PinetreeShop.CQRS.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PinetreeShop.Domain.Shared\PinetreeShop.Domain.Shared.csproj">
+      <Project>{2248252D-5385-42B4-BCD4-281CA370087E}</Project>
+      <Name>PinetreeShop.Domain.Shared</Name>
     </ProjectReference>
     <ProjectReference Include="..\PinetreeShop.Domain\PinetreeShop.Domain.csproj">
       <Project>{8604EBD4-4C55-46BA-B7BA-2CA6153B56FA}</Project>

@@ -1,7 +1,7 @@
 ﻿using PinetreeShop.CQRS.Infrastructure.Events;
 using PinetreeShop.Domain.Orders.Commands;
 using PinetreeShop.Domain.Orders.Events;
-using PinetreeShop.Domain.Types;
+using PinetreeShop.Domain.Shared.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;

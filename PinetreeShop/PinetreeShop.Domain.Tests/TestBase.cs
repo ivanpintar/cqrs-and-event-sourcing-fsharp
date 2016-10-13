@@ -66,12 +66,12 @@ namespace PinetreeShop.Domain.Tests
 
         protected void Then(params ICommand[] expectedCommands)
         {
-            var latestCommands = _processManagerRepository.LatestCommands;
+            var latestCommands = _eventStore.GetLatestCommands();
             var expectedCommandsList = expectedCommands != null
                 ? expectedCommands.ToList()
                 : new List<ICommand>();
 
-            Assert.Equal(latestCommands.Count, expectedCommandsList.Count);
+            Assert.Equal(latestCommands.Count(), expectedCommandsList.Count);
 
             var latestAndExpected = latestCommands.Zip(expectedCommandsList, (l, e) => new { L = l, E = e });
 

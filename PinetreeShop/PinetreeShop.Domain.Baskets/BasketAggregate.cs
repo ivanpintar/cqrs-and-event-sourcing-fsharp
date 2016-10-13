@@ -2,10 +2,9 @@
 using PinetreeShop.Domain.Baskets.Events;
 using PinetreeShop.Domain.Baskets.Commands;
 using PinetreeShop.Domain.Baskets.Exceptions;
-using PinetreeShop.Domain.Types;
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using PinetreeShop.Domain.Shared.Types;
 
 namespace PinetreeShop.Domain.Baskets
 {

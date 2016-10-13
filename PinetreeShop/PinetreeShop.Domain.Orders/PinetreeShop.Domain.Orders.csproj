@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8604EBD4-4C55-46BA-B7BA-2CA6153B56FA}</ProjectGuid>
+    <ProjectGuid>{92F861BF-B68B-426A-8D6F-BE03ABA5C836}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PinetreeShop.Domain</RootNamespace>
-    <AssemblyName>PinetreeShop.Domain</AssemblyName>
+    <RootNamespace>PinetreeShop.Domain.Orders</RootNamespace>
+    <AssemblyName>PinetreeShop.Domain.Orders</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -40,33 +40,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands.cs" />
     <Compile Include="DomainEntry.cs" />
+    <Compile Include="Events.cs" />
+    <Compile Include="Exceptions.cs" />
+    <Compile Include="OrderAggregate.cs" />
+    <Compile Include="OrderCommandHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PinetreeShop.CQRS.Infrastructure\PinetreeShop.CQRS.Infrastructure.csproj">
-      <Project>{1F715587-CCCE-4289-B3B7-FD3299475337}</Project>
+      <Project>{1f715587-ccce-4289-b3b7-fd3299475337}</Project>
       <Name>PinetreeShop.CQRS.Infrastructure</Name>
     </ProjectReference>
     <ProjectReference Include="..\PinetreeShop.CQRS.Persistence\PinetreeShop.CQRS.Persistence.csproj">
       <Project>{0E2B6EBB-B5EA-4FF4-833F-AD02F424A7FB}</Project>
       <Name>PinetreeShop.CQRS.Persistence</Name>
     </ProjectReference>
-    <ProjectReference Include="..\PinetreeShop.Domain.Baskets\PinetreeShop.Domain.Baskets.csproj">
-      <Project>{73fb242d-8716-47a9-99c0-f288d4d6b021}</Project>
-      <Name>PinetreeShop.Domain.Baskets</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PinetreeShop.Domain.OrderProcess\PinetreeShop.Domain.OrderProcess.csproj">
-      <Project>{81ad4126-2867-42ae-bdb5-4cdec584114a}</Project>
-      <Name>PinetreeShop.Domain.OrderProcess</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PinetreeShop.Domain.Orders\PinetreeShop.Domain.Orders.csproj">
-      <Project>{92f861bf-b68b-426a-8d6f-be03aba5c836}</Project>
-      <Name>PinetreeShop.Domain.Orders</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PinetreeShop.Domain.Products\PinetreeShop.Domain.Products.csproj">
-      <Project>{b7147caf-cdf3-459a-82b8-ece194143ba9}</Project>
-      <Name>PinetreeShop.Domain.Products</Name>
+    <ProjectReference Include="..\PinetreeShop.Domain.Shared\PinetreeShop.Domain.Shared.csproj">
+      <Project>{2248252d-5385-42b4-bcd4-281ca370087e}</Project>
+      <Name>PinetreeShop.Domain.Shared</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

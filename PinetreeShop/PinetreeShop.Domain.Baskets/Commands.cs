@@ -1,5 +1,5 @@
 ﻿using PinetreeShop.CQRS.Infrastructure.Commands;
-using PinetreeShop.Domain.Types;
+using PinetreeShop.Domain.Shared.Types;
 using System;
 
 namespace PinetreeShop.Domain.Baskets.Commands

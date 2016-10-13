@@ -1,7 +1,7 @@
-﻿using PinetreeShop.Domain.Exceptions;
-using PinetreeShop.Domain.Products.Commands;
+﻿using PinetreeShop.Domain.Products.Commands;
 using PinetreeShop.Domain.Products.Events;
 using PinetreeShop.Domain.Products.Exceptions;
+using PinetreeShop.Domain.Shared.Exceptions;
 using System;
 using Xunit;
 

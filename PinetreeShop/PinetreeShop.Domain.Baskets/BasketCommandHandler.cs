@@ -3,8 +3,7 @@ using PinetreeShop.CQRS.Infrastructure.Commands;
 using PinetreeShop.CQRS.Infrastructure.Repositories;
 using PinetreeShop.CQRS.Persistence.Exceptions;
 using PinetreeShop.Domain.Baskets.Commands;
-using PinetreeShop.Domain.Exceptions;
-using System;
+using PinetreeShop.Domain.Shared.Exceptions;
 
 namespace PinetreeShop.Domain.Baskets
 {

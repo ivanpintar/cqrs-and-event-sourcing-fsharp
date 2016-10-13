@@ -1,4 +1,4 @@
-﻿using PinetreeShop.Domain.Exceptions;
+﻿using PinetreeShop.Domain.Shared.Exceptions;
 using System;
 
 namespace PinetreeShop.Domain.Tests.Order.Exceptions

@@ -1,6 +1,5 @@
-﻿using PinetreeShop.CQRS.Infrastructure;
-using PinetreeShop.CQRS.Infrastructure.Commands;
-using PinetreeShop.Domain.Types;
+﻿using PinetreeShop.CQRS.Infrastructure.Commands;
+using PinetreeShop.Domain.Shared.Types;
 using System;
 using System.Collections.Generic;
 

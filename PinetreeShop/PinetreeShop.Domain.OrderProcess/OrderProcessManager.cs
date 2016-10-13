@@ -2,19 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PinetreeShop.Domain.Baskets.Events;
 using PinetreeShop.Domain.Products.Commands;
 using PinetreeShop.Domain.Products.Events;
-using PinetreeShop.Domain.Baskets.Commands;
-using PinetreeShop.Domain.Baskets;
 using PinetreeShop.Domain.Orders.Commands;
-using PinetreeShop.Domain.Types;
 using PinetreeShop.CQRS.Infrastructure.Repositories;
 using PinetreeShop.Domain.Orders;
 using PinetreeShop.Domain.Orders.Events;
 using PinetreeShop.Domain.OrderProcess.Commands;
+using PinetreeShop.Domain.Shared.Types;
 
 namespace PinetreeShop.Domain.OrderProcess
 {
@@ -24,7 +20,6 @@ namespace PinetreeShop.Domain.OrderProcess
         private Dictionary<Guid, bool> _reservations = new Dictionary<Guid, bool>();
         private List<OrderLine> _orderLines = new List<OrderLine>();
         private Address _shippingAddress;
-        private OrderAggregate.OrderState _orderState;
         private Guid _orderId;
 
         public OrderProcessManager()
@@ -91,7 +86,6 @@ namespace PinetreeShop.Domain.OrderProcess
 
         private void Apply(OrderCreated evt)
         {
-            _orderState = OrderAggregate.OrderState.Pending;
             _orderId = evt.AggregateId;
         }
 
@@ -112,7 +106,6 @@ namespace PinetreeShop.Domain.OrderProcess
 
         private void Apply(OrderCancelled obj)
         {
-            _orderState = OrderAggregate.OrderState.Cancelled;
             foreach (var ol in _orderLines)
             {
                 DispatchCommand(new CancelProductReservation(ol.ProductId, ol.Quantity));
@@ -141,7 +134,6 @@ namespace PinetreeShop.Domain.OrderProcess
 
         private void Apply(OrderDelivered obj)
         {
-            _orderState = OrderAggregate.OrderState.Delivered;
             DispatchCommand(new NotifyAdmin(AggregateRepositoryBase.CreateGuid()));
         }
 
