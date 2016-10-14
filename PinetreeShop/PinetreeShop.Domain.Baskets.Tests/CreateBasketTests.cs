@@ -32,7 +32,7 @@ namespace PinetreeShop.Domain.Baskets.Tests
         public void When_CreateBasketWithSameGuid_ThrowAggregateExistsException()
         {
             Given(new BasketCreated(id));
-            WhenThrows<AggregateExistsException>(new CreateBasket(id));
+            WhenThrows<CreateBasket, AggregateExistsException>(new CreateBasket(id));
         }
 
     }

@@ -6,7 +6,7 @@ namespace PinetreeShop.CQRS.Infrastructure.Commands
 {
     public class CommandDispatcher : ICommandDispatcher
     {
-        private Dictionary<Type, Func<object, IAggregate>> _commandHandlers = new Dictionary<Type, Func<object, IAggregate>>();
+        private Dictionary<Type, object> _commandHandlers = new Dictionary<Type, object>();
         private IAggregateRepository _aggregateRepository;
 
         public CommandDispatcher(IAggregateRepository aggregateRepository)
@@ -14,12 +14,17 @@ namespace PinetreeShop.CQRS.Infrastructure.Commands
             _aggregateRepository = aggregateRepository;
         }
 
-        public void RegisterHandler<TCommand>(IHandleCommand<TCommand> handler) where TCommand : class, ICommand
+        public void RegisterHandler<TCommand, TAggregate>(Func<TAggregate, TCommand, TAggregate> handler)
+            where TCommand : class, ICommand
+            where TAggregate : IAggregate
+
         {
-            _commandHandlers.Add(typeof(TCommand), command => handler.Handle(command as TCommand));
+            _commandHandlers.Add(typeof(TCommand), handler);
         }
 
-        public void ExecuteCommand<TCommand>(TCommand command) where TCommand : ICommand
+        public void ExecuteCommand<TCommand, TAggregate>(TCommand command)
+            where TCommand : ICommand
+            where TAggregate : IAggregate, new()
         {
             var commandType = command.GetType();
 
@@ -28,8 +33,11 @@ namespace PinetreeShop.CQRS.Infrastructure.Commands
                 throw new ApplicationException($"Missing handler for {commandType.Name}");
             }
 
-            var aggregate = _commandHandlers[commandType](command);
-            foreach(var evt in aggregate.UncommittedEvents)
+            var aggregate = _aggregateRepository.GetAggregateById<TAggregate>(command.AggregateId);
+
+            aggregate = (_commandHandlers[commandType] as Func<TAggregate, TCommand, TAggregate>)(aggregate, command);
+
+            foreach (var evt in aggregate.UncommittedEvents)
             {
                 evt.Metadata.CausationId = command.Metadata.CommandId;
                 evt.Metadata.CorrelationId = command.Metadata.CorrelationId;

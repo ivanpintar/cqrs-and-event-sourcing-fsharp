@@ -33,7 +33,7 @@ namespace PinetreeShop.Domain.Products.Tests
         public void When_ChangeProductQuantityBelowZero_ThrowQuantityChangeException()
         {
             Given(new ProductCreated(id, "Test Product", 2), new ProductQuantityChanged(id, 2));
-            WhenThrows<QuantityChangeException>(new ChangeProductQuantity(id, -4));
+            WhenThrows<ChangeProductQuantity, QuantityChangeException>(new ChangeProductQuantity(id, -4));
         }
     }
 }

@@ -37,20 +37,20 @@ namespace PinetreeShop.Domain.Orders.Tests
         [Fact]
         public void When_CreateOrderWithNoLines_ThrowEmptyOrderLinesException()
         {
-            WhenThrows<EmptyOrderLinesException>(new CreateOrder(id, basketId, Enumerable.Empty<OrderLine>(), shippingAddress));
+            WhenThrows<CreateOrder, EmptyOrderLinesException>(new CreateOrder(id, basketId, Enumerable.Empty<OrderLine>(), shippingAddress));
         }
 
         [Fact]
         public void When_CreateOrderWithNoShippingAddress_ThrowParameterNullException()
         {
-            WhenThrows<ParameterNullException>(new CreateOrder(id, basketId, OrderLines, null));
+            WhenThrows<CreateOrder, ParameterNullException>(new CreateOrder(id, basketId, OrderLines, null));
         }
         
         [Fact]
         public void When_CreateOrderWithSameGuid_ThrowAggregateExistsException()
         {
             Given(new OrderCreated(id, basketId, OrderLines, shippingAddress));
-            WhenThrows<AggregateExistsException>(new CreateOrder(id, basketId, OrderLines, shippingAddress));
+            WhenThrows<CreateOrder, AggregateExistsException>(new CreateOrder(id, basketId, OrderLines, shippingAddress));
         }
 
         private IEnumerable<OrderLine> OrderLines

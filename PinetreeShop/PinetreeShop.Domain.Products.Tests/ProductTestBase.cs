@@ -5,17 +5,15 @@ using PinetreeShop.Domain.Tests;
 
 namespace PinetreeShop.Domain.Products.Tests
 {
-    public class ProductTestBase : TestBase
+    public class ProductTestBase : AggregateTestBase<ProductAggregate>
     {
         protected override IDomainEntry BuildApplication()
         {
             _eventStore.AddPreviousEvents(_preConditions);
             _aggregateRepository = new AggregateRepository(_eventStore);
             var commandDispatcher = new CommandDispatcher(_aggregateRepository);
-            _processManagerRepository = new ProcessManagerRepository(_eventStore);
-            var eventListener = new EventListener(_processManagerRepository);
 
-            return new DomainEntry(commandDispatcher, eventListener, _aggregateRepository, _processManagerRepository);
+            return new DomainEntry(commandDispatcher, _aggregateRepository);
         }
     }
 }

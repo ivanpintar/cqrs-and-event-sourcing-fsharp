@@ -1,8 +1,15 @@
-﻿namespace PinetreeShop.CQRS.Infrastructure.Events
+﻿using System;
+
+namespace PinetreeShop.CQRS.Infrastructure.Events
 {
     public interface IEventListener
     {
-        void HandleEvent<TEvent>(TEvent evt) where TEvent : IEvent;
-        void RegisterHandler<TEvent>(IHandleEvent<TEvent> handler) where TEvent : class, IEvent;
+        void HandleEvent<TEvent, TProcessManager>(TEvent command)
+            where TEvent : IEvent
+            where TProcessManager : IProcessManager, new();
+
+        void RegisterHandler<TEvent, TProcessManager>(Func<TProcessManager, TEvent, TProcessManager> handler)
+            where TEvent : class, IEvent
+            where TProcessManager : IProcessManager;
     }
 }

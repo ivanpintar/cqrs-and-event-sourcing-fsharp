@@ -40,7 +40,7 @@ namespace PinetreeShop.Domain.Orders.Tests
             Given(
                 new OrderCreated(id, basketId, OrderLines, shippingAddress), 
                 new OrderCancelled(id));
-            WhenThrows<InvalidOrderStateException>(new DeliverOrder(id));
+            WhenThrows<DeliverOrder, InvalidOrderStateException>(new DeliverOrder(id));
         }
 
         private IEvent[] InitialEvents

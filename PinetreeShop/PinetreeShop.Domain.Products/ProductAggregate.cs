@@ -29,7 +29,7 @@ namespace PinetreeShop.Domain.Products
             RaiseEvent(new ProductCreated(cmd.AggregateId, cmd.Name, cmd.Price));
         }
 
-        internal static IAggregate Create(CreateProduct cmd)
+        internal static ProductAggregate Create(CreateProduct cmd)
         {
             if (cmd.Price <= 0) throw new ProductCreationException(cmd.AggregateId, $"Price {cmd.Price} must be a positive value.");
 

@@ -48,7 +48,7 @@ namespace PinetreeShop.Domain.Baskets.Tests
         {
             InitialEvents.Add(new BasketCancelled(id));
             Given(InitialEvents.ToArray());
-            WhenThrows<InvalidStateException>(new CheckOutBasket(id, shippingAddress));
+            WhenThrows<CheckOutBasket, InvalidStateException>(new CheckOutBasket(id, shippingAddress));
         }
 
         [Fact]

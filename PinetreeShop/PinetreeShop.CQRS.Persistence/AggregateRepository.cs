@@ -23,7 +23,8 @@ namespace PinetreeShop.CQRS.Persistence
             {
                 return BuildAggregate<TResult>(events);
             }
-            throw new AggregateNotFoundException($"Could not find aggregate {typeof(TResult)}:{id}");
+
+            return default(TResult);
         }
 
         public override void SaveAggregate<TAggregate>(TAggregate aggregate)

@@ -93,7 +93,7 @@ namespace PinetreeShop.Domain.Orders
             _state = OrderState.Delivered;
         }
 
-        internal static IAggregate Create(CreateOrder cmd)
+        internal static OrderAggregate Create(CreateOrder cmd)
         {
             return new OrderAggregate(cmd);
         }

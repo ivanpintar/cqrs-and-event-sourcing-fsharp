@@ -9,7 +9,7 @@ namespace PinetreeShop.CQRS.Infrastructure.Events
 {
     public class EventListener : IEventListener
     {
-        private Dictionary<Type, Func<object, IProcessManager>> _eventHandlers = new Dictionary<Type, Func<object, IProcessManager>>();
+        private Dictionary<Type, object> _eventHandlers = new Dictionary<Type, object>();
         private IProcessManagerRepository _processManagerRepository;
 
         public EventListener(IProcessManagerRepository processManagerRepository)
@@ -17,27 +17,35 @@ namespace PinetreeShop.CQRS.Infrastructure.Events
             _processManagerRepository = processManagerRepository;
         }
 
-        public void RegisterHandler<TEvent>(IHandleEvent<TEvent> handler) where TEvent : class, IEvent
+        public void RegisterHandler<TEvent, TProcessManager>(Func<TProcessManager, TEvent, TProcessManager> handler)
+            where TEvent : class, IEvent
+            where TProcessManager : IProcessManager
+
         {
-            _eventHandlers.Add(typeof(TEvent), evt => handler.Handle(evt as TEvent));
+            _eventHandlers.Add(typeof(TEvent), handler);
         }
 
-        public void HandleEvent<TEvent>(TEvent evt) where TEvent : IEvent
+        public void HandleEvent<TEvent, TProcessManager>(TEvent evt)
+            where TEvent : IEvent
+            where TProcessManager : IProcessManager, new()
         {
             var eventType = evt.GetType();
 
-            if(!_eventHandlers.ContainsKey(eventType))
+            if (!_eventHandlers.ContainsKey(eventType))
             {
                 return;
             }
 
-            var processManager = _eventHandlers[eventType](evt);
-            foreach(var cmd in processManager.UndispatchedCommands)
+            var processManager = _processManagerRepository.GetProcessManagerById<TProcessManager>(evt.Metadata.CorrelationId);
+
+            processManager = (_eventHandlers[eventType] as Func<TProcessManager, TEvent, TProcessManager>)(processManager, evt);
+
+            foreach (var cmd in processManager.UndispatchedCommands)
             {
                 cmd.Metadata.CausationId = evt.Metadata.EventId;
                 cmd.Metadata.CorrelationId = evt.Metadata.CorrelationId;
             }
-            
+
             _processManagerRepository.SaveProcessManager(processManager);
         }
     }

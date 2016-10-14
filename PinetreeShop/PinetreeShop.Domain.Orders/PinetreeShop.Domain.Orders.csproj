@@ -45,7 +45,7 @@
     <Compile Include="Events.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="OrderAggregate.cs" />
-    <Compile Include="OrderCommandHandler.cs" />
+    <Compile Include="CommandHandlers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

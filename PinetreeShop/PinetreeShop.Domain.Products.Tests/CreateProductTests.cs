@@ -31,14 +31,14 @@ namespace PinetreeShop.Domain.Products.Tests
         [Fact]
         public void When_CreateProductWithNegativePrice_ProductCreated()
         {
-            WhenThrows<ProductCreationException>(new CreateProduct(id, "Test Product", -2));
+            WhenThrows<CreateProduct, ProductCreationException>(new CreateProduct(id, "Test Product", -2));
         }
 
         [Fact]
         public void When_CreateProductWithSameGuid_ThrowAggregateExistsException()
         {
             Given(new ProductCreated(id, "Test Product", 1));
-            WhenThrows<AggregateExistsException>(new CreateProduct(id, "Test Product", 1));
+            WhenThrows<CreateProduct, AggregateExistsException>(new CreateProduct(id, "Test Product", 1));
         }
     }
 }

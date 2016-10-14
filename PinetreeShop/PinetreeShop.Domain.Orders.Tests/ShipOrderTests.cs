@@ -41,7 +41,7 @@ namespace PinetreeShop.Domain.Orders.Tests
             var events = InitialEvents.ToList();
             events.Add(new OrderCancelled(id));
             Given(events.ToArray());
-            WhenThrows<InvalidOrderStateException>(new ShipOrder(id));
+            WhenThrows<ShipOrder, InvalidOrderStateException>(new ShipOrder(id));
         }
 
         private IEvent[] InitialEvents

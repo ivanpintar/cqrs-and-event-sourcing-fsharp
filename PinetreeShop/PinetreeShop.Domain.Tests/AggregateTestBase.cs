@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using PinetreeShop.CQRS.Infrastructure;
 using PinetreeShop.CQRS.Infrastructure.Commands;
 using PinetreeShop.CQRS.Infrastructure.Events;
 using PinetreeShop.CQRS.Persistence;
@@ -10,12 +11,11 @@ using Xunit;
 
 namespace PinetreeShop.Domain.Tests
 {
-    public abstract class TestBase
+    public abstract class AggregateTestBase<TAggregate> where TAggregate : IAggregate, new()
     {
         protected TestEventStore _eventStore = new TestEventStore();
         protected AggregateRepository _aggregateRepository;
         protected List<IEvent> _preConditions = new List<IEvent>();
-        protected ProcessManagerRepository _processManagerRepository;
 
         protected abstract IDomainEntry BuildApplication();        
 
@@ -29,19 +29,16 @@ namespace PinetreeShop.Domain.Tests
             _preConditions = existingEvents.ToList();
         }
 
-        protected void When(ICommand command)
+        protected void When<TCommand>(TCommand command)
+            where TCommand : ICommand
         {
             var app = BuildApplication();
-            app.ExecuteCommand(command);
+            app.ExecuteCommand<TCommand, TAggregate>(command);
         }
 
-        protected void When(IEvent evt)
-        {
-            var app = BuildApplication();
-            app.HandleEvent(evt);
-        }
-
-        protected void WhenThrows<TException>(ICommand command) where TException : Exception
+        protected void WhenThrows<TCommand, TException>(TCommand command)
+            where TCommand : ICommand
+            where TException : Exception
         {
             Assert.Throws(typeof(TException), () => When(command));
         }
@@ -62,24 +59,6 @@ namespace PinetreeShop.Domain.Tests
             {
                 Assert.True(ObjectsAreEqual(le.L, le.E));
             }
-        }
-
-        protected void Then(params ICommand[] expectedCommands)
-        {
-            var latestCommands = _eventStore.GetLatestCommands();
-            var expectedCommandsList = expectedCommands != null
-                ? expectedCommands.ToList()
-                : new List<ICommand>();
-
-            Assert.Equal(latestCommands.Count(), expectedCommandsList.Count);
-
-            var latestAndExpected = latestCommands.Zip(expectedCommandsList, (l, e) => new { L = l, E = e });
-
-            foreach (var le in latestAndExpected)
-            {
-                Assert.True(ObjectsAreEqual(le.L, le.E));
-            }
-
         }
 
         private bool ObjectsAreEqual(object evt1, object evt2)

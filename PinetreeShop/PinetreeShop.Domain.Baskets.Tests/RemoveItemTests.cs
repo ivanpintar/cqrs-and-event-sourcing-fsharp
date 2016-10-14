@@ -65,7 +65,7 @@ namespace PinetreeShop.Domain.Baskets.Tests
 
             Given(InitialEvents.ToArray());
 
-            WhenThrows<InvalidStateException>(new RemoveItemFromBasket(id, productId, 10));
+            WhenThrows<RemoveItemFromBasket, InvalidStateException>(new RemoveItemFromBasket(id, productId, 10));
         }
 
         [Fact]

@@ -29,7 +29,7 @@ namespace PinetreeShop.Domain.Baskets
             RegisterEventHandler<BasketCheckedOut>(Apply);
         }
 
-        internal static IAggregate Create(CreateBasket cmd)
+        internal static BasketAggregate Create(CreateBasket cmd)
         {
             return new BasketAggregate(cmd);
         }

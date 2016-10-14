@@ -42,7 +42,7 @@
   <ItemGroup>
     <Compile Include="Commands.cs" />
     <Compile Include="DomainEntry.cs" />
-    <Compile Include="OrderProcessEventHandler.cs" />
+    <Compile Include="EventHandlers.cs" />
     <Compile Include="OrderProcessManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
