@@ -172,10 +172,6 @@
       <Project>{2248252D-5385-42B4-BCD4-281CA370087E}</Project>
       <Name>PinetreeShop.Domain.Shared</Name>
     </ProjectReference>
-    <ProjectReference Include="..\PinetreeShop.Domain\PinetreeShop.Domain.csproj">
-      <Project>{8604EBD4-4C55-46BA-B7BA-2CA6153B56FA}</Project>
-      <Name>PinetreeShop.Domain</Name>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -5,7 +5,7 @@ using PinetreeShop.Domain.Baskets.Commands;
 
 namespace PinetreeShop.Domain.Baskets
 {
-    public class DomainEntry
+    public class DomainEntry : IDomainEntry
     {
         private IAggregateRepository _aggregateRepository;
         private IProcessManagerRepository _processManagerRepository;

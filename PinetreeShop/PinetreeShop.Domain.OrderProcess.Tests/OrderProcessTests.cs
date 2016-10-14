@@ -12,9 +12,9 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace PinetreeShop.Domain.Tests.OrderProcess
+namespace PinetreeShop.Domain.OrderProcess.Tests
 {
-    public class OrderProcessTests : TestBase
+    public class OrderProcessTests : OrderProcessTestBase
     {
         Guid orderId = Guid.NewGuid();
         Guid basketId = Guid.NewGuid();

@@ -7,7 +7,7 @@ using PinetreeShop.Domain.Orders.Events;
 
 namespace PinetreeShop.Domain.OrderProcess
 {
-    public class DomainEntry
+    public class DomainEntry : IDomainEntry
     {
         private IAggregateRepository _aggregateRepository;
         private IProcessManagerRepository _processManagerRepository;

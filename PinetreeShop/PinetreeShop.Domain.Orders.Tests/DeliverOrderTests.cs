@@ -1,16 +1,15 @@
-﻿using System;
-using Xunit;
-using PinetreeShop.Domain.Orders.Events;
-using System.Collections.Generic;
+﻿using PinetreeShop.CQRS.Infrastructure.Events;
 using PinetreeShop.Domain.Orders.Commands;
-using PinetreeShop.Domain.Tests.Order.Exceptions;
-using System.Linq;
-using PinetreeShop.CQRS.Infrastructure.Events;
+using PinetreeShop.Domain.Orders.Events;
 using PinetreeShop.Domain.Shared.Types;
+using PinetreeShop.Domain.Tests.Order.Exceptions;
+using System;
+using System.Collections.Generic;
+using Xunit;
 
-namespace PinetreeShop.Domain.Tests.Order
+namespace PinetreeShop.Domain.Orders.Tests
 {
-    public class ShipOrderTests : TestBase
+    public class DeliverOrderTests : OrderTestBase
     {
         Guid id = Guid.NewGuid();
         Guid basketId = Guid.NewGuid();
@@ -18,17 +17,17 @@ namespace PinetreeShop.Domain.Tests.Order
         Guid causationAndCorrelationId = Guid.NewGuid();
 
         [Fact]
-        public void When_ShipOrder_OrderShipped()
+        public void When_DeliverOrder_OrderDelivered()
         {
             Given(InitialEvents);
 
-            var command = new ShipOrder(id);
+            var command = new DeliverOrder(id);
             command.Metadata.CausationId = command.Metadata.CommandId;
             command.Metadata.CorrelationId = causationAndCorrelationId;
 
             When(command);
 
-            var expectedEvent = new OrderShipped(id, shippingAddress);
+            var expectedEvent = new OrderDelivered(id, shippingAddress);
             expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
             expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
 
@@ -36,12 +35,12 @@ namespace PinetreeShop.Domain.Tests.Order
         }
 
         [Fact]
-        public void When_ShipOrderCancelled_ThrowOrderCancelledException()
+        public void When_DeliverOrderCancelled_ThrowOrderCancelledException()
         {
-            var events = InitialEvents.ToList();
-            events.Add(new OrderCancelled(id));
-            Given(events.ToArray());
-            WhenThrows<InvalidOrderStateException>(new ShipOrder(id));
+            Given(
+                new OrderCreated(id, basketId, OrderLines, shippingAddress), 
+                new OrderCancelled(id));
+            WhenThrows<InvalidOrderStateException>(new DeliverOrder(id));
         }
 
         private IEvent[] InitialEvents
@@ -50,7 +49,8 @@ namespace PinetreeShop.Domain.Tests.Order
             {
                 return new IEvent[]
                 {
-                    new OrderCreated(id, basketId, OrderLines, shippingAddress)
+                    new OrderCreated(id, basketId, OrderLines, shippingAddress),
+                    new OrderShipped(id,shippingAddress)
                 };
             }
         }

@@ -8,9 +8,9 @@ using System.Linq;
 using PinetreeShop.Domain.Shared.Types;
 using PinetreeShop.Domain.Shared.Exceptions;
 
-namespace PinetreeShop.Domain.Tests.Order
+namespace PinetreeShop.Domain.Orders.Tests
 {
-    public class CreateOrderTests : TestBase
+    public class CreateOrderTests : OrderTestBase
     {
         Guid id = Guid.NewGuid();
         Guid basketId = Guid.NewGuid();

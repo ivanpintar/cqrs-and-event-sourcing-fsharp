@@ -1,19 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\xunit.runner.visualstudio.2.1.0\build\net20\xunit.runner.visualstudio.props" Condition="Exists('..\packages\xunit.runner.visualstudio.2.1.0\build\net20\xunit.runner.visualstudio.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{117D52E7-FA11-46DF-BB75-E82A291A76FE}</ProjectGuid>
+    <ProjectGuid>{F4117AC2-4F34-4F90-BC78-38A411BB8376}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PinetreeShop.Domain.Tests</RootNamespace>
-    <AssemblyName>PinetreeShop.Domain.Tests</AssemblyName>
+    <RootNamespace>PinetreeShop.Domain.Products.Tests</RootNamespace>
+    <AssemblyName>PinetreeShop.Domain.Products.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,10 +30,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -63,36 +56,42 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CancelProductReservationsTests.cs" />
+    <Compile Include="ChangeProductQuantityTests.cs" />
+    <Compile Include="CreateProductTests.cs" />
+    <Compile Include="ProductTestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestBase.cs" />
+    <Compile Include="ReserveProductTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PinetreeShop.CQRS.Infrastructure\PinetreeShop.CQRS.Infrastructure.csproj">
-      <Project>{1F715587-CCCE-4289-B3B7-FD3299475337}</Project>
+      <Project>{1f715587-ccce-4289-b3b7-fd3299475337}</Project>
       <Name>PinetreeShop.CQRS.Infrastructure</Name>
     </ProjectReference>
     <ProjectReference Include="..\PinetreeShop.CQRS.Persistence\PinetreeShop.CQRS.Persistence.csproj">
-      <Project>{0E2B6EBB-B5EA-4FF4-833F-AD02F424A7FB}</Project>
+      <Project>{0e2b6ebb-b5ea-4ff4-833f-ad02f424a7fb}</Project>
       <Name>PinetreeShop.CQRS.Persistence</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PinetreeShop.Domain.Products\PinetreeShop.Domain.Products.csproj">
+      <Project>{b7147caf-cdf3-459a-82b8-ece194143ba9}</Project>
+      <Name>PinetreeShop.Domain.Products</Name>
     </ProjectReference>
     <ProjectReference Include="..\PinetreeShop.Domain.Shared\PinetreeShop.Domain.Shared.csproj">
       <Project>{2248252d-5385-42b4-bcd4-281ca370087e}</Project>
       <Name>PinetreeShop.Domain.Shared</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PinetreeShop.Domain.Tests\PinetreeShop.Domain.Tests.csproj">
+      <Project>{117d52e7-fa11-46df-bb75-e82a291a76fe}</Project>
+      <Name>PinetreeShop.Domain.Tests</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\xunit.runner.visualstudio.2.1.0\build\net20\xunit.runner.visualstudio.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xunit.runner.visualstudio.2.1.0\build\net20\xunit.runner.visualstudio.props'))" />
-  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

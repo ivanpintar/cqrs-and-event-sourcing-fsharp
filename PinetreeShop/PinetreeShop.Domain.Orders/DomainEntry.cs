@@ -5,7 +5,7 @@ using PinetreeShop.Domain.Orders.Commands;
 
 namespace PinetreeShop.Domain.Orders
 {
-    public class DomainEntry
+    public class DomainEntry : IDomainEntry
     {
         private IAggregateRepository _aggregateRepository;
         private IProcessManagerRepository _processManagerRepository;

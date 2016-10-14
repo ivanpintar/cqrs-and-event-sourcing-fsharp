@@ -4,9 +4,9 @@ using PinetreeShop.Domain.Shared.Exceptions;
 using System;
 using Xunit;
 
-namespace PinetreeShop.Domain.Tests.Basket
+namespace PinetreeShop.Domain.Baskets.Tests
 {
-    public class CreateBasketTests : TestBase
+    public class CreateBasketTests : BasketTestBase
     {
         Guid id = Guid.NewGuid();
         Guid causationAndCorrelationId = Guid.NewGuid();

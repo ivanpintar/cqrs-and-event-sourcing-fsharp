@@ -8,9 +8,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace PinetreeShop.Domain.Tests.Basket
+namespace PinetreeShop.Domain.Baskets.Tests
 {
-    public class RemoveItemTests : TestBase
+    public class RemoveItemTests : BasketTestBase
     {
         Guid id = Guid.NewGuid();
         Guid productId = Guid.NewGuid();

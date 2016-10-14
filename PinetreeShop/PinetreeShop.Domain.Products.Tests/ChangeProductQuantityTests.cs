@@ -4,9 +4,9 @@ using PinetreeShop.Domain.Products.Exceptions;
 using System;
 using Xunit;
 
-namespace PinetreeShop.Domain.Tests.Product
+namespace PinetreeShop.Domain.Products.Tests
 {
-    public class ChangeProductQuantityTests : TestBase
+    public class ChangeProductQuantityTests : ProductTestBase
     {
         Guid id = Guid.NewGuid();
         Guid causationAndCorrelationId = Guid.NewGuid();

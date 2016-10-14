@@ -8,9 +8,9 @@ using PinetreeShop.Domain.Baskets.Exceptions;
 using System.Collections.Generic;
 using PinetreeShop.Domain.Shared.Types;
 
-namespace PinetreeShop.Domain.Tests.Basket
+namespace PinetreeShop.Domain.Baskets.Tests
 {
-    public class CheckOutTests : TestBase
+    public class CheckOutTests : BasketTestBase
     {
         Guid id = Guid.NewGuid();
         Guid productId = Guid.NewGuid();

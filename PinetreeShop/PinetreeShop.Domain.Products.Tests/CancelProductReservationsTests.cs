@@ -4,9 +4,9 @@ using PinetreeShop.Domain.Products.Events;
 using System;
 using Xunit;
 
-namespace PinetreeShop.Domain.Tests.Product
+namespace PinetreeShop.Domain.Products.Tests
 {
-    public class CancelProductReservationsTests : TestBase
+    public class CancelProductReservationsTests : ProductTestBase
     {
         Guid id = Guid.NewGuid();
         Guid basketId = Guid.NewGuid();

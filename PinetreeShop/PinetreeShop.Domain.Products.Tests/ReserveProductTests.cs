@@ -4,9 +4,9 @@ using System;
 using Xunit;
 using PinetreeShop.CQRS.Infrastructure.Events;
 
-namespace PinetreeShop.Domain.Tests.Product
+namespace PinetreeShop.Domain.Products.Tests
 {
-    public class ReserveProductTests : TestBase
+    public class ReserveProductTests : ProductTestBase
     {
         Guid id = Guid.NewGuid();
         Guid basketId = Guid.NewGuid();
