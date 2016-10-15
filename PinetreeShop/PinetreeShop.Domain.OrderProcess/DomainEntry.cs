@@ -8,30 +8,28 @@ namespace PinetreeShop.Domain.OrderProcess
 {
     public class DomainEntry : IDomainEntry
     {
-        private IAggregateRepository _aggregateRepository;
         private IProcessManagerRepository _processManagerRepository;
-        private ICommandDispatcher _commandDispatcher;
-        private IEventListener _eventListener;
+        private IEventHandler _eventHandler;
 
         public DomainEntry(
-            IEventListener eventListener,
+            IEventHandler eventHandler,
             IProcessManagerRepository processManagerRepository)
         {
-            _eventListener = eventListener;
+            _eventHandler = eventHandler;
             _processManagerRepository = processManagerRepository;
             InitializeEventListener();
         }
 
         private void InitializeEventListener()
         {
-            _eventListener.RegisterHandler(EventHandlers.BasketCheckedOut);
-            _eventListener.RegisterHandler(EventHandlers.ProductReserved);
-            _eventListener.RegisterHandler(EventHandlers.ProductReservationFailed);
-            _eventListener.RegisterHandler(EventHandlers.OrderCreated);
-            _eventListener.RegisterHandler(EventHandlers.OrderCancelled);
-            _eventListener.RegisterHandler(EventHandlers.CreateOrderFailed);
-            _eventListener.RegisterHandler(EventHandlers.OrderDelivered);
-            _eventListener.RegisterHandler(EventHandlers.OrderShipped);
+            _eventHandler.RegisterHandler(EventHandlers.BasketCheckedOut);
+            _eventHandler.RegisterHandler(EventHandlers.ProductReserved);
+            _eventHandler.RegisterHandler(EventHandlers.ProductReservationFailed);
+            _eventHandler.RegisterHandler(EventHandlers.OrderCreated);
+            _eventHandler.RegisterHandler(EventHandlers.OrderCancelled);
+            _eventHandler.RegisterHandler(EventHandlers.CreateOrderFailed);
+            _eventHandler.RegisterHandler(EventHandlers.OrderDelivered);
+            _eventHandler.RegisterHandler(EventHandlers.OrderShipped);
         }
 
         public void ExecuteCommand<TCommand, TAggregate>(TCommand command)
@@ -45,7 +43,7 @@ namespace PinetreeShop.Domain.OrderProcess
             where TEvent : IEvent
             where TProcessManager : IProcessManager, new()
         {
-            _eventListener.HandleEvent<TEvent, TProcessManager>(evt);
+            _eventHandler.HandleEvent<TEvent, TProcessManager>(evt);
         }
     }
 }

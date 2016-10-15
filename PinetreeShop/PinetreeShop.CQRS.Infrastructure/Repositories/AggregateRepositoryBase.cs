@@ -13,9 +13,9 @@ namespace PinetreeShop.CQRS.Infrastructure.Repositories
             return aggregate.Version - events.Count;
         }
 
-        protected TResult BuildAggregate<TResult>(IEnumerable<IEvent> events) where TResult : IAggregate, new()
+        protected TAggregate BuildAggregate<TAggregate>(IEnumerable<IEvent> events) where TAggregate : IAggregate, new()
         {
-            var result = new TResult();
+            var result = new TAggregate();
             foreach(var evt in events)
             {
                 result.ApplyEvent(evt);
@@ -24,6 +24,6 @@ namespace PinetreeShop.CQRS.Infrastructure.Repositories
         }
 
         public abstract void SaveAggregate<TAggregate>(TAggregate aggregate) where TAggregate : IAggregate;
-        public abstract TResult GetAggregateById<TResult>(Guid id) where TResult : IAggregate, new();
+        public abstract TAggregate GetAggregateById<TAggregate>(Guid id) where TAggregate : IAggregate, new();
     }
 }

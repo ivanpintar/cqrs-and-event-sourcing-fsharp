@@ -6,7 +6,7 @@ namespace PinetreeShop.CQRS.Infrastructure.Commands
 {
     public class CommandDispatcher : ICommandDispatcher
     {
-        private Dictionary<Type, object> _commandHandlers = new Dictionary<Type, object>();
+        private Dictionary<Type, Func<IAggregate, ICommand, IAggregate>> _commandHandlers = new Dictionary<Type, Func<IAggregate, ICommand, IAggregate>>();
         private IAggregateRepository _aggregateRepository;
 
         public CommandDispatcher(IAggregateRepository aggregateRepository)
@@ -14,17 +14,20 @@ namespace PinetreeShop.CQRS.Infrastructure.Commands
             _aggregateRepository = aggregateRepository;
         }
 
-        public void RegisterHandler<TCommand, TAggregate>(Func<TAggregate, TCommand, TAggregate> handler)
+        public void RegisterHandler<TCommand, TAggregate>(Func<TAggregate, TCommand, TAggregate> handler) 
             where TCommand : class, ICommand
-            where TAggregate : IAggregate
-
+            where TAggregate : class, IAggregate, new()
         {
-            _commandHandlers.Add(typeof(TCommand), handler);
-        }
+            Func<IAggregate, ICommand, IAggregate> handler2 = (aggregate, command) =>
+            {
+                return handler(aggregate as TAggregate, command as TCommand);
+            };
 
-        public void ExecuteCommand<TCommand, TAggregate>(TCommand command)
-            where TCommand : ICommand
-            where TAggregate : IAggregate, new()
+            _commandHandlers.Add(typeof(TCommand), handler2);
+        }
+                
+        public void ExecuteCommand<TAggregate>(ICommand command)
+            where TAggregate : class, IAggregate, new()
         {
             var commandType = command.GetType();
 
@@ -33,9 +36,9 @@ namespace PinetreeShop.CQRS.Infrastructure.Commands
                 throw new ApplicationException($"Missing handler for {commandType.Name}");
             }
 
-            var aggregate = _aggregateRepository.GetAggregateById<TAggregate>(command.AggregateId);
+            IAggregate aggregate = _aggregateRepository.GetAggregateById<TAggregate>(command.AggregateId);
 
-            aggregate = (_commandHandlers[commandType] as Func<TAggregate, TCommand, TAggregate>)(aggregate, command);
+            aggregate = (_commandHandlers[commandType] as Func<IAggregate, ICommand, IAggregate>)(aggregate, command);
 
             foreach (var evt in aggregate.UncommittedEvents)
             {
@@ -43,7 +46,7 @@ namespace PinetreeShop.CQRS.Infrastructure.Commands
                 evt.Metadata.CorrelationId = command.Metadata.CorrelationId;
             }
 
-            _aggregateRepository.SaveAggregate(aggregate);
-        }
+            _aggregateRepository.SaveAggregate(aggregate as TAggregate);
+        }        
     }
 }

@@ -25,7 +25,7 @@ namespace PinetreeShop.Domain.Products
             where TCommand : ICommand
             where TAggregate : IAggregate, new()
         {
-            _commandDispatcher.ExecuteCommand<TCommand, TAggregate>(command);
+            _commandDispatcher.ExecuteCommand<ProductAggregate>(command);
         }
         
         private void InitializeCommandDispatcher()

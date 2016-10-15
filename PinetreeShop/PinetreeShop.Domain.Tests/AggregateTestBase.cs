@@ -3,7 +3,6 @@ using PinetreeShop.CQRS.Infrastructure;
 using PinetreeShop.CQRS.Infrastructure.Commands;
 using PinetreeShop.CQRS.Infrastructure.Events;
 using PinetreeShop.CQRS.Persistence;
-using PinetreeShop.CQRS.Persistence.InMemory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,7 +44,7 @@ namespace PinetreeShop.Domain.Tests
 
         protected void Then(params IEvent[] expectedEvents)
         {
-            var latestEvents = _eventStore.GetLatestEvents().ToList();
+            var latestEvents = _eventStore.LatestEvents.ToList();
             var expectedEventsList = expectedEvents != null
                 ? expectedEvents.ToList()
                 : new List<IEvent>();

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace PinetreeShop.CQRS.Persistence.Exceptions
+namespace PinetreeShop.CQRS.Infrastructure.Exceptions
 {
     [Serializable]
     public class ProcessManagerNotFoundException : Exception

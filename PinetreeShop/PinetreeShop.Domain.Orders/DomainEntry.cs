@@ -25,7 +25,7 @@ namespace PinetreeShop.Domain.Orders
             where TCommand : ICommand
             where TAggregate : IAggregate, new()
         {
-            _commandDispatcher.ExecuteCommand<TCommand, TAggregate>(command);
+            _commandDispatcher.ExecuteCommand<OrderAggregate>(command);
         }
 
         public void HandleEvent<TEvent, TProcessManager>(TEvent evt)

@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace PinetreeShop.CQRS.Infrastructure.Events
 {
-    public class EventListener : IEventListener
+    public class EventHandler : IEventHandler
     {
         private Dictionary<Type, object> _eventHandlers = new Dictionary<Type, object>();
         private IProcessManagerRepository _processManagerRepository;
 
-        public EventListener(IProcessManagerRepository processManagerRepository)
+        public EventHandler(IProcessManagerRepository processManagerRepository)
         {
             _processManagerRepository = processManagerRepository;
         }
@@ -40,7 +40,7 @@ namespace PinetreeShop.CQRS.Infrastructure.Events
 
             processManager = (_eventHandlers[eventType] as Func<TProcessManager, TEvent, TProcessManager>)(processManager, evt);
 
-            foreach (var cmd in processManager.UndispatchedCommands)
+            foreach (var cmd in processManager.UndispatchedCommands.SelectMany(x => x.Value))
             {
                 cmd.Metadata.CausationId = evt.Metadata.EventId;
                 cmd.Metadata.CorrelationId = evt.Metadata.CorrelationId;

@@ -27,8 +27,8 @@ namespace PinetreeShop.CQRS.Infrastructure
             _uncommittedEvents.Clear();
         }
 
-        private List<ICommand> _undispatchedCommands = new List<ICommand>();
-        public IEnumerable<ICommand> UndispatchedCommands { get { return _undispatchedCommands; } }
+        private Dictionary<Type, List<ICommand>> _undispatchedCommands = new Dictionary<Type, List<ICommand>>();
+        public Dictionary<Type, List<ICommand>> UndispatchedCommands { get { return _undispatchedCommands; } }
 
         public void ClearUndispatchedCommands()
         {
@@ -58,9 +58,14 @@ namespace PinetreeShop.CQRS.Infrastructure
             }
         }
 
-        protected void DispatchCommand(ICommand command)
+        protected void DispatchCommand<TAggregate>(ICommand command)
         {
-            _undispatchedCommands.Add(command);
+            var type = typeof(TAggregate);
+            if (!_undispatchedCommands.ContainsKey(type))
+            {
+                _undispatchedCommands[type] = new List<ICommand>();
+            }
+            _undispatchedCommands[type].Add(command);
         }
 
         protected void RegisterEventHandler<T>(Action<T> handler) where T : class

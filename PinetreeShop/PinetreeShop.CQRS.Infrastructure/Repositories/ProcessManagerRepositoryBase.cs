@@ -11,9 +11,9 @@ namespace PinetreeShop.CQRS.Infrastructure.Repositories
             return processManager.Version - events.Count;
         }
 
-        protected TResult BuildProcessManager<TResult>(IEnumerable<IEvent> events) where TResult : IProcessManager, new()
+        protected TProcessManager BuildProcessManager<TProcessManager>(IEnumerable<IEvent> events) where TProcessManager : IProcessManager, new()
         {
-            var result = new TResult();
+            var result = new TProcessManager();
             foreach(var evt in events)
             {
                 result.Transition(evt);
@@ -25,6 +25,6 @@ namespace PinetreeShop.CQRS.Infrastructure.Repositories
         }
 
         public abstract void SaveProcessManager<TProcessManager>(TProcessManager aggregate) where TProcessManager : IProcessManager;
-        public abstract TResult GetProcessManagerById<TResult>(Guid id) where TResult : IProcessManager, new();
+        public abstract TProcessManager GetProcessManagerById<TProcessManager>(Guid id) where TProcessManager : IProcessManager, new();
     }
 }

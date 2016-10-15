@@ -1,6 +1,7 @@
-﻿using PinetreeShop.CQRS.Infrastructure.Events;
+﻿using PinetreeShop.CQRS.Infrastructure;
+using PinetreeShop.CQRS.Infrastructure.Events;
 using PinetreeShop.CQRS.Infrastructure.Repositories;
-using PinetreeShop.CQRS.Persistence.Exceptions;
+using PinetreeShop.CQRS.Infrastructure.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,15 +17,15 @@ namespace PinetreeShop.CQRS.Persistence
             _eventStore = eventStore;
         }
 
-        public override TResult GetAggregateById<TResult>(Guid id)
+        public override TAggregate GetAggregateById<TAggregate>(Guid id)
         {
-            var events = GetEventsForAggregate(id);
+            var events = GetEventsForAggregate<TAggregate>(id);
             if (events.Any())
             {
-                return BuildAggregate<TResult>(events);
+                return BuildAggregate<TAggregate>(events);
             }
 
-            return default(TResult);
+            return default(TAggregate);
         }
 
         public override void SaveAggregate<TAggregate>(TAggregate aggregate)
@@ -34,7 +35,7 @@ namespace PinetreeShop.CQRS.Persistence
 
             if (expectedVersion >= 0)
             {
-                var existingEvents = GetEventsForAggregate(aggregate.AggregateId);
+                var existingEvents = GetEventsForAggregate<TAggregate>(aggregate.AggregateId);
                 var currentversion = existingEvents.Count - 1;
                 if (currentversion != expectedVersion)
                 {
@@ -42,13 +43,13 @@ namespace PinetreeShop.CQRS.Persistence
                 }
             }
 
-            _eventStore.CommitEvents(eventsToSave);
+            _eventStore.CommitEvents<TAggregate>(eventsToSave);
             aggregate.ClearUncommittedEvents();
         }
-
-        private List<IEvent> GetEventsForAggregate(Guid aggregateId)
+        
+        private List<IEvent> GetEventsForAggregate<TAggregate>(Guid aggregateId) where TAggregate : IAggregate
         {
-            return _eventStore.Events.Where(e => e.AggregateId == aggregateId).ToList();
+            return _eventStore.GetEvents(typeof(TAggregate).Name, aggregateId, 0).ToList();                
         }
     }
 }

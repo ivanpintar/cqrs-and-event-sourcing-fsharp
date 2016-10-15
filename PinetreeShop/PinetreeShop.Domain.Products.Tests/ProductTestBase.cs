@@ -9,7 +9,7 @@ namespace PinetreeShop.Domain.Products.Tests
     {
         protected override IDomainEntry BuildApplication()
         {
-            _eventStore.AddPreviousEvents(_preConditions);
+            _eventStore.AddPreviousEvents<ProductAggregate>(_preConditions);
             _aggregateRepository = new AggregateRepository(_eventStore);
             var commandDispatcher = new CommandDispatcher(_aggregateRepository);
 

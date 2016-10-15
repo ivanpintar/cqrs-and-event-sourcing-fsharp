@@ -13,7 +13,7 @@ namespace PinetreeShop.CQRS.Infrastructure
         IEnumerable<IEvent> UncommittedEvents { get; }
         void ClearUncommittedEvents();
 
-        IEnumerable<ICommand> UndispatchedCommands { get; }
+        Dictionary<Type, List<ICommand>> UndispatchedCommands { get; }
         void ClearUndispatchedCommands();
 
         void Transition(IEvent evt);    

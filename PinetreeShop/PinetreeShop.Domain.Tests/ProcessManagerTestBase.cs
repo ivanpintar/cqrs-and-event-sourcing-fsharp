@@ -3,7 +3,6 @@ using PinetreeShop.CQRS.Infrastructure;
 using PinetreeShop.CQRS.Infrastructure.Commands;
 using PinetreeShop.CQRS.Infrastructure.Events;
 using PinetreeShop.CQRS.Persistence;
-using PinetreeShop.CQRS.Persistence.InMemory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +13,7 @@ namespace PinetreeShop.Domain.Tests
     public abstract class ProcessManagerTestBase<TProcessManager> where TProcessManager : IProcessManager, new()
     {
         protected TestEventStore _eventStore = new TestEventStore();
-        protected List<IEvent> _preConditions = new List<IEvent>();
+        protected List<Tuple<Type, IEvent>> _preConditions = new List<Tuple<Type, IEvent>>();
         protected ProcessManagerRepository _processManagerRepository;
 
         protected abstract IDomainEntry BuildApplication();        
@@ -24,7 +23,7 @@ namespace PinetreeShop.Domain.Tests
             _preConditions.Clear();
         }
 
-        protected void Given(params IEvent[] existingEvents)
+        protected void Given(params Tuple<Type, IEvent>[] existingEvents)
         {
             _preConditions = existingEvents.ToList();
         }
@@ -38,12 +37,12 @@ namespace PinetreeShop.Domain.Tests
 
         protected void Then(params ICommand[] expectedCommands)
         {
-            var latestCommands = _eventStore.GetLatestCommands();
+            var latestCommands = _eventStore.LatestCommands;
             var expectedCommandsList = expectedCommands != null
                 ? expectedCommands.ToList()
                 : new List<ICommand>();
 
-            Assert.Equal(latestCommands.Count(), expectedCommandsList.Count);
+            Assert.Equal(expectedCommandsList.Count, latestCommands.Count());
 
             var latestAndExpected = latestCommands.Zip(expectedCommandsList, (l, e) => new { L = l, E = e });
 
@@ -77,6 +76,13 @@ namespace PinetreeShop.Domain.Tests
             var json2 = JsonConvert.SerializeObject(obj2);
 
             return json1 == json2;
+        }
+        
+        protected List<Tuple<Type, IEvent>> _initialEvents = new List<Tuple<Type, IEvent>>();
+
+        protected void AddInitialEvent<TAggregate>(IEvent evt)
+        {
+            _initialEvents.Add(new Tuple<Type, IEvent>(typeof(TAggregate), evt));
         }
     }
 }

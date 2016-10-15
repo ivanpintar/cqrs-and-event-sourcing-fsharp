@@ -25,7 +25,7 @@ namespace PinetreeShop.Domain.Baskets
             where TCommand : ICommand
             where TAggregate : IAggregate, new()
         {
-            _commandDispatcher.ExecuteCommand<TCommand, TAggregate>(command);
+            _commandDispatcher.ExecuteCommand<BasketAggregate>(command);
         }
 
         private void InitializeCommandDispatcher()
