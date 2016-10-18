@@ -9,10 +9,10 @@ namespace PinetreeShop.Domain.OrderProcess
     public class DomainEntry : IDomainEntry
     {
         private IProcessManagerRepository _processManagerRepository;
-        private IEventHandler _eventHandler;
+        private IProcessEventHandler _eventHandler;
 
         public DomainEntry(
-            IEventHandler eventHandler,
+            IProcessEventHandler eventHandler,
             IProcessManagerRepository processManagerRepository)
         {
             _eventHandler = eventHandler;

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
-namespace PinetreeShop.Domain.Tests
+namespace PinetreeShop.CQRS.Infrastructure.Tests
 {
     public class TestEventStore : IEventStore
     {
@@ -37,6 +37,11 @@ namespace PinetreeShop.Domain.Tests
 
         public IEnumerable<ICommand> DeQueueCommands(string queueName)
         {
+            if(!_commandQueues.ContainsKey(queueName) || _commandQueues[queueName] == null)
+            {
+                return Enumerable.Empty<ICommand>();
+            }
+
             var commands = _commandQueues[queueName].ToList();
             _commandQueues[queueName].Clear();
             return commands;

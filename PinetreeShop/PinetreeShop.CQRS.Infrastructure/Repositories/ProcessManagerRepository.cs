@@ -1,13 +1,11 @@
 ﻿using PinetreeShop.CQRS.Infrastructure.Commands;
 using PinetreeShop.CQRS.Infrastructure.Events;
-using PinetreeShop.CQRS.Infrastructure.Repositories;
 using PinetreeShop.CQRS.Infrastructure.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using PinetreeShop.CQRS.Infrastructure;
 
-namespace PinetreeShop.CQRS.Persistence
+namespace PinetreeShop.CQRS.Infrastructure.Repositories
 {
     public class ProcessManagerRepository : ProcessManagerRepositoryBase
     {
@@ -30,9 +28,9 @@ namespace PinetreeShop.CQRS.Persistence
 
         public override void SaveProcessManager<TProcessManager>(TProcessManager processManager)
         {
-            var handledEvents = processManager.UncommittedEvents.ToList();
+            var eventsToSave = processManager.UncommittedEvents.ToList();
             var commandsToDispatch = processManager.UndispatchedCommands;
-            var expectedVersion = CalculateExpectedVersion(processManager, handledEvents);
+            var expectedVersion = CalculateExpectedVersion(processManager, eventsToSave);
 
             if (expectedVersion >= 0)
             {
@@ -43,10 +41,11 @@ namespace PinetreeShop.CQRS.Persistence
                     throw new WrongExpectedVersionException($"{processManager.GetType()}:{processManager.ProcessId}: Expected version {expectedVersion} but the version is {currentversion}");
                 }
             }
+            
+            _eventStore.CommitEvents<TProcessManager>(eventsToSave);
+            processManager.ClearUncommittedEvents();
 
             DispatchCommands(commandsToDispatch);
-
-            processManager.ClearUncommittedEvents();
             processManager.ClearUndispatchedCommands();
         }
 
@@ -60,7 +59,7 @@ namespace PinetreeShop.CQRS.Persistence
 
         private List<IEvent> GetEventsForProcessManager<TProcessManager>(Guid processManagerId)
         {
-            return _eventStore.GetEvents(typeof(TProcessManager).Name, processManagerId, 0).ToList();
+            return _eventStore.GetProcessEvents(processManagerId, 0).ToList();
         }
     }
 }

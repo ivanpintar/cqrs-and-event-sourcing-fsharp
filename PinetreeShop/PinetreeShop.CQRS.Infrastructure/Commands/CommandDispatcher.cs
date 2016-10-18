@@ -15,19 +15,19 @@ namespace PinetreeShop.CQRS.Infrastructure.Commands
         }
 
         public void RegisterHandler<TCommand, TAggregate>(Func<TAggregate, TCommand, TAggregate> handler) 
-            where TCommand : class, ICommand
-            where TAggregate : class, IAggregate, new()
+            where TCommand : ICommand
+            where TAggregate : IAggregate, new()
         {
             Func<IAggregate, ICommand, IAggregate> handler2 = (aggregate, command) =>
             {
-                return handler(aggregate as TAggregate, command as TCommand);
+                return handler((TAggregate)aggregate, (TCommand)command);
             };
 
             _commandHandlers.Add(typeof(TCommand), handler2);
         }
-                
+
         public void ExecuteCommand<TAggregate>(ICommand command)
-            where TAggregate : class, IAggregate, new()
+            where TAggregate : IAggregate, new()
         {
             var commandType = command.GetType();
 
@@ -46,7 +46,7 @@ namespace PinetreeShop.CQRS.Infrastructure.Commands
                 evt.Metadata.CorrelationId = command.Metadata.CorrelationId;
             }
 
-            _aggregateRepository.SaveAggregate(aggregate as TAggregate);
+            _aggregateRepository.SaveAggregate((TAggregate)aggregate);
         }        
     }
 }

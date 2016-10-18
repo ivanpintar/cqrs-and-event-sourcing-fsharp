@@ -1,5 +1,5 @@
 ﻿using PinetreeShop.CQRS.Infrastructure.Commands;
-using PinetreeShop.CQRS.Persistence;
+using PinetreeShop.CQRS.Infrastructure.Repositories;
 using PinetreeShop.Domain.Tests;
 
 namespace PinetreeShop.Domain.Baskets.Tests

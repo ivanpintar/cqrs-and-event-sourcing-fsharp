@@ -2,7 +2,7 @@
 
 namespace PinetreeShop.CQRS.Infrastructure.Events
 {
-    public interface IEventHandler
+    public interface IProcessEventHandler
     {
         void HandleEvent<TEvent, TProcessManager>(TEvent command)
             where TEvent : IEvent

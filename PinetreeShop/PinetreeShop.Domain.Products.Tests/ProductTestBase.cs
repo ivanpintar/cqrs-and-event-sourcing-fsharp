@@ -1,6 +1,5 @@
 ﻿using PinetreeShop.CQRS.Infrastructure.Commands;
-using PinetreeShop.CQRS.Infrastructure.Events;
-using PinetreeShop.CQRS.Persistence;
+using PinetreeShop.CQRS.Infrastructure.Repositories;
 using PinetreeShop.Domain.Tests;
 
 namespace PinetreeShop.Domain.Products.Tests

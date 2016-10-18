@@ -40,11 +40,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Repositories\AggregateRepository.cs" />
     <Compile Include="Commands\CommandQueueListener.cs" />
     <Compile Include="Commands\ICommandDispatcher.cs" />
+    <Compile Include="Repositories\ProcessManagerRepository.cs" />
     <Compile Include="Events\EventStreamListener.cs" />
-    <Compile Include="Events\EventHandler.cs" />
-    <Compile Include="Events\IEventHandler.cs" />
+    <Compile Include="Events\ProcessEventHandler.cs" />
+    <Compile Include="Events\IProcessEventHandler.cs" />
     <Compile Include="AggregateBase.cs" />
     <Compile Include="Commands\CommandDispatcher.cs" />
     <Compile Include="Exceptions\AggregateNotFoundException.cs" />

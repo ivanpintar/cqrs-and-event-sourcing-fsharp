@@ -1,29 +1,29 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
-//namespace PinetreeShop.CQRS.Infrastructure.Commands
-//{
-//    public class CommandQueueListener
-//    {
-//        private Dictionary<string, ICommandDispatcher> _commandDispatchers;
-//        private IEventStore _eventStore;
+namespace PinetreeShop.CQRS.Infrastructure.Commands
+{
+    public class CommandQueueListener<TAggregate> where TAggregate : class, IAggregate, new()
+    {
+        private ICommandDispatcher _commandDispatcher;
+        private IEventStore _eventStore;
+        private string _queueName;
 
-//        public CommandQueueListener(IEventStore eventStore)
-//        {
-//            _eventStore = eventStore;
-//        }
+        public CommandQueueListener(IEventStore eventStore, ICommandDispatcher commandDispatcher)
+        {
+            _eventStore = eventStore;
+            _commandDispatcher = commandDispatcher;
+            _queueName = typeof(TAggregate).Name;
+        }
 
-//        public void DequeueAndDispatchCommand()
-//        {
-//            foreach (var queueName in _commandDispatchers.Keys)
-//            {
-//                var commands = _eventStore.DeQueueCommands(queueName);
-//                foreach (var cmd in commands)
-//                {
-//                    _commandDispatchers[queueName].ExecuteCommand(cmd);
-//                }
-//            }
-//        }
-//    }
-//}
+        public void DequeueAndDispatchCommand()
+        {
+            var commands = _eventStore.DeQueueCommands(_queueName);
+            foreach(var cmd in commands)
+            {
+                _commandDispatcher.ExecuteCommand<TAggregate>(cmd);
+            }
+        }
+    }
+}

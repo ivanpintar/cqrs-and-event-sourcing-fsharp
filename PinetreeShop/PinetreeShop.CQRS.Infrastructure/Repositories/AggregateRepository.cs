@@ -1,12 +1,10 @@
-﻿using PinetreeShop.CQRS.Infrastructure;
-using PinetreeShop.CQRS.Infrastructure.Events;
-using PinetreeShop.CQRS.Infrastructure.Repositories;
+﻿using PinetreeShop.CQRS.Infrastructure.Events;
 using PinetreeShop.CQRS.Infrastructure.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PinetreeShop.CQRS.Persistence
+namespace PinetreeShop.CQRS.Infrastructure.Repositories
 {
     public class AggregateRepository : AggregateRepositoryBase
     {
@@ -49,7 +47,7 @@ namespace PinetreeShop.CQRS.Persistence
         
         private List<IEvent> GetEventsForAggregate<TAggregate>(Guid aggregateId) where TAggregate : IAggregate
         {
-            return _eventStore.GetEvents(typeof(TAggregate).Name, aggregateId, 0).ToList();                
+            return _eventStore.GetAggregateEvents<TAggregate>(aggregateId, 0).ToList();                
         }
     }
 }
