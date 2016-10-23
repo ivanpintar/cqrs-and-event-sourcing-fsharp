@@ -8,12 +8,13 @@ namespace PinetreeShop.CQRS.Infrastructure
     public interface IEventStore
     {
         IEnumerable<IEvent> GetEvents(int startingPoint);
-        IEnumerable<IEvent> GetEvents<TAggregate>(int startingPoint) where TAggregate : IAggregate;
-        IEnumerable<IEvent> GetAggregateEvents<TAggregate>(Guid aggregateId, int startingPoint) where TAggregate : IAggregate;
-        IEnumerable<IEvent> GetProcessEvents(Guid correlatioId, int startingPoint);
+        IEnumerable<IEvent> GetEvents<TAggregate>(int lastEventNumber) where TAggregate : IAggregate;
+        IEnumerable<IEvent> GetAggregateEvents(Guid aggregateId, int lastEventNumber);
+        IEnumerable<IEvent> GetProcessEvents(Guid correlatioId, int lastEventNumber);
         void CommitEvents<TAggregate>(IEnumerable<IEvent> events);
 
         IEnumerable<ICommand> DeQueueCommands(string queueName);
         void DispatchCommands(string queueName, IEnumerable<ICommand> commands);
+        void DispatchCommand(string queueName, ICommand command);
     }
 }

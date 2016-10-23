@@ -22,7 +22,7 @@ namespace PinetreeShop.CQRS.Infrastructure.Commands
 
     public class RevertCommandBase : CommandBase
     {
-        public string Reason { get; set; }
+        public string Reason { get; private set; }
 
         public RevertCommandBase(Guid aggregateId, string reason) : base(aggregateId)
         {

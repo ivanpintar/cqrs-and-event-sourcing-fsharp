@@ -15,11 +15,11 @@ namespace PinetreeShop.Domain.Baskets.Commands
     public class AddItemToBasket : CommandBase
     {
         public Guid ProductId { get; set; }
-        public uint Quantity { get; set; }
+        public int Quantity { get; set; }
         public string ProductName { get; set; }
         public decimal Price { get; set; }
 
-        public AddItemToBasket(Guid basketId, Guid productId, string productName, decimal price, uint quantity) : base(basketId)
+        public AddItemToBasket(Guid basketId, Guid productId, string productName, decimal price, int quantity) : base(basketId)
         {
             ProductId = productId;
             Quantity = quantity;
@@ -31,9 +31,9 @@ namespace PinetreeShop.Domain.Baskets.Commands
     public class RemoveItemFromBasket : CommandBase
     {
         public Guid ProductId { get; set; }
-        public uint Quantity { get; set; }
+        public int Quantity { get; set; }
 
-        public RemoveItemFromBasket(Guid basketId, Guid productId, uint quantity) : base(basketId)
+        public RemoveItemFromBasket(Guid basketId, Guid productId, int quantity) : base(basketId)
         {
             ProductId = productId;
             Quantity = quantity;

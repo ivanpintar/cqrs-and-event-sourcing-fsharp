@@ -14,11 +14,11 @@ namespace PinetreeShop.Domain.Baskets.Events
     public class BasketItemAdded : EventBase
     {
         public Guid ProductId { get; private set; }
-        public uint Quantity { get; private set; }
+        public int Quantity { get; private set; }
         public string ProductName { get; private set; }
         public decimal Price { get; private set; }
 
-        public BasketItemAdded(Guid basketId, Guid productId, string productName, decimal price, uint quantity) : base(basketId)
+        public BasketItemAdded(Guid basketId, Guid productId, string productName, decimal price, int quantity) : base(basketId)
         {
             ProductId = productId;
             ProductName = productName;
@@ -30,9 +30,9 @@ namespace PinetreeShop.Domain.Baskets.Events
     public class BasketItemRemoved : EventBase
     {
         public Guid ProductId { get; private set; }
-        public uint Quantity { get; private set; }
+        public int Quantity { get; private set; }
 
-        public BasketItemRemoved(Guid basketId, Guid productId, uint quantity) : base(basketId)
+        public BasketItemRemoved(Guid basketId, Guid productId, int quantity) : base(basketId)
         {
             ProductId = productId;
             Quantity = quantity;

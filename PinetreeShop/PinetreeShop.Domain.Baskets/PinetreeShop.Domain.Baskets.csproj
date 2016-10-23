@@ -41,9 +41,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasketAggregate.cs" />
-    <Compile Include="CommandHandlers.cs" />
     <Compile Include="Commands.cs" />
-    <Compile Include="DomainEntry.cs" />
+    <Compile Include="BasketCommandDispatcher.cs" />
     <Compile Include="Events.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

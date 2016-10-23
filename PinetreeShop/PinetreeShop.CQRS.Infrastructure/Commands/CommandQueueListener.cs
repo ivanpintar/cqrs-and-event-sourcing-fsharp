@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PinetreeShop.CQRS.Infrastructure.Events;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,12 +18,22 @@ namespace PinetreeShop.CQRS.Infrastructure.Commands
             _queueName = typeof(TAggregate).Name;
         }
 
-        public void DequeueAndDispatchCommand()
+        public void DequeueAndDispatchCommands()
         {
             var commands = _eventStore.DeQueueCommands(_queueName);
             foreach(var cmd in commands)
             {
-                _commandDispatcher.ExecuteCommand<TAggregate>(cmd);
+                try
+                {
+                    _commandDispatcher.ExecuteCommand<TAggregate>(cmd);
+                }
+                catch (Exception ex)
+                {
+                    var failureEvent = new EventFailedBase(cmd.AggregateId, ex.Message);
+                    failureEvent.Metadata.CausationId = cmd.Metadata.CausationId;
+                    failureEvent.Metadata.CorrelationId = cmd.Metadata.CorrelationId;
+                    _eventStore.CommitEvents<TAggregate>(new List<IEvent> { failureEvent });
+                }
             }
         }
     }

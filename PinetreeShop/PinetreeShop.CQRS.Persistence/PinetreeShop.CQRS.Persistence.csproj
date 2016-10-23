@@ -45,6 +45,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -53,6 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="JsonConversionSettings.cs" />
     <Compile Include="Migrations\201610150633262_Base.cs" />
     <Compile Include="Migrations\201610150633262_Base.Designer.cs">
       <DependentUpon>201610150633262_Base.cs</DependentUpon>

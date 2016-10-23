@@ -58,7 +58,7 @@ namespace PinetreeShop.CQRS.Infrastructure.Tests
             var commandListener = new CommandQueueListener<TestAggregate>(_eventStore, commandDispatcher);
 
             _eventStore.DispatchCommands(typeof(TestAggregate).Name, new List<ICommand> { new TestCommand(cmdGuid) });
-            commandListener.DequeueAndDispatchCommand();
+            commandListener.DequeueAndDispatchCommands();
 
             Assert.True(state == 2);
         }

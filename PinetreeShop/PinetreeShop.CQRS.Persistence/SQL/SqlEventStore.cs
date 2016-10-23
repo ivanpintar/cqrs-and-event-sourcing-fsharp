@@ -6,13 +6,12 @@ using PinetreeShop.CQRS.Infrastructure;
 using PinetreeShop.CQRS.Persistence.SQL.Entities;
 using Newtonsoft.Json;
 using System.Linq;
+using System.Transactions;
 
 namespace PinetreeShop.CQRS.Persistence.SQL
 {
     public class SqlEventStore : IEventStore
     {
-        private static JsonSerializerSettings _jsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
-
         public void CommitEvents<TAggregate>(IEnumerable<IEvent> events)
         {
             using (var ctx = new EventStoreContext())
@@ -26,7 +25,7 @@ namespace PinetreeShop.CQRS.Persistence.SQL
                         CausationId = evt.Metadata.CausationId,
                         CorrelationId = evt.Metadata.CorrelationId,
                         EventId = evt.Metadata.EventId,
-                        EventPayload = JsonConvert.SerializeObject(evt, _jsonSettings)
+                        EventPayload = JsonConvert.SerializeObject(evt, JsonConversionSettings.SerializerSettings)
                     });
                 }
                 ctx.SaveChanges();
@@ -35,7 +34,8 @@ namespace PinetreeShop.CQRS.Persistence.SQL
 
         public IEnumerable<ICommand> DeQueueCommands(string queueName)
         {
-            using (var ctx = new EventStoreContext())
+            using(var transaction = new TransactionScope())
+            using (var ctx = new EventStoreContext())          
             {
                 var commands = ctx.Commands
                     .Where(c => c.QueueName == queueName)
@@ -43,7 +43,9 @@ namespace PinetreeShop.CQRS.Persistence.SQL
                     .ToList();
 
                 ctx.Commands.RemoveRange(commands);
+                ctx.SaveChanges();
 
+                transaction.Complete();
                 return commands.Select(DeserializeCommand).ToList();
             }
         }
@@ -59,7 +61,7 @@ namespace PinetreeShop.CQRS.Persistence.SQL
                         AggregateId = cmd.AggregateId,
                         CausationId =cmd.Metadata.CausationId,
                         CommandId = cmd.Metadata.CommandId,
-                        CommandPayload  = JsonConvert.SerializeObject(cmd, _jsonSettings),
+                        CommandPayload  = JsonConvert.SerializeObject(cmd, JsonConversionSettings.SerializerSettings),
                         CorrelationId = cmd.Metadata.CorrelationId,
                         QueueName = queueName                        
                     });
@@ -68,56 +70,61 @@ namespace PinetreeShop.CQRS.Persistence.SQL
             }
         }
 
-        public IEnumerable<IEvent> GetEvents(int startingPoint)
+        public void DispatchCommand(string queueName, ICommand command)
+        {
+            var cmds = new List<ICommand> { command };
+            DispatchCommands(queueName, cmds);
+        }
+
+        public IEnumerable<IEvent> GetEvents(int lastEventNumber)
         {
             using (var ctx = new EventStoreContext())
             {
                 var events = ctx.Events
+                    .Where(e => e.Id > lastEventNumber)
                     .OrderBy(e => e.Id)
-                    .Skip(startingPoint)
                     .ToList();
 
                 return events.Select(DeserializeEvent).ToList();
             }
         }
 
-        public IEnumerable<IEvent> GetEvents<TAggregate>(int startingPoint) where TAggregate : IAggregate
+        public IEnumerable<IEvent> GetEvents<TAggregate>(int lastEventNumber) where TAggregate : IAggregate
         {
             using (var ctx = new EventStoreContext())
             {
                 var events = ctx.Events
                     .Where(e => e.Category == typeof(TAggregate).Name)
+                    .Where(e => e.Id > lastEventNumber)
                     .OrderBy(e => e.Id)
-                    .Skip(startingPoint)
                     .ToList();
 
                 return events.Select(DeserializeEvent).ToList();
             }
         }
 
-        public IEnumerable<IEvent> GetAggregateEvents<TAggregate>(Guid aggregateId, int startingPoint) where TAggregate : IAggregate
+        public IEnumerable<IEvent> GetAggregateEvents(Guid aggregateId, int lastEventNumber)
         {
             using (var ctx = new EventStoreContext())
             {
                 var events = ctx.Events
-                    .Where(e => e.Category == typeof(TAggregate).Name)
                     .Where(e => e.AggregateId == aggregateId)
+                    .Where(e => e.Id > lastEventNumber)
                     .OrderBy(e => e.Id)
-                    .Skip(startingPoint)
                     .ToList();
 
                 return events.Select(DeserializeEvent).ToList();
             }
         }
 
-        public IEnumerable<IEvent> GetProcessEvents(Guid correlationId, int startingPoint)
+        public IEnumerable<IEvent> GetProcessEvents(Guid correlationId, int lastEventNumber)
         {
             using (var ctx = new EventStoreContext())
             {
                 var events = ctx.Events
                     .Where(e => e.CorrelationId == correlationId)
+                    .Where(e => e.Id > lastEventNumber)
                     .OrderBy(e => e.Id)
-                    .Skip(startingPoint)
                     .ToList();
 
                 return events.Select(DeserializeEvent).ToList();
@@ -126,12 +133,14 @@ namespace PinetreeShop.CQRS.Persistence.SQL
         
         private ICommand DeserializeCommand(CommandEntity cmd)
         {
-            return JsonConvert.DeserializeObject(cmd.CommandPayload) as ICommand;
+            return (ICommand)JsonConvert.DeserializeObject(cmd.CommandPayload, JsonConversionSettings.SerializerSettings);
         }
 
-        private IEvent DeserializeEvent(EventEntity evt)
+        private IEvent DeserializeEvent(EventEntity entity)
         {
-            return JsonConvert.DeserializeObject(evt.EventPayload) as IEvent;
+            var evt = (IEvent)JsonConvert.DeserializeObject(entity.EventPayload, JsonConversionSettings.SerializerSettings);
+            evt.Metadata.EventNumber = entity.Id;
+            return evt;
         }
-    }
+    };
 }

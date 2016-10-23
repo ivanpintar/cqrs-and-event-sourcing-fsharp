@@ -54,6 +54,12 @@ namespace PinetreeShop.Domain.Tests
             }
         }
 
+        public void DispatchCommand(string queueName, ICommand command)
+        {
+            var cmds = new List<ICommand> { command };
+            DispatchCommands(queueName, cmds);
+        }
+
         public IEnumerable<IEvent> GetEvents(int startingPoint)
         {
             return _events.Select(t => t.Item2).Skip(startingPoint).ToList();
@@ -68,10 +74,9 @@ namespace PinetreeShop.Domain.Tests
                 .ToList();
         }
 
-        public IEnumerable<IEvent> GetAggregateEvents<TAggregate>(Guid aggregateId, int startingPoint) where TAggregate : IAggregate
-        {
+        public IEnumerable<IEvent> GetAggregateEvents(Guid aggregateId, int startingPoint)
+        { 
             return _events
-                .Where(t => t.Item1 == typeof(TAggregate))
                 .Select(t => t.Item2)
                 .Where(e => e.AggregateId == aggregateId)
                 .Skip(startingPoint)

@@ -17,7 +17,7 @@ namespace PinetreeShop.Domain.Tests
         protected List<Tuple<Type, IEvent>> _preConditions = new List<Tuple<Type, IEvent>>();
         protected ProcessManagerRepository _processManagerRepository;
 
-        protected abstract IDomainEntry BuildApplication();        
+        protected abstract IProcessEventHandler BuildApplication();        
 
         protected void TearDown()
         {
@@ -32,8 +32,8 @@ namespace PinetreeShop.Domain.Tests
         protected void When<TEvent>(TEvent command)
             where TEvent : IEvent
         {
-            var app = BuildApplication();
-            app.HandleEvent<TEvent, TProcessManager>(command);
+            var handler = BuildApplication();
+            handler.HandleEvent<TEvent, TProcessManager>(command);
         }
 
         protected void Then(params ICommand[] expectedCommands)

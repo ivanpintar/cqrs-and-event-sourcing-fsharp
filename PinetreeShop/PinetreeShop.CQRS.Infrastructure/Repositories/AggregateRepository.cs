@@ -17,7 +17,7 @@ namespace PinetreeShop.CQRS.Infrastructure.Repositories
 
         public override TAggregate GetAggregateById<TAggregate>(Guid id)
         {
-            var events = GetEventsForAggregate<TAggregate>(id);
+            var events = GetEventsForAggregate(id);
             if (events.Any())
             {
                 return BuildAggregate<TAggregate>(events);
@@ -33,7 +33,7 @@ namespace PinetreeShop.CQRS.Infrastructure.Repositories
 
             if (expectedVersion >= 0)
             {
-                var existingEvents = GetEventsForAggregate<TAggregate>(aggregate.AggregateId);
+                var existingEvents = GetEventsForAggregate(aggregate.AggregateId);
                 var currentversion = existingEvents.Count - 1;
                 if (currentversion != expectedVersion)
                 {
@@ -45,9 +45,9 @@ namespace PinetreeShop.CQRS.Infrastructure.Repositories
             aggregate.ClearUncommittedEvents();
         }
         
-        private List<IEvent> GetEventsForAggregate<TAggregate>(Guid aggregateId) where TAggregate : IAggregate
+        private List<IEvent> GetEventsForAggregate(Guid aggregateId)
         {
-            return _eventStore.GetAggregateEvents<TAggregate>(aggregateId, 0).ToList();                
+            return _eventStore.GetAggregateEvents(aggregateId, 0).ToList();                
         }
     }
 }

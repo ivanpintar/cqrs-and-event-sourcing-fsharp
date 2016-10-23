@@ -24,10 +24,10 @@ namespace PinetreeShop.CQRS.Infrastructure.Tests
             var eventStore = new TestEventStore();
             eventStore.AddPreviousEvents(new List<Tuple<Type, IEvent>> { new Tuple<Type, IEvent>(typeof(AggregateBase), new SomeEvent(Guid.NewGuid())) });
 
-            var eventListener = new EventStreamListener(eventStore, 0);
+            var eventListener = new EventStreamListener(eventStore);
             eventListener.RegisterEventHandler<SomeEvent>(evt => { state = 2; });
 
-            eventListener.ReadAndHandleLatestEvents();
+            eventListener.ReadAndHandleLatestEvents<AggregateBase>(0);
 
             Assert.True(state == 2);
         }

@@ -10,8 +10,8 @@ namespace PinetreeShop.CQRS.Infrastructure.Events
 
     public class EventBase : IEvent
     {
-        public Guid AggregateId { get; set; }
-        public Metadata Metadata { get; set; }
+        public Guid AggregateId { get; private set; }
+        public Metadata Metadata { get; private set; }
 
         public EventBase(Guid aggregateId)
         {
@@ -23,7 +23,7 @@ namespace PinetreeShop.CQRS.Infrastructure.Events
     public class EventFailedBase : EventBase
     {
         public static string UnknownError = "UnknownError";        
-        public string Reason { get; set; }
+        public string Reason { get; private set; }
 
         public EventFailedBase(Guid aggregateId, string reason) : base(aggregateId)
         {
@@ -37,6 +37,7 @@ namespace PinetreeShop.CQRS.Infrastructure.Events
         public Guid CausationId { get; set; }
         public Guid CorrelationId { get; set; }
         public DateTime Date { get; private set; }
+        public int EventNumber { get; set; }
 
         public Metadata()
         {

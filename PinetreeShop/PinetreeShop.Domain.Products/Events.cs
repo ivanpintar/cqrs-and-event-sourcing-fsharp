@@ -28,9 +28,9 @@ namespace PinetreeShop.Domain.Products.Events
     public class ProductReserved : EventBase
     {
         public Guid BasketId { get; private set; }
-        public uint QuantityToReserve { get; private set; }
+        public int QuantityToReserve { get; private set; }
 
-        public ProductReserved(Guid productId, Guid basketId, uint quantityToReserve) : base(productId)
+        public ProductReserved(Guid productId, Guid basketId, int quantityToReserve) : base(productId)
         {
             BasketId = basketId;
             QuantityToReserve = quantityToReserve;
@@ -42,9 +42,9 @@ namespace PinetreeShop.Domain.Products.Events
         public static string NotAvailable = "NotAvailable";
 
         public Guid BasketId { get; private set; }
-        public uint Quantity { get; private set; }
+        public int Quantity { get; private set; }
 
-        public ProductReservationFailed(Guid productId, Guid basketId, uint quantity, string reason) : base(productId, reason)
+        public ProductReservationFailed(Guid productId, Guid basketId, int quantity, string reason) : base(productId, reason)
         {
             BasketId = basketId;
             Quantity = quantity;
@@ -53,9 +53,9 @@ namespace PinetreeShop.Domain.Products.Events
 
     public class ProductReservationCancelled : EventBase
     {
-        public uint Quantity { get; private set; }
+        public int Quantity { get; private set; }
 
-        public ProductReservationCancelled(Guid productId, uint quantity) : base(productId)
+        public ProductReservationCancelled(Guid productId, int quantity) : base(productId)
         {
             Quantity = quantity;
         }

@@ -72,10 +72,6 @@
       <Project>{0E2B6EBB-B5EA-4FF4-833F-AD02F424A7FB}</Project>
       <Name>PinetreeShop.CQRS.Persistence</Name>
     </ProjectReference>
-    <ProjectReference Include="..\PinetreeShop.Domain.Baskets\PinetreeShop.Domain.Baskets.csproj">
-      <Project>{73fb242d-8716-47a9-99c0-f288d4d6b021}</Project>
-      <Name>PinetreeShop.Domain.Baskets</Name>
-    </ProjectReference>
     <ProjectReference Include="..\PinetreeShop.Domain.OrderProcess\PinetreeShop.Domain.OrderProcess.csproj">
       <Project>{81ad4126-2867-42ae-bdb5-4cdec584114a}</Project>
       <Name>PinetreeShop.Domain.OrderProcess</Name>

@@ -6,13 +6,13 @@ namespace PinetreeShop.Domain.Orders.Tests
 {
     public class OrderTestBase : AggregateTestBase<OrderAggregate>
     {
-        protected override IDomainEntry BuildApplication()
+        protected override ICommandDispatcher BuildCommandDispatcher()
         {
             _eventStore.AddPreviousEvents<OrderAggregate>(_preConditions);
             _aggregateRepository = new AggregateRepository(_eventStore);
-            var commandDispatcher = new CommandDispatcher(_aggregateRepository);
+            var commandDispatcher = new OrderCommandDispatcher(_aggregateRepository);
 
-            return new DomainEntry(commandDispatcher, _aggregateRepository);
+            return commandDispatcher;
         }
     }
 }

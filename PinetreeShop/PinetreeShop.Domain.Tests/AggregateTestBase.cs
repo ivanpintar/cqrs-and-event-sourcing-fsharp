@@ -16,7 +16,7 @@ namespace PinetreeShop.Domain.Tests
         protected AggregateRepository _aggregateRepository;
         protected List<IEvent> _preConditions = new List<IEvent>();
 
-        protected abstract IDomainEntry BuildApplication();        
+        protected abstract ICommandDispatcher BuildCommandDispatcher();        
 
         protected void TearDown()
         {
@@ -31,8 +31,8 @@ namespace PinetreeShop.Domain.Tests
         protected void When<TCommand>(TCommand command)
             where TCommand : ICommand
         {
-            var app = BuildApplication();
-            app.ExecuteCommand<TCommand, TAggregate>(command);
+            var dispatcher = BuildCommandDispatcher();
+            dispatcher.ExecuteCommand<TAggregate>(command);
         }
 
         protected void WhenThrows<TCommand, TException>(TCommand command)
