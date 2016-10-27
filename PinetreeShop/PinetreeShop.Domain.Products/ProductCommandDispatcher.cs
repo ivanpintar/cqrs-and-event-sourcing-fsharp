@@ -11,7 +11,9 @@ namespace PinetreeShop.Domain.Products
         public ProductCommandDispatcher(IAggregateRepository aggregateRepository) : base(aggregateRepository)
         {
             RegisterHandler(Create);
-            RegisterHandler(ChangeQuantity);
+            RegisterHandler(SetQuantity);
+            RegisterHandler(AddToStock);
+            RegisterHandler(RemoveFromStock);
             RegisterHandler(Reserve);
             RegisterHandler(CancelReservation);
         }
@@ -26,9 +28,21 @@ namespace PinetreeShop.Domain.Products
             return ProductAggregate.Create(command as CreateProduct);
         };
 
-        private Func<ProductAggregate, ChangeProductQuantity, ProductAggregate> ChangeQuantity = (product, command) =>
+        private Func<ProductAggregate, SetProductQuantity, ProductAggregate> SetQuantity = (product, command) =>
         {
-            (product as ProductAggregate).ChangeQuantity(command as ChangeProductQuantity);
+            (product as ProductAggregate).SetQuantity(command as SetProductQuantity);
+            return product;
+        };
+
+        private Func<ProductAggregate, AddProductToStock, ProductAggregate> AddToStock = (product, command) =>
+        {
+            (product as ProductAggregate).AddToStock(command as AddProductToStock);
+            return product;
+        };
+
+        private Func<ProductAggregate, RemoveProductFromStock, ProductAggregate> RemoveFromStock = (product, command) =>
+        {
+            (product as ProductAggregate).RemoveFromStock(command as RemoveProductFromStock);
             return product;
         };
 

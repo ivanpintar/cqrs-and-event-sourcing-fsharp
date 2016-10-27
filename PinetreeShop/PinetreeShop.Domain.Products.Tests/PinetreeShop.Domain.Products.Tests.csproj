@@ -56,11 +56,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddProductToStockTests.cs" />
     <Compile Include="CancelProductReservationsTests.cs" />
     <Compile Include="ChangeProductQuantityTests.cs" />
     <Compile Include="CreateProductTests.cs" />
     <Compile Include="ProductTestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RemoveProductsFromStock.cs" />
     <Compile Include="ReserveProductTests.cs" />
   </ItemGroup>
   <ItemGroup>

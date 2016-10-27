@@ -5,7 +5,7 @@ namespace PinetreeShop.Domain.Shared.Exceptions
     [Serializable]
     public class DomainException : Exception
     {
-        public DomainException(Guid id, string message) : base($"Product {id}: {message}")
+        public DomainException(Guid id, string message) : base($"Aggregate {id}: {message}")
         {
         }
     }

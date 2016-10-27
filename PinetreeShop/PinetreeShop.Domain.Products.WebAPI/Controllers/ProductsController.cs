@@ -1,7 +1,6 @@
 ﻿using PinetreeShop.CQRS.Infrastructure;
 using PinetreeShop.CQRS.Infrastructure.Repositories;
 using PinetreeShop.CQRS.Persistence.SQL;
-using PinetreeShop.Domain.Products;
 using PinetreeShop.Domain.Products.Commands;
 using PinetreeShop.Domain.Products.ReadModel;
 using PinetreeShop.Domain.Products.WebAPI.Models;
@@ -46,9 +45,9 @@ namespace PinetreeShop.Domain.Products.WebAPI.Controllers
 
         [HttpPost]
         [Route("quantity")]
-        public bool ChangeQuantity([FromBody] ChangeQuantityModel model)
+        public bool ChangeQuantity([FromBody] SetQuantityModel model)
         {
-            var cmd = new ChangeProductQuantity(model.Id, model.Difference);
+            var cmd = new SetProductQuantity(model.Id, model.Quantity);
             _commandDispatcher.ExecuteCommand<ProductAggregate>(cmd);
             return true;
         }

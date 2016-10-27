@@ -35,6 +35,27 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PinetreeShop.Domain.Product
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PinetreeShop.Domain.Products.WebAPI", "PinetreeShop.Domain.Products.WebAPI\PinetreeShop.Domain.Products.WebAPI.csproj", "{8C9C68BF-1AF9-4CB1-B3F3-EF2737E6B8F5}"
 EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "PinetreeShop.Domain.Products.WebUI", "PinetreeShop.Domain.Products.WebUI\", "{54E0CA80-93BD-4F03-986A-5F8137656F51}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.6"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_60353"
+		Debug.AspNetCompiler.PhysicalPath = "PinetreeShop.Domain.Products.WebUI\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_60353\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_60353"
+		Release.AspNetCompiler.PhysicalPath = "PinetreeShop.Domain.Products.WebUI\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_60353\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "60353"
+		SlnRelativePath = "PinetreeShop.Domain.Products.WebUI\"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -89,6 +110,10 @@ Global
 		{8C9C68BF-1AF9-4CB1-B3F3-EF2737E6B8F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C9C68BF-1AF9-4CB1-B3F3-EF2737E6B8F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C9C68BF-1AF9-4CB1-B3F3-EF2737E6B8F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54E0CA80-93BD-4F03-986A-5F8137656F51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54E0CA80-93BD-4F03-986A-5F8137656F51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54E0CA80-93BD-4F03-986A-5F8137656F51}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{54E0CA80-93BD-4F03-986A-5F8137656F51}.Release|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -106,5 +131,6 @@ Global
 		{17DD0E38-4114-41C4-9391-7EDC723E6CA4} = {58973138-8686-4202-93F7-AA9954A6E79E}
 		{A7092447-A2B5-4074-8B28-7A847A37DAE1} = {58973138-8686-4202-93F7-AA9954A6E79E}
 		{8C9C68BF-1AF9-4CB1-B3F3-EF2737E6B8F5} = {58973138-8686-4202-93F7-AA9954A6E79E}
+		{54E0CA80-93BD-4F03-986A-5F8137656F51} = {58973138-8686-4202-93F7-AA9954A6E79E}
 	EndGlobalSection
 EndGlobal

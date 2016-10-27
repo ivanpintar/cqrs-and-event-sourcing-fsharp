@@ -51,14 +51,21 @@ namespace PinetreeShop.Domain.Products
             _quantity += evt.Difference;
         }
 
-        internal void ChangeQuantity(ChangeProductQuantity cmd)
+        internal void AddToStock(AddProductToStock cmd)
         {
-            var productId = cmd.AggregateId;
-            var difference = cmd.Difference;
+            var newQuantity = _quantity + cmd.Quantity;
+            ChangeQuantity(newQuantity);
+        }
 
-            if (_quantity + difference < 0) throw new QuantityChangeException(AggregateId, $"Quantity can't be negative. Quantity: {_quantity}, Diff: {difference}");
+        internal void RemoveFromStock(RemoveProductFromStock cmd)
+        {
+            var newQuantity = _quantity - cmd.Quantity;
+            ChangeQuantity(newQuantity);
+        }
 
-            RaiseEvent(new ProductQuantityChanged(productId, difference));
+        internal void SetQuantity(SetProductQuantity cmd)
+        {
+            ChangeQuantity(cmd.Quantity);
         }
 
         internal void CancelReservation(CancelProductReservation cmd)
@@ -91,6 +98,18 @@ namespace PinetreeShop.Domain.Products
             AggregateId = evt.AggregateId;
             _name = evt.Name;
             _price = evt.Price;
+        }
+
+        private void ChangeQuantity(int newQuantity)
+        {
+            var productId = AggregateId;
+            var difference = newQuantity - _quantity;
+
+            if (difference == 0) return;
+
+            if (_quantity + difference < 0) throw new QuantityChangeException(AggregateId, $"Quantity can't be negative. Quantity: {_quantity}, Diff: {difference}");
+
+            RaiseEvent(new ProductQuantityChanged(productId, difference));
         }
     }
 }

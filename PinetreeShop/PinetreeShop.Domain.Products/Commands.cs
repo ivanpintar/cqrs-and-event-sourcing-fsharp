@@ -1,5 +1,4 @@
-﻿using PinetreeShop.CQRS.Infrastructure;
-using PinetreeShop.CQRS.Infrastructure.Commands;
+﻿using PinetreeShop.CQRS.Infrastructure.Commands;
 using System;
 
 namespace PinetreeShop.Domain.Products.Commands
@@ -16,13 +15,33 @@ namespace PinetreeShop.Domain.Products.Commands
         }
     }
 
-    public class ChangeProductQuantity : CommandBase
+    public class RemoveProductFromStock : CommandBase
     {
-        public int Difference { get; private set; }
+        public int Quantity { get; private set; }
 
-        public ChangeProductQuantity(Guid productId, int difference) : base(productId)
+        public RemoveProductFromStock(Guid productId, int quantity) : base(productId)
         {
-            Difference = difference;
+            Quantity = quantity;
+        }
+    }
+
+    public class AddProductToStock : CommandBase
+    {
+        public int Quantity { get; private set; }
+
+        public AddProductToStock(Guid productId, int quantity) : base(productId)
+        {
+            Quantity = quantity;
+        }
+    }
+
+    public class SetProductQuantity : CommandBase
+    {
+        public int Quantity { get; private set; }
+
+        public SetProductQuantity(Guid productId, int quantity) : base(productId)
+        {
+                Quantity = quantity;
         }
     }
 
