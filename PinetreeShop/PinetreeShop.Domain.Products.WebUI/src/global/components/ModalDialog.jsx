@@ -27,8 +27,8 @@ class ModalDialog extends React.Component {
             saveButton = <Button bsStyle='primary' onClick={this.save}>{saveText}</Button>;
         }
 
-        let cancelText = this.props.cancelText || 'Close';
-        let cancelButton = <Button onClick={this.close}>{cancelText}</Button>;
+        let closeText = this.props.closeText || 'Close';
+        let closeButton = <Button onClick={this.close}>{closeText}</Button>;
 
         return (
             <span>
@@ -40,7 +40,7 @@ class ModalDialog extends React.Component {
                         {this.props.children}
                     </Modal.Body>
                     <Modal.Footer>
-                        {cancelButton}
+                        {closeButton}
                         {saveButton}
                     </Modal.Footer>
                 </Modal>

@@ -17,14 +17,21 @@ namespace PinetreeShop.Domain.Products.WebAPI.Controllers
         IEventStore _eventStore = new SqlEventStore();
         string _queueName = typeof(ProductAggregate).Name;
         private ProductCommandDispatcher _commandDispatcher;
+        private AggregateRepository _aggregateRepository;
 
         public ProductsController()
         {
-            _commandDispatcher = new ProductCommandDispatcher(new AggregateRepository(_eventStore));
+            _aggregateRepository = new AggregateRepository(_eventStore);
+            _commandDispatcher = new ProductCommandDispatcher(_aggregateRepository);
         }
-
-        [HttpGet]
-        [Route("")]
+        
+        [Route("stuff"), HttpGet]
+        public bool GetStuff()
+        {
+            return true;
+        }
+        
+        [Route("list"), HttpGet]
         public List<ProductModel> GetProducts() 
         {
             using(var ctx = new ProductContext())
@@ -33,23 +40,36 @@ namespace PinetreeShop.Domain.Products.WebAPI.Controllers
             }
         }
         
-        [HttpPost]
-        [Route("create")]
-        public bool CreateProduct([FromBody] CreateProductModel model)
+        [Route("create"), HttpPost]
+        public ProductModel CreateProduct([FromBody] CreateProductModel model)
         {
-            var cmd = new CreateProduct(Guid.NewGuid(), model.Name, model.Price);
+            var productId = Guid.NewGuid();
+
+            var cmd = new CreateProduct(productId, model.Name, model.Price);
             _commandDispatcher.ExecuteCommand<ProductAggregate>(cmd);
 
-            return true;
-        }
+            if(model.Quantity > 0)
+            {
+                return ChangeQuantity(new SetQuantityModel
+                {
+                    Id = productId,
+                    Quantity = model.Quantity
+                });
+            }
 
-        [HttpPost]
-        [Route("quantity")]
-        public bool ChangeQuantity([FromBody] SetQuantityModel model)
+            var product = _aggregateRepository.GetAggregateById<ProductAggregate>(productId);
+            return ProductModel.FromAggregate(product);
+        }
+        
+        [Route("quantity"), HttpPost]
+        public ProductModel ChangeQuantity([FromBody] SetQuantityModel model)
         {
             var cmd = new SetProductQuantity(model.Id, model.Quantity);
             _commandDispatcher.ExecuteCommand<ProductAggregate>(cmd);
-            return true;
+
+
+            var product = _aggregateRepository.GetAggregateById<ProductAggregate>(model.Id);
+            return ProductModel.FromAggregate(product);
         }
     }
 }

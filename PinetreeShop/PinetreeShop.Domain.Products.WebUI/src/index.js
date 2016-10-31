@@ -7,10 +7,10 @@ import { createStore, applyMiddleware } from 'redux';
 import { combineReducers } from 'redux-immutable';
 import App from './global/containers/App';
 import AppState from './global/models/appRecord';
-import Product from './products/models/productRecord';
 import { reducer as toastrReducer } from 'react-redux-toastr';
 import { products as productsReducer, filter as filterReducer } from './products/reducers';
 import ReduxToastr from 'react-redux-toastr';
+import { getProducts } from './products/actions';
 
 const reducers = combineReducers({ 
     toastr: toastrReducer,
@@ -18,22 +18,10 @@ const reducers = combineReducers({
     filter: filterReducer
 });
 
-let product = new Product({
-    id: 1,
-    name: 'test product',
-    price: 10.2,
-    quantity: 10,
-    reserved: 0
-});
-let product2 = new Product({
-    id: 2,
-    name: 'test product2',
-    price: 10.2,
-    quantity: 10,
-    reserved: 0
-});
 const initialState = new AppState({
-    products: Immutable.List([product, product2]),
+    products: Immutable.List(),
+    filter: '',
+    toastr: { toastrs: [] }
 });
 
 let store = createStore(reducers, initialState, applyMiddleware(thunk));
@@ -49,7 +37,9 @@ let appRoot = (
 
 let rootElement = document.getElementById('root');
 
-render(appRoot, rootElement)
+render(appRoot, rootElement);
+
+store.dispatch(getProducts());
 
 if (module.hot) {
     module.hot.accept();

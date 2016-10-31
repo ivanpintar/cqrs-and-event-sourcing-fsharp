@@ -5,10 +5,7 @@ import Product from './models/productRecord';
 const product = (state, action) => {
     switch (action.type) {
         case actionTypes.ADD_PRODUCT:
-            return new Product({
-                name: action.name,
-                price: action.price
-            });
+            return new Product(action.product);
         case actionTypes.SET_PRODUCT_QUANTITY:
             if(state.id !== action.id) return state;
             return state.set('quantity', action.quantity);

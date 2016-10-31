@@ -22,5 +22,17 @@ namespace PinetreeShop.Domain.Products.WebAPI.Models
                 Reserved = productEntity.Reserved
             };
         }
+
+        public static ProductModel FromAggregate(ProductAggregate productAggregate)
+        {
+            return new ProductModel
+            {
+                Id = productAggregate.AggregateId,
+                Name = productAggregate.Name,
+                Price = productAggregate.Price,
+                Quantity = productAggregate.Quantity,
+                Reserved = productAggregate.Reserved
+            };
+        }
     }
 }

@@ -14,8 +14,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        addProduct: (name, price) => {
-            dispatch(addProduct(name, price));
+        addProduct: (name, price, quantity) => {
+            dispatch(addProduct(name, price, quantity));
         },
         setQuantity: (id, diff) => {
             dispatch(setProductQuantity(id, diff));

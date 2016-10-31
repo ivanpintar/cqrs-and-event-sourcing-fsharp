@@ -7,16 +7,16 @@ namespace PinetreeShop.Domain.Products
 {
     public class ProductAggregate : AggregateBase
     {
-        private string _name;
-        private decimal _price;
-        private int _quantity;
-        private int _reserved;
-        private int AvailableQuantity { get { return _quantity - _reserved; } }
+        public string Name { get; set; }
+        public decimal Price { get; set; }
+        public int Quantity { get; set; }
+        public int Reserved { get; set; }
+        private int AvailableQuantity { get { return Quantity - Reserved; } }
 
         public ProductAggregate()
         {
-            _quantity = 0;
-            _reserved = 0;
+            Quantity = 0;
+            Reserved = 0;
 
             RegisterEventHandler<ProductCreated>(Apply);
             RegisterEventHandler<ProductQuantityChanged>(Apply);
@@ -38,28 +38,28 @@ namespace PinetreeShop.Domain.Products
 
         private void Apply(ProductReservationCancelled evt)
         {
-            _reserved -= evt.Quantity;
+            Reserved -= evt.Quantity;
         }
 
         private void Apply(ProductReserved evt)
         {
-            _reserved += evt.QuantityToReserve;
+            Reserved += evt.QuantityToReserve;
         }
 
         private void Apply(ProductQuantityChanged evt)
         {
-            _quantity += evt.Difference;
+            Quantity += evt.Difference;
         }
 
         internal void AddToStock(AddProductToStock cmd)
         {
-            var newQuantity = _quantity + cmd.Quantity;
+            var newQuantity = Quantity + cmd.Quantity;
             ChangeQuantity(newQuantity);
         }
 
         internal void RemoveFromStock(RemoveProductFromStock cmd)
         {
-            var newQuantity = _quantity - cmd.Quantity;
+            var newQuantity = Quantity - cmd.Quantity;
             ChangeQuantity(newQuantity);
         }
 
@@ -73,7 +73,7 @@ namespace PinetreeShop.Domain.Products
             var productId = cmd.AggregateId;
             var quantity = cmd.Quantity;
 
-            if (quantity > _reserved) quantity = _reserved;
+            if (quantity > Reserved) quantity = Reserved;
             RaiseEvent(new ProductReservationCancelled(productId, quantity));
         }
 
@@ -96,18 +96,18 @@ namespace PinetreeShop.Domain.Products
         private void Apply(ProductCreated evt)
         {
             AggregateId = evt.AggregateId;
-            _name = evt.Name;
-            _price = evt.Price;
+            Name = evt.Name;
+            Price = evt.Price;
         }
 
         private void ChangeQuantity(int newQuantity)
         {
             var productId = AggregateId;
-            var difference = newQuantity - _quantity;
+            var difference = newQuantity - Quantity;
 
             if (difference == 0) return;
 
-            if (_quantity + difference < 0) throw new QuantityChangeException(AggregateId, $"Quantity can't be negative. Quantity: {_quantity}, Diff: {difference}");
+            if (Quantity + difference < 0) throw new QuantityChangeException(AggregateId, $"Quantity can't be negative. Quantity: {Quantity}, Diff: {difference}");
 
             RaiseEvent(new ProductQuantityChanged(productId, difference));
         }
