@@ -5,7 +5,7 @@ const ProductRow = (product, clickToEdit) => (
         <td>{product.name}</td>
         <td>{product.price}</td>
         <td onClick={clickToEdit}>{product.quantity}</td>
-        <td>{product.quantity}</td>
+        <td>{product.reserved}</td>
     </tr>
 );
 
