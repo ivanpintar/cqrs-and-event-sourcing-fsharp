@@ -41,7 +41,7 @@ namespace PinetreeShop.Domain.Products.WebAPI.Controllers
         }
         
         [Route("create"), HttpPost]
-        public ProductModel CreateProduct([FromBody] CreateProductModel model)
+        public IHttpActionResult CreateProduct([FromBody] CreateProductModel model)
         {
             var productId = Guid.NewGuid();
 
@@ -58,18 +58,17 @@ namespace PinetreeShop.Domain.Products.WebAPI.Controllers
             }
 
             var product = _aggregateRepository.GetAggregateById<ProductAggregate>(productId);
-            return ProductModel.FromAggregate(product);
+            return Ok(ProductModel.FromAggregate(product));
         }
         
         [Route("quantity"), HttpPost]
-        public ProductModel ChangeQuantity([FromBody] SetQuantityModel model)
+        public IHttpActionResult ChangeQuantity([FromBody] SetQuantityModel model)
         {
             var cmd = new SetProductQuantity(model.Id, model.Quantity);
             _commandDispatcher.ExecuteCommand<ProductAggregate>(cmd);
 
-
             var product = _aggregateRepository.GetAggregateById<ProductAggregate>(model.Id);
-            return ProductModel.FromAggregate(product);
+            return Ok(ProductModel.FromAggregate(product));
         }
     }
 }

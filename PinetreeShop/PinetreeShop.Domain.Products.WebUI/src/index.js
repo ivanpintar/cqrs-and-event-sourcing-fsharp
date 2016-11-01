@@ -40,6 +40,7 @@ let rootElement = document.getElementById('root');
 render(appRoot, rootElement);
 
 store.dispatch(getProducts());
+setInterval(() => store.dispatch(getProducts()), 10000);
 
 if (module.hot) {
     module.hot.accept();

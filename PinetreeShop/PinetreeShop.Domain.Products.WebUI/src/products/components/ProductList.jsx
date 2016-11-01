@@ -43,7 +43,8 @@ class ProductList extends React.Component {
                 <Table  striped hover>
                     <thead>
                         <tr>
-                            <th className='col-md-6'>
+                            <th className='col-md-3'></th>
+                            <th className='col-md-3'>
                                 Name
                             </th>
                             <th className='col-md-2'>Price</th>
@@ -54,7 +55,7 @@ class ProductList extends React.Component {
                     <tbody>{productRows}</tbody>
                     <tfoot>
                         <tr>
-                            <td colSpan='4'>
+                            <td colSpan='5'>
                                 <Button onClick={() => this.showAddModal(true)}>Add Product</Button>
                             </td>
                         </tr>

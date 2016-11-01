@@ -1,5 +1,4 @@
-﻿import { toastr } from 'react-redux-toastr';
-import fetch from 'isomorphic-fetch';
+﻿import fetch from 'isomorphic-fetch';
 import config from '../config';
 
 const createRequest = (method, body) => ({
@@ -14,7 +13,7 @@ const createPostRequest = (body) => createRequest('POST', JSON.stringify(body));
 const createGetRequest = () => createRequest('GET');
 
 export const actionTypes = {
-    ADD_PRODUCT: 'ADD_PRODUCT',
+    ADD_OR_UPDATE_PRODUCT: 'ADD_OR_UPDATE_PRODUCT',
     SET_PRODUCT_QUANTITY: 'SET_PRODUCT_QUANTITY',
     FILTER_PRODUCTS: 'FILTER_PRODUCTS'
 }
@@ -27,7 +26,7 @@ export const getProducts = () => {
             .then(response => response.json())
             .then(products => {
                 products.forEach(product => dispatch({
-                    type: actionTypes.ADD_PRODUCT,
+                    type: actionTypes.ADD_OR_UPDATE_PRODUCT,
                     product
                 }));
             });
@@ -41,7 +40,7 @@ export const addProduct = (name, price, quantity) => {
         fetch(url, createPostRequest({ name, price, quantity }))
             .then(response => response.json())
             .then(product => dispatch({
-                type: actionTypes.ADD_PRODUCT,
+                type: actionTypes.ADD_OR_UPDATE_PRODUCT,
                 product
             }));
     };

@@ -2,8 +2,16 @@
 import { addProduct, setProductQuantity, filterProducts } from '../actions';
 import ProductList from '../components/ProductList';
 
+const sortProducts = (a,b) => {
+    if (a.name < b.name) return -1; 
+    if (a.name > b.name) return 1;
+    return 0; 
+}
+
 const getFilteredProducts = (products, filter) => {
-    return products.filter(p => p.name.indexOf(filter) >= 0);    
+    return products
+        .filter(p => p.name.indexOf(filter) >= 0)
+        .sort(sortProducts);    
 }
 
 const mapStateToProps = (state) => {
