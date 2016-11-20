@@ -1,8 +1,4 @@
-﻿using PinetreeShop.CQRS.Infrastructure.Commands;
-using PinetreeShop.CQRS.Infrastructure.Events;
-using PinetreeShop.CQRS.Infrastructure.Repositories;
-using PinetreeShop.CQRS.Infrastructure;
-using System;
+﻿using PinetreeShop.CQRS.Infrastructure.Events;
 
 namespace PinetreeShop.Domain.OrderProcess
 {

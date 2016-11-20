@@ -9,7 +9,7 @@ class AddToBasketModal extends React.Component{
         this.submit = this.submit.bind(this);
         this.close = this.close.bind(this);
         this.state = {
-            quantity: 0
+            quantity: 1
         }; 
     }
 
@@ -43,7 +43,7 @@ class AddToBasketModal extends React.Component{
                 onSave={this.submit}
                 title={title}>
                 <FormControl
-                    value={this.state.value}
+                    value={this.state.quantity}
                     type="text"
                     onChange={this.handleChange}/>     
             </ModalDialog>

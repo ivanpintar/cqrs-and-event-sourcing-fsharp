@@ -15,9 +15,13 @@ class Basket extends React.Component {
     }
 
     render() {
-        let { basket, changeQuantity } = this.props;
+        let { basket, changeQuantity, cancelBasket } = this.props;
         let { selectedOrder } = this.state;
         let orderLines = [];
+
+        if(!basket.id) {
+            return null;
+        }
 
         if(basket) {
             orderLines = basket.orderLines.map(p => 
@@ -47,7 +51,9 @@ class Basket extends React.Component {
                         <tr>
                             <td colSpan='4' className='text-right'>
                                 <Button>Check Out</Button>
-                                <Button bsStyle='danger'>Cancel</Button>
+                                <Button 
+                                    bsStyle='danger' 
+                                    onClick={() => cancelBasket(basket.id)}>Cancel</Button>
                             </td>
                         </tr>
                     </tfoot>

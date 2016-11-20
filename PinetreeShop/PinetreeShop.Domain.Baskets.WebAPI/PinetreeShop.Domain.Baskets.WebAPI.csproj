@@ -110,6 +110,7 @@
     </Compile>
     <Compile Include="Models\AddItemModel.cs" />
     <Compile Include="Models\BasketModel.cs" />
+    <Compile Include="Models\CancelModel.cs" />
     <Compile Include="Models\CheckOutModel.cs" />
     <Compile Include="Models\RemoveItemModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

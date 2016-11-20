@@ -87,9 +87,9 @@ namespace PinetreeShop.Domain.Baskets.WebAPI.Controllers
         }
 
         [Route("cancel"), HttpPost]
-        public IHttpActionResult Cancel([FromBody] Guid basketId)
+        public IHttpActionResult Cancel([FromBody] CancelModel model)
         {
-            var cmd = new CancelBasket(basketId);
+            var cmd = new CancelBasket(model.BasketId);
             var basket = _commandDispatcher.ExecuteCommand<BasketAggregate>(cmd);
 
             return Ok();

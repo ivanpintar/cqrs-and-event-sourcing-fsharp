@@ -20,7 +20,11 @@ export const actionTypes = {
 }
 
 export const dispatchBasketUpdate = (dispatch, basket) => {
-    localStorage.setItem('basketId', basket.id);
+    if(basket.id) {
+        localStorage.setItem('basketId', basket.id);
+    } else {
+        localStorage.removeItem('basketId');
+    }
 
     dispatch({
         type: actionTypes.UPDATE_BASKET,
@@ -71,6 +75,20 @@ export const getBasket = (basketId) => {
                 dispatch({
                     type: actionTypes.UPDATE_BASKET,
                     basket
+                });
+            });
+    }
+}
+
+export const cancelBasket = (basketId) => {
+    return dispatch => {
+        const url = config.BASKET_API_URL + '/cancel';
+
+        fetch(url, createPostRequest({ basketId }))
+            .then(response => {
+                dispatch({
+                    type: actionTypes.UPDATE_BASKET,
+                    basket: {}
                 });
             });
     }

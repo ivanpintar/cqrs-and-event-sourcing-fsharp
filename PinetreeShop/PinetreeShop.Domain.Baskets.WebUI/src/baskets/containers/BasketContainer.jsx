@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { changeQuantity, cancel, checkout } from '../actions';
+import { changeQuantity, cancelBasket, checkoutBasket } from '../actions';
 import Basket from '../components/Basket';
 
 const mapStateToProps = (state) => {
@@ -13,11 +13,11 @@ const mapDispatchToProps = (dispatch) => {
         changeQuantity: (productId, quantity) => {
             dispatch(changeQuantity(productId, quantity));
         },
-        checkout: (basketId, address) => {
-            dispatch(checkout(basketId, address));
+        checkoutBasket: (basketId, address) => {
+            dispatch(checkoutBasket(basketId, address));
         },
-        cancel: (basketId) => {
-            dispatch(cancel(basketId));
+        cancelBasket: (basketId) => {
+            dispatch(cancelBasket(basketId));
         }
 
     };
