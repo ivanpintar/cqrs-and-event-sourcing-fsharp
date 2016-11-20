@@ -17,18 +17,10 @@ namespace PinetreeShop.Domain.Products.WebAPI.Controllers
         IEventStore _eventStore = new SqlEventStore();
         string _queueName = typeof(ProductAggregate).Name;
         private ProductCommandDispatcher _commandDispatcher;
-        private AggregateRepository _aggregateRepository;
 
         public ProductsController()
         {
-            _aggregateRepository = new AggregateRepository(_eventStore);
-            _commandDispatcher = new ProductCommandDispatcher(_aggregateRepository);
-        }
-        
-        [Route("stuff"), HttpGet]
-        public bool GetStuff()
-        {
-            return true;
+            _commandDispatcher = new ProductCommandDispatcher(new AggregateRepository(_eventStore));
         }
         
         [Route("list"), HttpGet]
@@ -46,7 +38,7 @@ namespace PinetreeShop.Domain.Products.WebAPI.Controllers
             var productId = Guid.NewGuid();
 
             var cmd = new CreateProduct(productId, model.Name, model.Price);
-            _commandDispatcher.ExecuteCommand<ProductAggregate>(cmd);
+            var product = _commandDispatcher.ExecuteCommand<ProductAggregate>(cmd);
 
             if(model.Quantity > 0)
             {
@@ -57,7 +49,6 @@ namespace PinetreeShop.Domain.Products.WebAPI.Controllers
                 });
             }
 
-            var product = _aggregateRepository.GetAggregateById<ProductAggregate>(productId);
             return Ok(ProductModel.FromAggregate(product));
         }
         
@@ -65,9 +56,8 @@ namespace PinetreeShop.Domain.Products.WebAPI.Controllers
         public IHttpActionResult ChangeQuantity([FromBody] SetQuantityModel model)
         {
             var cmd = new SetProductQuantity(model.Id, model.Quantity);
-            _commandDispatcher.ExecuteCommand<ProductAggregate>(cmd);
+            var product = _commandDispatcher.ExecuteCommand<ProductAggregate>(cmd);
 
-            var product = _aggregateRepository.GetAggregateById<ProductAggregate>(model.Id);
             return Ok(ProductModel.FromAggregate(product));
         }
     }

@@ -14,8 +14,7 @@ const createGetRequest = () => createRequest('GET');
 
 export const actionTypes = {
     ADD_OR_UPDATE_PRODUCT: 'ADD_OR_UPDATE_PRODUCT',
-    SET_PRODUCT_QUANTITY: 'SET_PRODUCT_QUANTITY',
-    FILTER_PRODUCTS: 'FILTER_PRODUCTS'
+    SET_PRODUCT_QUANTITY: 'SET_PRODUCT_QUANTITY'
 }
 
 export const getProducts = () => {
@@ -57,12 +56,5 @@ export const setProductQuantity = (id, quantity) => {
                 id: product.id,
                 quantity: product.quantity
             }));
-    };
-}
-
-export const filterProducts = (filterText) => {
-    return {
-        type: actionTypes.FILTER_PRODUCTS,
-        filterText
     };
 }

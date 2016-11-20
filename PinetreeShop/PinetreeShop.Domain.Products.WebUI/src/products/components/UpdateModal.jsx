@@ -8,8 +8,7 @@ class UpdateModal extends React.Component{
         this.handleChange = this.handleChange.bind(this);
         this.submit = this.submit.bind(this);
         this.state = { 
-            value: 0,
-            show: false
+            value: 0
         }; 
     }
 

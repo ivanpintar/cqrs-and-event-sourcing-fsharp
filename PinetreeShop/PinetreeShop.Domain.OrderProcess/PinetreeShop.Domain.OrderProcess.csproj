@@ -52,6 +52,10 @@
       <Project>{1f715587-ccce-4289-b3b7-fd3299475337}</Project>
       <Name>PinetreeShop.CQRS.Infrastructure</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PinetreeShop.Domain.Baskets\PinetreeShop.Domain.Baskets.csproj">
+      <Project>{73FB242D-8716-47A9-99C0-F288D4D6B021}</Project>
+      <Name>PinetreeShop.Domain.Baskets</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PinetreeShop.Domain.Orders\PinetreeShop.Domain.Orders.csproj">
       <Project>{92f861bf-b68b-426a-8d6f-be03aba5c836}</Project>
       <Name>PinetreeShop.Domain.Orders</Name>

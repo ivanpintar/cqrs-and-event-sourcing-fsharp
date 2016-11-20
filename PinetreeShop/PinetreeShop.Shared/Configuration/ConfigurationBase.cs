@@ -11,7 +11,7 @@ namespace PinetreeShop.Shared.Configuration
         private static Type booltype = typeof(bool);
         private readonly IConfigurationDictionary _configSettings;
 
-        protected abstract string Namespace { get; }
+        protected virtual string Namespace { get { return ""; } }
 
         public ConfigurationBase(IConfigurationDictionary configSettings)
         {

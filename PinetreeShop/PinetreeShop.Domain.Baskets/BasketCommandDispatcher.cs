@@ -50,6 +50,6 @@ namespace PinetreeShop.Domain.Baskets
         {
             basket.CheckOut(command);
             return basket;
-        };        
+        };
     }
 }

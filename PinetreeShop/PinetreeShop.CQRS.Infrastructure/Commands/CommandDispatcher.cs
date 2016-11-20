@@ -26,7 +26,7 @@ namespace PinetreeShop.CQRS.Infrastructure.Commands
             _commandHandlers.Add(typeof(TCommand), handler2);
         }
 
-        public void ExecuteCommand<TAggregate>(ICommand command)
+        public TAggregate ExecuteCommand<TAggregate>(ICommand command)
             where TAggregate : IAggregate, new()
         {
             var commandType = command.GetType();
@@ -47,6 +47,8 @@ namespace PinetreeShop.CQRS.Infrastructure.Commands
             }
 
             _aggregateRepository.SaveAggregate((TAggregate)aggregate);
+
+            return (TAggregate)aggregate;
         }        
     }
 }

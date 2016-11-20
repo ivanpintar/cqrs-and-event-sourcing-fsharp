@@ -8,19 +8,17 @@ import { combineReducers } from 'redux-immutable';
 import App from './global/containers/App';
 import AppState from './global/models/appRecord';
 import { reducer as toastrReducer } from 'react-redux-toastr';
-import { products as productsReducer, filter as filterReducer } from './products/reducers';
+import { products as productsReducer } from './products/reducers';
 import ReduxToastr from 'react-redux-toastr';
 import { getProducts } from './products/actions';
 
 const reducers = combineReducers({ 
     toastr: toastrReducer,
-    products: productsReducer,
-    filter: filterReducer
+    products: productsReducer
 });
 
 const initialState = new AppState({
     products: Immutable.List(),
-    filter: '',
     toastr: { toastrs: [] }
 });
 

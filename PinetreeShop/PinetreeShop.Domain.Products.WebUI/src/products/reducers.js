@@ -27,12 +27,3 @@ export const products = (state = Immutable.List(), action) => {
             return state;
     }
 };
-
-export const filter = (state = '', action) => {
-    switch (action.type) {
-        case actionTypes.FILTER_PRODUCTS:
-            return action.filterText;
-        default:
-            return state;
-    }
-};

@@ -3,12 +3,11 @@ import { Button, Table } from 'react-bootstrap';
 import ProductRow from './ProductRow';
 import UpdateModal from './UpdateModal';
 import AddModal from './AddModal';
-import ProductFilter from './ProductFilter';
 
 class ProductList extends React.Component {
     constructor(props){
         super(props);
-        this.state = { selectedProduct: null, addProduct: false };
+        this.state = { selectedProduct: null, showAddProductModal: false };
         this.showUpdateModal = this.showUpdateModal.bind(this);
     }    
 
@@ -17,12 +16,12 @@ class ProductList extends React.Component {
     }
 
     showAddModal(show) {
-        this.setState({ addProductModal: show })
+        this.setState({ showAddProductModal: show })
     }
 
     render() {
-        let { products, setQuantity, filterProducts, addProduct } = this.props;
-        let { selectedProduct, addProductModal } = this.state;
+        let { products, setQuantity, addProduct } = this.props;
+        let { selectedProduct, showAddProductModal } = this.state;
         let productRows = products.map(p => ProductRow(p, () => this.showUpdateModal(p)));
         
         return (
@@ -34,12 +33,9 @@ class ProductList extends React.Component {
                         onClose={() => this.showUpdateModal(null)}/>
                 <AddModal
                         addProduct={addProduct}
-                        show={addProductModal}
+                        show={showAddProductModal}
                         onClose={() => this.showAddModal(false)}/>
 
-                <div>
-                    <ProductFilter filterProducts={filterProducts}/>                                
-                </div>
                 <Table  striped hover>
                     <thead>
                         <tr>

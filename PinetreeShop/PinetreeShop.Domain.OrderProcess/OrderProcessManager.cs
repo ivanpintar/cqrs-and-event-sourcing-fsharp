@@ -123,7 +123,7 @@ namespace PinetreeShop.Domain.OrderProcess
         {
             foreach(var ol in _orderLines)
             {
-                DispatchCommand<ProductAggregate>(new ChangeProductQuantity(ol.ProductId, -(int)ol.Quantity));
+                DispatchCommand<ProductAggregate>(new RemoveProductFromStock(ol.ProductId, ol.Quantity));
             }
             DispatchCommand<DummyNotifier>(new NotifyCustomer(AggregateRepositoryBase.CreateGuid()));
         }

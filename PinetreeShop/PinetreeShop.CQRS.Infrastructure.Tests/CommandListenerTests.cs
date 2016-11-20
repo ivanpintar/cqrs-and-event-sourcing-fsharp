@@ -1,21 +1,17 @@
 ﻿using PinetreeShop.CQRS.Infrastructure.Commands;
-using PinetreeShop.CQRS.Infrastructure.Repositories;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace PinetreeShop.CQRS.Infrastructure.Tests
 {
     public class TestCommandDispatcher : ICommandDispatcher
     {
-        public Action<ICommand> Action;
+        public Func<ICommand, IAggregate> Action;
 
-        public void ExecuteCommand<TAggregate>(ICommand command) where TAggregate : IAggregate, new()
+        public TAggregate ExecuteCommand<TAggregate>(ICommand command) where TAggregate : IAggregate, new()
         {
-            Action(command);
+            return (TAggregate)Action(command);
         }
 
         public void RegisterHandler<TCommand, TAggregate>(Func<TAggregate, TCommand, TAggregate> handler)
@@ -52,6 +48,7 @@ namespace PinetreeShop.CQRS.Infrastructure.Tests
                     {
                         state = 2;
                     }
+                    return null;
                 }
             };
 

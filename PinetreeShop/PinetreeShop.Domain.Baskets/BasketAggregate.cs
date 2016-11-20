@@ -10,9 +10,9 @@ namespace PinetreeShop.Domain.Baskets
 {
     public class BasketAggregate : AggregateBase
     {
-        private enum BasketState { Pending, Cancelled, CheckedOut };
-        private BasketState _state;
-        private List<OrderLine> _orderLines = new List<OrderLine>();
+        public enum BasketState { Pending, Cancelled, CheckedOut };
+        public BasketState State { get; private set; }
+        public List<OrderLine> OrderLines { get; private set; }
 
 
         private BasketAggregate(CreateBasket cmd) : this()
@@ -22,6 +22,9 @@ namespace PinetreeShop.Domain.Baskets
 
         public BasketAggregate()
         {
+            OrderLines = new List<OrderLine>();
+            State = BasketState.Pending;
+
             RegisterEventHandler<BasketCreated>(Apply);
             RegisterEventHandler<BasketItemAdded>(Apply);
             RegisterEventHandler<BasketItemRemoved>(Apply);
@@ -37,13 +40,13 @@ namespace PinetreeShop.Domain.Baskets
         private void Apply(BasketCreated evt)
         {
             AggregateId = evt.AggregateId;
-            _state = BasketState.Pending;
+            State = BasketState.Pending;
         }
 
         internal void AddItemToBasket(AddItemToBasket cmd)
         {
-            if (_state != BasketState.Pending)
-                throw new InvalidStateException(AggregateId, $"Cannot add item. Basket is {_state}");
+            if (State != BasketState.Pending)
+                throw new InvalidStateException(AggregateId, $"Cannot add item. Basket is {State}");
 
             RaiseEvent(new BasketItemAdded(cmd.AggregateId, cmd.ProductId, cmd.ProductName, cmd.Price, cmd.Quantity));
         }
@@ -55,13 +58,13 @@ namespace PinetreeShop.Domain.Baskets
 
         internal void RemoveItemFromBasket(RemoveItemFromBasket cmd)
         {
-            if (_state != BasketState.Pending) throw new InvalidStateException(AggregateId, $"Cannot remove item. Basket is {_state}");
+            if (State != BasketState.Pending) throw new InvalidStateException(AggregateId, $"Cannot remove item. Basket is {State}");
 
             var basketId = cmd.AggregateId;
             var productId = cmd.ProductId;
             var quantity = cmd.Quantity;
 
-            var orderLine = _orderLines.SingleOrDefault(ol => ol.ProductId == productId);
+            var orderLine = OrderLines.SingleOrDefault(ol => ol.ProductId == productId);
             if (orderLine != null)
             {
                 if (orderLine.Quantity < quantity) quantity = orderLine.Quantity;
@@ -76,32 +79,32 @@ namespace PinetreeShop.Domain.Baskets
 
         internal void Cancel(CancelBasket cmd)
         {
-            if (_state == BasketState.Cancelled) return;
+            if (State == BasketState.Cancelled) return;
 
-            if (_state != BasketState.Pending)
-                throw new InvalidStateException(cmd.AggregateId, $"Cannot cancel, basket is {_state}");
+            if (State != BasketState.Pending)
+                throw new InvalidStateException(cmd.AggregateId, $"Cannot cancel, basket is {State}");
 
             RaiseEvent(new BasketCancelled(cmd.AggregateId));
         }
 
         private void Apply(BasketCancelled evt)
         {
-            _state = BasketState.Cancelled;
+            State = BasketState.Cancelled;
         }
 
         internal void CheckOut(CheckOutBasket cmd)
         {
-            if (_state == BasketState.CheckedOut || !_orderLines.Any()) return;
+            if (State == BasketState.CheckedOut || !OrderLines.Any()) return;
 
-            if (_state != BasketState.Pending)
-                throw new InvalidStateException(cmd.AggregateId, $"Cannot check out, basket is {_state}");
+            if (State != BasketState.Pending)
+                throw new InvalidStateException(cmd.AggregateId, $"Cannot check out, basket is {State}");
 
             RaiseEvent(new BasketCheckedOut(cmd.AggregateId, cmd.ShippingAddress));
         }
 
         private void Apply(BasketCheckedOut evt)
         {
-            _state = BasketState.CheckedOut;
+            State = BasketState.CheckedOut;
         }
 
         private void AddProductToOrderLines(BasketItemAdded evt)
@@ -110,7 +113,7 @@ namespace PinetreeShop.Domain.Baskets
             var productName = evt.ProductName;
             var price = evt.Price;
             var quantity = evt.Quantity;
-            var orderLine = _orderLines.SingleOrDefault(ol => ol.ProductId == productId);
+            var orderLine = OrderLines.SingleOrDefault(ol => ol.ProductId == productId);
             if (orderLine == null)
             {
                 orderLine = new OrderLine
@@ -120,7 +123,7 @@ namespace PinetreeShop.Domain.Baskets
                     Price = price,
                     Quantity = quantity
                 };
-                _orderLines.Add(orderLine);
+                OrderLines.Add(orderLine);
             }
             else
             {
@@ -132,12 +135,12 @@ namespace PinetreeShop.Domain.Baskets
         {
             var productId = evt.ProductId;
             var quantity = evt.Quantity;
-            var orderLine = _orderLines.Single(ol => ol.ProductId == productId);
+            var orderLine = OrderLines.Single(ol => ol.ProductId == productId);
             orderLine.Quantity = orderLine.Quantity - quantity;
 
             if (orderLine.Quantity == 0)
             {
-                _orderLines.Remove(orderLine);
+                OrderLines.Remove(orderLine);
             }
         }
     }

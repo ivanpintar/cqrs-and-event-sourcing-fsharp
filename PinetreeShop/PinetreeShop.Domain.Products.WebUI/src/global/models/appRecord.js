@@ -2,6 +2,5 @@
 
 export default new Record({
     products: List(),
-    filter: '',
     toastr: { toastrs: [] }
 });

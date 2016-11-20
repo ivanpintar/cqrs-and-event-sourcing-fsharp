@@ -9,8 +9,8 @@ namespace PinetreeShop.Domain.Products.WebAPI
         {
             // Web API routes
             config.MapHttpAttributeRoutes();
-
-            var cors = new EnableCorsAttribute("http://localhost:3030", "*", "*");
+            
+            var cors = new EnableCorsAttribute(Configuration.Instance.ClientUrl, "*", "*");
             config.EnableCors(cors);
         }
     }

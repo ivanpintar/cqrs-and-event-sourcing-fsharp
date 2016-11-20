@@ -23,7 +23,7 @@ namespace PinetreeShop.Domain.Products.Tests
 
             When(command);
 
-            var expectedEvent = new ProductQuantityChanged(id, 3);
+            var expectedEvent = new ProductQuantityChanged(id, 5);
             expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
             expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
 
@@ -33,7 +33,9 @@ namespace PinetreeShop.Domain.Products.Tests
         [Fact]
         public void When_SetProductQuantitySame_NothingHappens()
         {
-            Given(new ProductCreated(id, "Test Product", 2));
+            Given(
+                new ProductCreated(id, "Test Product", 2), 
+                new ProductQuantityChanged(id, 2));
 
             var command = new SetProductQuantity(id, 2);
             command.Metadata.CausationId = command.Metadata.CommandId;

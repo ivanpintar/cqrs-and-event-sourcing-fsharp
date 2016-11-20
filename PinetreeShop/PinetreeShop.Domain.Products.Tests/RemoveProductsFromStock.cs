@@ -15,7 +15,9 @@ namespace PinetreeShop.Domain.Products.Tests
         [Fact]
         public void When_RemoveProductFromStock_ProductQuantityChanged()
         {
-            Given(new ProductCreated(id, "Test Product", 5));
+            Given(
+                new ProductCreated(id, "Test Product", 5),
+                new ProductQuantityChanged(id, 5));
 
             var command = new RemoveProductFromStock(id, 3);
             command.Metadata.CausationId = command.Metadata.CommandId;
@@ -33,7 +35,9 @@ namespace PinetreeShop.Domain.Products.Tests
         [Fact]
         public void When_RemoveProductFromStockZero_NothingHappens()
         {
-            Given(new ProductCreated(id, "Test Product", 2));
+            Given(
+                new ProductCreated(id, "Test Product", 2),
+                new ProductQuantityChanged(id, 5));
 
             var command = new RemoveProductFromStock(id, 0);
             command.Metadata.CausationId = command.Metadata.CommandId;

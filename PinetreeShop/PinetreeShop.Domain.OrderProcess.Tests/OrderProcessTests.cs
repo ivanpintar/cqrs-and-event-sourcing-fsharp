@@ -216,8 +216,8 @@ namespace PinetreeShop.Domain.OrderProcess.Tests
 
             var expectedCommands = new List<ICommand>
             {
-                new ChangeProductQuantity(productOneId, -10),
-                new ChangeProductQuantity(productTwoId, -20),
+                new RemoveProductFromStock(productOneId, 10),
+                new RemoveProductFromStock(productTwoId, 20),
                 new NotifyCustomer(notificationId)
             };
             expectedCommands.ForEach(c =>
