@@ -16,9 +16,7 @@ namespace PinetreeShop.CQRS.Infrastructure
         {
             get { return _version; }
         }
-
-        protected List<IEvent> _events = new List<IEvent>();
-
+        
         private List<IEvent> _uncommittedEvents = new List<IEvent>();
         public IEnumerable<IEvent> UncommittedEvents { get { return _uncommittedEvents; } }
 
@@ -42,8 +40,6 @@ namespace PinetreeShop.CQRS.Infrastructure
             {
                 _eventHandlers[eventType](evt);
             }
-
-            _events.Add(evt);
             _version++;
         }
 

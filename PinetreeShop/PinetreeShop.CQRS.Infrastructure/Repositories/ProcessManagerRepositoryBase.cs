@@ -25,6 +25,6 @@ namespace PinetreeShop.CQRS.Infrastructure.Repositories
         }
 
         public abstract void SaveProcessManager<TProcessManager>(TProcessManager aggregate) where TProcessManager : IProcessManager;
-        public abstract TProcessManager GetProcessManagerById<TProcessManager>(Guid id) where TProcessManager : IProcessManager, new();
+        public abstract TProcessManager GetProcessManagerById<TProcessManager>(Guid id, int upToEventNumber) where TProcessManager : IProcessManager, new();
     }
 }

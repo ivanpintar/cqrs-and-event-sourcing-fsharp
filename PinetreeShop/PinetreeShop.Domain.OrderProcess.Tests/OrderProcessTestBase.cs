@@ -10,11 +10,7 @@ namespace PinetreeShop.Domain.OrderProcess.Tests
         {
             _eventStore.AddPreviousEvents(_preConditions);
             _processManagerRepository = new ProcessManagerRepository(_eventStore);
-            var eventHandler = new ProcessEventHandler(_processManagerRepository);
-
-            DomainEntry.InitializeEventHandler(eventHandler);
-
-            return eventHandler;
+            return new OrderProcessEventHandler(_processManagerRepository);
         }
     }
 }

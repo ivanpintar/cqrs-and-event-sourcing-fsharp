@@ -40,21 +40,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Events\IProcessEventHandler.cs" />
+    <Compile Include="Events\ProcessEventHandler.cs" />
+    <Compile Include="Exceptions\ProcessManagerNotFoundException.cs" />
+    <Compile Include="IProcessManager.cs" />
+    <Compile Include="ProcessManagerBase.cs" />
     <Compile Include="Repositories\AggregateRepository.cs" />
     <Compile Include="Commands\CommandQueueListener.cs" />
     <Compile Include="Commands\ICommandDispatcher.cs" />
-    <Compile Include="Repositories\ProcessManagerRepository.cs" />
     <Compile Include="Events\EventStreamListener.cs" />
-    <Compile Include="Events\ProcessEventHandler.cs" />
-    <Compile Include="Events\IProcessEventHandler.cs" />
     <Compile Include="AggregateBase.cs" />
     <Compile Include="Commands\CommandDispatcher.cs" />
     <Compile Include="Exceptions\AggregateNotFoundException.cs" />
-    <Compile Include="Exceptions\ProcessManagerNotFoundException.cs" />
     <Compile Include="Exceptions\WrongExpectedVersionException.cs" />
     <Compile Include="IEventStore.cs" />
-    <Compile Include="IProcessManager.cs" />
-    <Compile Include="ProcessManagerBase.cs" />
     <Compile Include="Repositories\AggregateRepositoryBase.cs" />
     <Compile Include="IAggregate.cs" />
     <Compile Include="Commands\ICommand.cs" />
@@ -62,6 +61,7 @@
     <Compile Include="Events\IEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\IProcessManagerRepository.cs" />
+    <Compile Include="Repositories\ProcessManagerRepository.cs" />
     <Compile Include="Repositories\ProcessManagerRepositoryBase.cs" />
   </ItemGroup>
   <ItemGroup />

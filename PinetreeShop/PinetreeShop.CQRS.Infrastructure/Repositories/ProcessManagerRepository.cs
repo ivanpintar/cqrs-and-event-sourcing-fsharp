@@ -16,14 +16,10 @@ namespace PinetreeShop.CQRS.Infrastructure.Repositories
             _eventStore = eventStore;
         }
 
-        public override TProcessManager GetProcessManagerById<TProcessManager>(Guid id)
+        public override TProcessManager GetProcessManagerById<TProcessManager>(Guid id, int upToEventNumber)
         {
-            var events = GetEventsForProcessManager<TProcessManager>(id);
-            if (events.Any())
-            {
-                return BuildProcessManager<TProcessManager>(events);
-            }
-            return new TProcessManager();
+            var events = GetEventsForProcessManager<TProcessManager>(id).Where(e => e.Metadata.EventNumber < upToEventNumber);
+            return BuildProcessManager<TProcessManager>(events);
         }
 
         public override void SaveProcessManager<TProcessManager>(TProcessManager processManager)
@@ -41,7 +37,7 @@ namespace PinetreeShop.CQRS.Infrastructure.Repositories
                     throw new WrongExpectedVersionException($"{processManager.GetType()}:{processManager.ProcessId}: Expected version {expectedVersion} but the version is {currentversion}");
                 }
             }
-            
+
             _eventStore.CommitEvents<TProcessManager>(eventsToSave);
             processManager.ClearUncommittedEvents();
 
