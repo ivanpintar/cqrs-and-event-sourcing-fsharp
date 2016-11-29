@@ -1,6 +1,7 @@
 ﻿using PinetreeShop.CQRS.Infrastructure.Events;
 using PinetreeShop.Domain.Shared.Types;
 using System;
+using System.Collections.Generic;
 
 namespace PinetreeShop.Domain.Baskets.Events
 {
@@ -49,10 +50,12 @@ namespace PinetreeShop.Domain.Baskets.Events
     public class BasketCheckedOut : EventBase
     {
         public Address ShippingAddress { get; private set; }
+        public IEnumerable<OrderLine> OrderLines { get; private set; }
 
-        public BasketCheckedOut(Guid basketId, Address shippingAddress) : base(basketId)
+        public BasketCheckedOut(Guid basketId, IEnumerable<OrderLine> orderLines, Address shippingAddress) : base(basketId)
         {
             ShippingAddress = shippingAddress;
+            OrderLines = orderLines;
         }
     }
 }

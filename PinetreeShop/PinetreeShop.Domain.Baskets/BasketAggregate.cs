@@ -5,6 +5,7 @@ using PinetreeShop.Domain.Baskets.Exceptions;
 using System.Collections.Generic;
 using System.Linq;
 using PinetreeShop.Domain.Shared.Types;
+using PinetreeShop.Domain.Shared.Exceptions;
 
 namespace PinetreeShop.Domain.Baskets
 {
@@ -94,12 +95,15 @@ namespace PinetreeShop.Domain.Baskets
 
         internal void CheckOut(CheckOutBasket cmd)
         {
+            if (cmd.ShippingAddress == null)
+                throw new DomainException(cmd.AggregateId, $"Cannot check out, address is null");
+
             if (State == BasketState.CheckedOut || !OrderLines.Any()) return;
 
             if (State != BasketState.Pending)
                 throw new InvalidStateException(cmd.AggregateId, $"Cannot check out, basket is {State}");
 
-            RaiseEvent(new BasketCheckedOut(cmd.AggregateId, cmd.ShippingAddress));
+            RaiseEvent(new BasketCheckedOut(cmd.AggregateId, OrderLines, cmd.ShippingAddress));
         }
 
         private void Apply(BasketCheckedOut evt)

@@ -28,7 +28,7 @@ namespace PinetreeShop.Domain.Baskets.Tests
 
             When(command);
 
-            var expectedEvent = new BasketCheckedOut(id, shippingAddress);
+            var expectedEvent = new BasketCheckedOut(id, OrderLines, shippingAddress);
             expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
             expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
 
@@ -55,7 +55,7 @@ namespace PinetreeShop.Domain.Baskets.Tests
         public void When_CheckOutCheckedOut_NothingHappens()
         {
             var initialEvents = InitialEvents.ToList();
-            initialEvents.Add(new BasketCheckedOut(id, shippingAddress));
+            initialEvents.Add(new BasketCheckedOut(id, OrderLines, shippingAddress));
             Given(initialEvents.ToArray());
             When(new CheckOutBasket(id, shippingAddress));
             Then(new IEvent[] { });
@@ -75,6 +75,23 @@ namespace PinetreeShop.Domain.Baskets.Tests
                     };
                 }
                 return _initialEvents;
+            }
+        }
+
+        private List<OrderLine> OrderLines
+        {
+            get
+            {
+                return new List<OrderLine>
+                {
+                    new OrderLine
+                    {
+                        ProductName = "Test Item",
+                        ProductId = productId,
+                        Price = 2,
+                        Quantity = 10
+                    }
+                };
             }
         }
     }

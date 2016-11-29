@@ -56,9 +56,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddOrderLineTests.cs" />
     <Compile Include="CancelOrderTests.cs" />
     <Compile Include="CreateOrderTests.cs" />
     <Compile Include="DeliverOrderTests.cs" />
+    <Compile Include="PrepareOrderForShippingTests.cs" />
     <Compile Include="OrderTestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ShipOrderTests.cs" />

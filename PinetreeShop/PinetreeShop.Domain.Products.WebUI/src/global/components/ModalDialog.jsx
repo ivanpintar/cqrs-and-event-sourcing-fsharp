@@ -1,52 +1,40 @@
 import { Modal, Button } from 'react-bootstrap';
 import React from 'react';
 
-class ModalDialog extends React.Component {
-    constructor(props){
-        super(props);
-        this.close = this.close.bind(this);
-        this.save = this.save.bind(this);
-    }
+const ModalDialog = ({ onClose, onSave, saveText, closeText, show, title, children }) => {
+    const close = () => {
+        if(onClose) onClose();
+    };
 
-    close() {
-        if (this.props.onClose()) {
-            this.props.onClose();
-        }
-    }
+    const save = () => {
+        if(onSave) onSave();
+    };
 
-    save() {        
-        if (this.props.onSave) {
-            this.props.onSave();
-        }
-    }
+    let saveButton = null;
+    if(onSave) {
+        saveText = saveText || 'Save';
+        saveButton = <Button bsStyle='primary' onClick={save}>{saveText}</Button>;
+    };
 
-    render() {
-        let saveButton = null;
-        if(this.props.onSave) {
-            let saveText = this.props.saveText ? this.props.saveText : 'Save';
-            saveButton = <Button bsStyle='primary' onClick={this.save}>{saveText}</Button>;
-        }
+    closeText = closeText || 'Close';
+    let closeButton = <Button onClick={close}>{closeText}</Button>;
 
-        let closeText = this.props.closeText || 'Close';
-        let closeButton = <Button onClick={this.close}>{closeText}</Button>;
-
-        return (
-            <span>
-                <Modal show={this.props.show} onHide={this.close}>
-                    <Modal.Header>
-                        <Modal.Title>{this.props.title}</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        {this.props.children}
-                    </Modal.Body>
-                    <Modal.Footer>
-                        {closeButton}
-                        {saveButton}
-                    </Modal.Footer>
-                </Modal>
-            </span>
-        );
-    }
-}
+    return (
+        <span>
+            <Modal show={show} onHide={close}>
+                <Modal.Header>
+                    <Modal.Title>{title}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {children}
+                </Modal.Body>
+                <Modal.Footer>
+                    {closeButton}
+                    {saveButton}
+                </Modal.Footer>
+            </Modal>
+        </span>
+    );
+};
 
 export default ModalDialog;

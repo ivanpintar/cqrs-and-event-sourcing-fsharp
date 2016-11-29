@@ -57,10 +57,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommandQueueListeners.cs" />
+    <Compile Include="CommandQueueListener.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReadModelListeners.cs" />
+    <Compile Include="ReadModelListener.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

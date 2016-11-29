@@ -14,9 +14,9 @@ class ChangeQuantityModal extends React.Component{
     }
     
     componentWillReceiveProps(props) {
-        this.state = { 
+        this.setState({ 
             quantity: props.order ? props.order.quantity : 0 
-        }; 
+        }); 
     }
 
     handleChange(e) {

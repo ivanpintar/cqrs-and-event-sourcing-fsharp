@@ -1,7 +1,6 @@
 ﻿using PinetreeShop.CQRS.Infrastructure.Events;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace PinetreeShop.CQRS.Infrastructure.Commands
 {

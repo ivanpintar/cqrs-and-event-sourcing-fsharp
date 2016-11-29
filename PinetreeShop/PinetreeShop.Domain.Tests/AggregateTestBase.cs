@@ -28,6 +28,12 @@ namespace PinetreeShop.Domain.Tests
             _preConditions = existingEvents.ToList();
         }
 
+        protected void Given(IEnumerable<IEvent> existingEvents, params IEvent[] additionalExistingEvents)
+        {
+            _preConditions = existingEvents.ToList();
+            _preConditions.AddRange(additionalExistingEvents);
+        }
+
         protected void When<TCommand>(TCommand command)
             where TCommand : ICommand
         {

@@ -27,6 +27,11 @@ namespace PinetreeShop.Domain.Baskets.WebAPI.Controllers
         {
             var basket = _aggregateRepository.GetAggregateById<BasketAggregate>(basketId);
 
+            if(basket == null)
+            {
+                return CreateBasket();
+            }
+
             return Ok(BasketModel.FromAggregate(basket));
         }
 

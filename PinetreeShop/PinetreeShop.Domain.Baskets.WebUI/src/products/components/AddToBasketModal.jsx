@@ -13,6 +13,12 @@ class AddToBasketModal extends React.Component{
         }; 
     }
 
+     componentWillReceiveProps(props) {
+        this.setState({ 
+            quantity: 1
+        }); 
+    }
+
     handleChange(e) {
         this.setState({ quantity: e.target.value });
     }

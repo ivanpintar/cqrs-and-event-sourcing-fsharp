@@ -27,22 +27,23 @@ namespace PinetreeShop.Domain.OrderProcess.Tests
         Address shippingAddress = new Address { Country = "US", StateOrProvince = "CA", StreetAndNumber = "A2", ZipAndCity = "LA" };
 
         [Fact]
-        public void When_BasketCheckedOut_ReserveProduct()
+        public void When_BasketCheckedOut_CreateOrder()
         {
+            AggregateRepositoryBase.CreateGuid = () => orderId;
             SetupInitialEvents();
+            AddInitialEvent<BasketAggregate>(new BasketCheckedOut(basketId, OrderLines, shippingAddress));
             _initialEvents.ForEach(e => e.Item2.Metadata.CorrelationId = causationAndCorrelationId);
 
             Given(_initialEvents.ToArray());
 
-            var evt = new BasketCheckedOut(basketId, shippingAddress);
+            var evt = new BasketCheckedOut(basketId, OrderLines, shippingAddress);
             evt.Metadata.CorrelationId = causationAndCorrelationId;
 
             When(evt);
 
             var expectedCommands = new List<ICommand>
             {
-                new ReserveProduct(productOneId, basketId, 10),
-                new ReserveProduct(productTwoId, basketId, 20)
+                new CreateOrder(orderId, basketId, shippingAddress, causationAndCorrelationId)
             };
             expectedCommands.ForEach(x =>
             {
@@ -54,10 +55,42 @@ namespace PinetreeShop.Domain.OrderProcess.Tests
         }
 
         [Fact]
-        public void When_SomeProductsReserved_NothingHappens()
+        public void When_OrderCreated_ReserveProducts()
+        {
+            AggregateRepositoryBase.CreateGuid = () => orderId;
+            SetupInitialEvents();
+            AddInitialEvent<BasketAggregate>(new BasketCheckedOut(basketId, OrderLines, shippingAddress));
+            AddInitialEvent<OrderAggregate>(new OrderCreated(orderId, basketId, causationAndCorrelationId, shippingAddress));
+            _initialEvents.ForEach(e => e.Item2.Metadata.CorrelationId = causationAndCorrelationId);
+
+            Given(_initialEvents.ToArray());
+
+            var evt = new OrderCreated(orderId, basketId, causationAndCorrelationId, shippingAddress);
+            evt.Metadata.CorrelationId = causationAndCorrelationId;
+
+            When(evt);
+
+            var expectedCommands = new List<ICommand>
+            {
+                new ReserveProduct(productOneId, basketId, 10),
+                new ReserveProduct(productTwoId, basketId, 20),
+            };
+            expectedCommands.ForEach(x =>
+            {
+                x.Metadata.CausationId = evt.Metadata.EventId;
+                x.Metadata.CorrelationId = causationAndCorrelationId;
+            });
+
+            Then(expectedCommands.ToArray());
+        }
+
+        [Fact]
+        public void When_ProductReserved_AddOrderLine()
         {
             SetupInitialEvents();
-            AddInitialEvent<BasketAggregate>(new BasketCheckedOut(basketId, shippingAddress));
+            AddInitialEvent<BasketAggregate>(new BasketCheckedOut(basketId, OrderLines, shippingAddress));
+            AddInitialEvent<OrderAggregate>(new OrderCreated(orderId, basketId, causationAndCorrelationId, shippingAddress));
+            AddInitialEvent<ProductAggregate>(new ProductReserved(productTwoId, basketId, 20));
             _initialEvents.ForEach(e => e.Item2.Metadata.CorrelationId = causationAndCorrelationId);
 
             Given(_initialEvents.ToArray());
@@ -66,31 +99,50 @@ namespace PinetreeShop.Domain.OrderProcess.Tests
             evt.Metadata.CorrelationId = causationAndCorrelationId;
 
             When(evt);
+            var expectedCommands = new List<ICommand>
+            {
+                new AddOrderLine(orderId, OrderLines[1])
+            };
+            expectedCommands.ForEach(x =>
+            {
+                x.Metadata.CausationId = evt.Metadata.EventId;
+                x.Metadata.CorrelationId = causationAndCorrelationId;
+            });
 
-            Then(new ICommand[] { });
+            Then(expectedCommands.ToArray());
         }
 
         [Fact]
-        public void When_AllProductsReserved_CreateOrder()
+        public void When_AllProductsReserved_PrepareOrderForShipping()
         {
-            AggregateRepositoryBase.CreateGuid = () => orderId;
+            var notificationId = Guid.NewGuid();
+            AggregateRepositoryBase.CreateGuid = () => notificationId;
             SetupInitialEvents();
-            AddInitialEvent<BasketAggregate>(new BasketCheckedOut(basketId, shippingAddress));
+            AddInitialEvent<BasketAggregate>(new BasketCheckedOut(basketId,  OrderLines, shippingAddress));
+            AddInitialEvent<OrderAggregate>(new OrderCreated(orderId, basketId, causationAndCorrelationId, shippingAddress));
+            AddInitialEvent<ProductAggregate>(new ProductReserved(productOneId, basketId, 10));
+            AddInitialEvent<OrderAggregate>(new OrderLineAdded(orderId, OrderLines[0]));
             AddInitialEvent<ProductAggregate>(new ProductReserved(productTwoId, basketId, 20));
             _initialEvents.ForEach(e => e.Item2.Metadata.CorrelationId = causationAndCorrelationId);
 
             Given(_initialEvents.ToArray());
 
-            var evt = new ProductReserved(productOneId, basketId, 10);
+            var evt = new ProductReserved(productTwoId, basketId, 20);
             evt.Metadata.CorrelationId = causationAndCorrelationId;
 
             When(evt);
+            var expectedCommands = new List<ICommand>
+            {
+                new AddOrderLine(orderId, OrderLines[1]),
+                new PrepareOrderForShipping(orderId)
+            };
+            expectedCommands.ForEach(x =>
+            {
+                x.Metadata.CausationId = evt.Metadata.EventId;
+                x.Metadata.CorrelationId = causationAndCorrelationId;
+            });
 
-            var expectedCommand = new CreateOrder(orderId, basketId, OrderLines, shippingAddress);
-            expectedCommand.Metadata.CausationId = evt.Metadata.EventId;
-            expectedCommand.Metadata.CorrelationId = evt.Metadata.CorrelationId;
-
-            Then(expectedCommand);
+            Then(expectedCommands.ToArray());
         }
 
         [Fact]
@@ -99,8 +151,10 @@ namespace PinetreeShop.Domain.OrderProcess.Tests
             var notificationId = Guid.NewGuid();
             AggregateRepositoryBase.CreateGuid = () => notificationId;
             SetupInitialEvents();
-            AddInitialEvent<BasketAggregate>(new BasketCheckedOut(basketId, shippingAddress));
-            AddInitialEvent<ProductAggregate>(new ProductReserved(productTwoId, basketId, 20));
+            AddInitialEvent<BasketAggregate>(new BasketCheckedOut(basketId, OrderLines, shippingAddress));
+            AddInitialEvent<OrderAggregate>(new OrderCreated(orderId, basketId, causationAndCorrelationId, shippingAddress));
+            AddInitialEvent<ProductAggregate>(new ProductReserved(productOneId, basketId, 10));
+            AddInitialEvent<ProductAggregate>(new ProductReservationFailed(productOneId, basketId, 20, ProductReservationFailed.NotAvailable));
             _initialEvents.ForEach(e => e.Item2.Metadata.CorrelationId = causationAndCorrelationId);
 
             Given(_initialEvents.ToArray());
@@ -118,59 +172,18 @@ namespace PinetreeShop.Domain.OrderProcess.Tests
         }
 
         [Fact]
-        public void When_CreateOrderFailed_NotifyAdmin()
-        {
-            var notificationId = Guid.NewGuid();
-            AggregateRepositoryBase.CreateGuid = () => notificationId;
-            SetupInitialEvents();
-            AddInitialEvent<BasketAggregate>(new BasketCheckedOut(basketId, shippingAddress));
-            AddInitialEvent<ProductAggregate>(new ProductReserved(productOneId, basketId, 10));
-            AddInitialEvent<ProductAggregate>(new ProductReserved(productTwoId, basketId, 20));
-            _initialEvents.ForEach(e => e.Item2.Metadata.CorrelationId = causationAndCorrelationId);
-
-            Given(_initialEvents.ToArray());
-
-            var evt = new CreateOrderFailed(orderId, basketId, EventFailedBase.UnknownError);
-            evt.Metadata.CorrelationId = causationAndCorrelationId;
-
-            When(evt);
-
-            var expectedCommand = new NotifyAdmin(notificationId);
-            expectedCommand.Metadata.CausationId = evt.Metadata.EventId;
-            expectedCommand.Metadata.CorrelationId = evt.Metadata.CorrelationId;
-
-            Then(expectedCommand);
-        }
-
-        [Fact]
-        public void When_OrderCreated_DoNothing()
-        {
-            var notificationId = Guid.NewGuid();
-            AggregateRepositoryBase.CreateGuid = () => notificationId;
-            SetupInitialEvents();
-            AddInitialEvent<BasketAggregate>(new BasketCheckedOut(basketId, shippingAddress));
-            AddInitialEvent<ProductAggregate>(new ProductReserved(productOneId, basketId, 10));
-            AddInitialEvent<ProductAggregate>(new ProductReserved(productTwoId, basketId, 20));
-            _initialEvents.ForEach(e => e.Item2.Metadata.CorrelationId = causationAndCorrelationId);
-
-            Given(_initialEvents.ToArray());
-
-            var evt = new OrderCreated(orderId, basketId, OrderLines, shippingAddress);
-            evt.Metadata.CorrelationId = causationAndCorrelationId;
-
-            When(evt);
-            Then(new ICommand[] { });
-        }
-
-        [Fact]
         public void When_OrderCancelled_CancelProductReservation_And_NotifyCustomer()
         {
             var notificationId = Guid.NewGuid();
             AggregateRepositoryBase.CreateGuid = () => notificationId;
             SetupInitialEvents();
-            AddInitialEvent<BasketAggregate>(new BasketCheckedOut(basketId, shippingAddress));
+            AddInitialEvent<BasketAggregate>(new BasketCheckedOut(basketId, OrderLines, shippingAddress));
+            AddInitialEvent<OrderAggregate>(new OrderCreated(orderId, basketId, causationAndCorrelationId, shippingAddress));
             AddInitialEvent<ProductAggregate>(new ProductReserved(productOneId, basketId, 10));
             AddInitialEvent<ProductAggregate>(new ProductReserved(productTwoId, basketId, 20));
+            AddInitialEvent<OrderAggregate>(new OrderLineAdded(orderId, OrderLines[0]));
+            AddInitialEvent<OrderAggregate>(new OrderLineAdded(orderId, OrderLines[1]));
+            AddInitialEvent<OrderAggregate>(new OrderCancelled(orderId));
             _initialEvents.ForEach(e => e.Item2.Metadata.CorrelationId = causationAndCorrelationId);
 
             Given(_initialEvents.ToArray());
@@ -201,15 +214,19 @@ namespace PinetreeShop.Domain.OrderProcess.Tests
             var notificationId = Guid.NewGuid();
             AggregateRepositoryBase.CreateGuid = () => notificationId;
             SetupInitialEvents();
-            AddInitialEvent<BasketAggregate>(new BasketCheckedOut(basketId, shippingAddress));
+            AddInitialEvent<BasketAggregate>(new BasketCheckedOut(basketId, OrderLines, shippingAddress));
+            AddInitialEvent<OrderAggregate>(new OrderCreated(orderId, basketId, causationAndCorrelationId, shippingAddress));
             AddInitialEvent<ProductAggregate>(new ProductReserved(productOneId, basketId, 10));
+            AddInitialEvent<OrderAggregate>(new OrderLineAdded(orderId, OrderLines[0]));
             AddInitialEvent<ProductAggregate>(new ProductReserved(productTwoId, basketId, 20));
-            AddInitialEvent<OrderAggregate>(new OrderCreated(orderId, basketId, OrderLines, shippingAddress));
+            AddInitialEvent<OrderAggregate>(new OrderLineAdded(orderId, OrderLines[1]));
+            AddInitialEvent<OrderAggregate>(new OrderReadyForShipping(orderId));
+            AddInitialEvent<OrderAggregate>(new OrderShipped(orderId));
             _initialEvents.ForEach(e => e.Item2.Metadata.CorrelationId = causationAndCorrelationId);
 
             Given(_initialEvents.ToArray());
 
-            var evt = new OrderShipped(orderId, shippingAddress);
+            var evt = new OrderShipped(orderId);
             evt.Metadata.CorrelationId = causationAndCorrelationId;
 
             When(evt);
@@ -235,16 +252,20 @@ namespace PinetreeShop.Domain.OrderProcess.Tests
             var notificationId = Guid.NewGuid();
             AggregateRepositoryBase.CreateGuid = () => notificationId;
             SetupInitialEvents();
-            AddInitialEvent<BasketAggregate>(new BasketCheckedOut(basketId, shippingAddress));
+            AddInitialEvent<BasketAggregate>(new BasketCheckedOut(basketId, OrderLines, shippingAddress));
+            AddInitialEvent<OrderAggregate>(new OrderCreated(orderId, basketId, causationAndCorrelationId, shippingAddress));
             AddInitialEvent<ProductAggregate>(new ProductReserved(productOneId, basketId, 10));
-            AddInitialEvent < ProductAggregate > (new ProductReserved(productTwoId, basketId, 20));
-            AddInitialEvent<OrderAggregate>(new OrderCreated(orderId, basketId, OrderLines, shippingAddress));
-            AddInitialEvent<OrderAggregate>(new OrderShipped(orderId, shippingAddress));
+            AddInitialEvent<OrderAggregate>(new OrderLineAdded(orderId, OrderLines[0]));
+            AddInitialEvent<ProductAggregate>(new ProductReserved(productTwoId, basketId, 20));
+            AddInitialEvent<OrderAggregate>(new OrderLineAdded(orderId, OrderLines[1]));
+            AddInitialEvent<OrderAggregate>(new OrderReadyForShipping(orderId));
+            AddInitialEvent<OrderAggregate>(new OrderShipped(orderId));
+            AddInitialEvent<OrderAggregate>(new OrderDelivered(orderId));
             _initialEvents.ForEach(e => e.Item2.Metadata.CorrelationId = causationAndCorrelationId);
 
             Given(_initialEvents.ToArray());
 
-            var evt = new OrderDelivered(orderId, shippingAddress);
+            var evt = new OrderDelivered(orderId);
             evt.Metadata.CorrelationId = causationAndCorrelationId;
 
             When(evt);

@@ -8,14 +8,24 @@ namespace PinetreeShop.Domain.Orders.Events
     public class OrderCreated : EventBase
     {
         public Guid BasketId { get; private set; }
-        public IEnumerable<OrderLine> Lines { get; private set; }
+        public Guid ProcessId { get; private set; }
         public Address ShippingAddress { get; private set; }
 
-        public OrderCreated(Guid aggregateId, Guid basketId, IEnumerable<OrderLine> lines, Address shippingAddress) : base(aggregateId)
+        public OrderCreated(Guid orderId, Guid basketId, Guid processId, Address shippingAddress) : base(orderId)
         {
             BasketId = basketId;
-            Lines = lines;
+            ProcessId = processId; 
             ShippingAddress = shippingAddress;
+        }
+    }
+
+    public class OrderLineAdded : EventBase
+    {
+        public OrderLine OrderLine { get; private set; }
+
+        public OrderLineAdded(Guid orderId, OrderLine orderLine) : base(orderId)
+        {
+            OrderLine = orderLine;
         }
     }
 
@@ -23,12 +33,18 @@ namespace PinetreeShop.Domain.Orders.Events
     {
         public Guid BasketId { get; private set; }
 
-        public CreateOrderFailed(Guid aggregateId, Guid basketId, string reason) : base(aggregateId, reason)
+        public CreateOrderFailed(Guid orderId, Guid basketId, string reason) : base(orderId, reason)
         {
             BasketId = basketId;
         }
     }
 
+    public class OrderReadyForShipping : EventBase
+    {
+        public OrderReadyForShipping(Guid orderId) : base(orderId)
+        {
+        }
+    }
 
     public class OrderCancelled : EventBase
     {
@@ -36,34 +52,18 @@ namespace PinetreeShop.Domain.Orders.Events
         {
         }
     }
-
-    public class CancelOrderFailed : EventFailedBase
-    {
-        public static string OrderShipped = "OrderShipped";
-        public static string OrderDelivered = "OrderDelivered";
-
-        public CancelOrderFailed(Guid orderId, string reason) : base(orderId, reason)
-        {
-        }
-    }
-
+    
     public class OrderShipped : EventBase
     {
-        public Address ShippingAddress { get; private set; }
-
-        public OrderShipped(Guid orderId, Address shippingAddress) : base(orderId)
+        public OrderShipped(Guid orderId) : base(orderId)
         {
-            ShippingAddress = shippingAddress;
         }
     }
 
     public class OrderDelivered : EventBase
     {
-        public Address ShippingAddress { get; private set; }
-
-        public OrderDelivered(Guid orderId, Address shippingAddress) : base(orderId)
+        public OrderDelivered(Guid orderId) : base(orderId)
         {
-            ShippingAddress = shippingAddress;
         }
     }
 }

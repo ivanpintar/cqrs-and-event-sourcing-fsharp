@@ -21,13 +21,13 @@ namespace PinetreeShop.Domain.Orders.Tests
         [Fact]
         public void When_CreateOrder_OrderCreated()
         {
-            var command = new CreateOrder(id, basketId, OrderLines, shippingAddress);
+            var command = new CreateOrder(id, basketId, shippingAddress, causationAndCorrelationId);
             command.Metadata.CausationId = command.Metadata.CommandId;
             command.Metadata.CorrelationId = causationAndCorrelationId;
 
             When(command);
 
-            var expectedEvent = new OrderCreated(id, basketId, OrderLines, shippingAddress);
+            var expectedEvent = new OrderCreated(id, basketId, causationAndCorrelationId, shippingAddress);
             expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
             expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
 
@@ -35,39 +35,16 @@ namespace PinetreeShop.Domain.Orders.Tests
         }
 
         [Fact]
-        public void When_CreateOrderWithNoLines_ThrowEmptyOrderLinesException()
-        {
-            WhenThrows<CreateOrder, EmptyOrderLinesException>(new CreateOrder(id, basketId, Enumerable.Empty<OrderLine>(), shippingAddress));
-        }
-
-        [Fact]
         public void When_CreateOrderWithNoShippingAddress_ThrowParameterNullException()
         {
-            WhenThrows<CreateOrder, ParameterNullException>(new CreateOrder(id, basketId, OrderLines, null));
+            WhenThrows<CreateOrder, ParameterNullException>(new CreateOrder(id, basketId, null, causationAndCorrelationId));
         }
         
         [Fact]
         public void When_CreateOrderWithSameGuid_ThrowAggregateExistsException()
         {
-            Given(new OrderCreated(id, basketId, OrderLines, shippingAddress));
-            WhenThrows<CreateOrder, AggregateExistsException>(new CreateOrder(id, basketId, OrderLines, shippingAddress));
-        }
-
-        private IEnumerable<OrderLine> OrderLines
-        {
-            get
-            {
-                return new List<OrderLine>
-                {
-                    new OrderLine
-                    {
-                        ProductId = productId,
-                        ProductName = "Test Product",
-                        Price = 2,
-                        Quantity = 2
-                    }
-                };
-            }
+            Given(new OrderCreated(id, basketId, causationAndCorrelationId, shippingAddress));
+            WhenThrows<CreateOrder, AggregateExistsException>(new CreateOrder(id, basketId, shippingAddress, causationAndCorrelationId));
         }
     }
 }

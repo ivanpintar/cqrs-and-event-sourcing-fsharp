@@ -71,12 +71,7 @@ export const getBasket = (basketId) => {
 
         fetch(url, createGetRequest(url))
             .then(response => response.json())
-            .then(basket => {
-                dispatch({
-                    type: actionTypes.UPDATE_BASKET,
-                    basket
-                });
-            });
+            .then(basket => dispatchBasketUpdate(dispatch, basket));
     }
 }
 
@@ -85,11 +80,16 @@ export const cancelBasket = (basketId) => {
         const url = config.BASKET_API_URL + '/cancel';
 
         fetch(url, createPostRequest({ basketId }))
-            .then(response => {
-                dispatch({
-                    type: actionTypes.UPDATE_BASKET,
-                    basket: {}
-                });
-            });
+            .then(response => dispatchBasketUpdate(dispatch, {}));
+    }
+}
+
+
+export const checkOutBasket = (basketId, shippingAddress) => {
+    return dispatch => {
+        const url = config.BASKET_API_URL + '/checkout';
+
+        fetch(url, createPostRequest({ basketId, shippingAddress }))
+            .then(response => dispatchBasketUpdate(dispatch, {}));
     }
 }

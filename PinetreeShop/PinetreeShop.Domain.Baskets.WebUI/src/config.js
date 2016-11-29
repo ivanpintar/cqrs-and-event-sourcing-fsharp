@@ -1,4 +1,4 @@
 export default {
-    PRODUCTS_API_URL: 'http://localhost/PinetreeShop.Products',
-    BASKET_API_URL: 'http://localhost/PinetreeShop.Baskets'
+    PRODUCTS_API_URL: 'http://localhost/PinetreeShop.Domain.Products.WebAPI',
+    BASKET_API_URL: 'http://localhost/PinetreeShop.Domain.Baskets.WebAPI'
 }

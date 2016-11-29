@@ -41,9 +41,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands.cs" />
-    <Compile Include="DomainEntry.cs" />
     <Compile Include="DummyNotifier.cs" />
-    <Compile Include="EventHandlers.cs" />
+    <Compile Include="OrderProcessEventHandler.cs" />
     <Compile Include="OrderProcessManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

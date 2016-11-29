@@ -28,7 +28,7 @@ namespace PinetreeShop.Domain.Orders.Tests
 
             When(command);
 
-            var expectedEvent = new OrderShipped(id, shippingAddress);
+            var expectedEvent = new OrderShipped(id);
             expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
             expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
 
@@ -36,10 +36,18 @@ namespace PinetreeShop.Domain.Orders.Tests
         }
 
         [Fact]
-        public void When_ShipOrderCancelled_ThrowOrderCancelledException()
+        public void When_ShipOrderCancelled_ThrowInvalidOrderStateException()
         {
-            var events = InitialEvents.ToList();
+            var events = InitialEvents.Take(2).ToList();
             events.Add(new OrderCancelled(id));
+            Given(events.ToArray());
+            WhenThrows<ShipOrder, InvalidOrderStateException>(new ShipOrder(id));
+        }
+
+        [Fact]
+        public void When_ShipOrderCreated_ThrowInvalidOrderStateException()
+        {
+            var events = InitialEvents.Take(1).ToList();
             Given(events.ToArray());
             WhenThrows<ShipOrder, InvalidOrderStateException>(new ShipOrder(id));
         }
@@ -50,7 +58,9 @@ namespace PinetreeShop.Domain.Orders.Tests
             {
                 return new IEvent[]
                 {
-                    new OrderCreated(id, basketId, OrderLines, shippingAddress)
+                    new OrderCreated(id, basketId, causationAndCorrelationId, shippingAddress),
+                    new OrderLineAdded(id, OrderLines.First()),
+                    new OrderReadyForShipping(id)
                 };
             }
         }

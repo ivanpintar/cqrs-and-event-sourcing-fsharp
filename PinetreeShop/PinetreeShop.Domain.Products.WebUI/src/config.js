@@ -1,3 +1,3 @@
 export default {
-    API_URL: 'http://localhost/PinetreeShop.Products'
+    API_URL: 'http://localhost/PinetreeShop.Domain.Products.WebAPI'
 }

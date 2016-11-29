@@ -5,6 +5,7 @@ using PinetreeShop.Domain.Shared.Types;
 using PinetreeShop.Domain.Tests.Order.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace PinetreeShop.Domain.Orders.Tests
@@ -27,7 +28,7 @@ namespace PinetreeShop.Domain.Orders.Tests
 
             When(command);
 
-            var expectedEvent = new OrderDelivered(id, shippingAddress);
+            var expectedEvent = new OrderDelivered(id);
             expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
             expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
 
@@ -38,7 +39,9 @@ namespace PinetreeShop.Domain.Orders.Tests
         public void When_DeliverOrderCancelled_ThrowOrderCancelledException()
         {
             Given(
-                new OrderCreated(id, basketId, OrderLines, shippingAddress), 
+                new OrderCreated(id, basketId, causationAndCorrelationId, shippingAddress),
+                new OrderLineAdded(id, OrderLines.First()),
+                new OrderReadyForShipping(id),
                 new OrderCancelled(id));
             WhenThrows<DeliverOrder, InvalidOrderStateException>(new DeliverOrder(id));
         }
@@ -49,8 +52,10 @@ namespace PinetreeShop.Domain.Orders.Tests
             {
                 return new IEvent[]
                 {
-                    new OrderCreated(id, basketId, OrderLines, shippingAddress),
-                    new OrderShipped(id,shippingAddress)
+                    new OrderCreated(id, basketId, causationAndCorrelationId, shippingAddress),
+                    new OrderLineAdded(id, OrderLines.First()),
+                    new OrderReadyForShipping(id),
+                    new OrderShipped(id)
                 };
             }
         }

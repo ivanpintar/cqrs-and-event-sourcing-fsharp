@@ -38,7 +38,7 @@ namespace PinetreeShop.Domain.Baskets.Tests
         [InlineData("cancelled")]
         public void When_AddItemNotPending_ThrowsInvalidStateException(string checkedOutOrCancelled)
         {
-            IEvent evt = new BasketCheckedOut(id, new Address());
+            IEvent evt = new BasketCheckedOut(id, new List<OrderLine>(), new Address());
             if (checkedOutOrCancelled == "cancelled")
                 evt = new BasketCancelled(id);
 

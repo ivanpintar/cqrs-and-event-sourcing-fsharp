@@ -13,7 +13,7 @@ namespace PinetreeShop.CQRS.Infrastructure.Commands
         {
             _aggregateRepository = aggregateRepository;
         }
-
+        
         public void RegisterHandler<TCommand, TAggregate>(Func<TAggregate, TCommand, TAggregate> handler) 
             where TCommand : ICommand
             where TAggregate : IAggregate, new()
@@ -33,7 +33,7 @@ namespace PinetreeShop.CQRS.Infrastructure.Commands
 
             if (!_commandHandlers.ContainsKey(commandType))
             {
-                throw new ApplicationException($"Missing handler for {commandType.Name}");
+                throw new ApplicationException($"Missing handler for command {commandType.Name} on aggregate {typeof(TAggregate)}");
             }
 
             IAggregate aggregate = _aggregateRepository.GetAggregateById<TAggregate>(command.AggregateId);

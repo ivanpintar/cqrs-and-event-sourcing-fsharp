@@ -19,7 +19,7 @@ namespace PinetreeShop.Domain.OrderProcess
     {
         private Guid _basketId;
         private Dictionary<Guid, bool> _reservations = new Dictionary<Guid, bool>();
-        private List<OrderLine> _orderLines = new List<OrderLine>();
+        private Dictionary<Guid, OrderLine> _orderLines = new Dictionary<Guid, OrderLine>();
         private Address _shippingAddress;
         private Guid _orderId;
 
@@ -44,15 +44,10 @@ namespace PinetreeShop.Domain.OrderProcess
         {
             ProcessId = evt.Metadata.CorrelationId;
             _basketId = evt.AggregateId;
-
-            BuildOrderLines();
             _shippingAddress = evt.ShippingAddress;
-
-            foreach (var orderLine in _orderLines)
-            {
-                _reservations[orderLine.ProductId] = false;
-                DispatchCommand<ProductAggregate>(new ReserveProduct(orderLine.ProductId, _basketId, orderLine.Quantity));
-            }
+            _orderLines = evt.OrderLines.ToDictionary(ol => ol.ProductId, ol => ol);
+            
+            DispatchCommand<OrderAggregate>(new CreateOrder(AggregateRepositoryBase.CreateGuid(), _basketId, _shippingAddress, ProcessId));
         }
 
         internal void ProductReserved(ProductReserved evt)
@@ -64,9 +59,12 @@ namespace PinetreeShop.Domain.OrderProcess
         {
             _reservations[evt.AggregateId] = true;
 
-            if (_reservations.Values.All(v => v))
+            var orderLine = _orderLines[evt.AggregateId];
+            DispatchCommand<OrderAggregate>(new AddOrderLine(_orderId, orderLine));
+
+            if(_reservations.All(x => x.Value))
             {
-                DispatchCommand<OrderAggregate>(new CreateOrder(AggregateRepositoryBase.CreateGuid(), _basketId, _orderLines, _shippingAddress));
+                DispatchCommand<OrderAggregate>(new PrepareOrderForShipping(_orderId));
             }
         }
 
@@ -88,6 +86,12 @@ namespace PinetreeShop.Domain.OrderProcess
         private void Apply(OrderCreated evt)
         {
             _orderId = evt.AggregateId;
+
+            foreach (var orderLine in _orderLines.Values)
+            {
+                _reservations[orderLine.ProductId] = false;
+                DispatchCommand<ProductAggregate>(new ReserveProduct(orderLine.ProductId, _basketId, orderLine.Quantity));
+            }
         }
 
         internal void CreateOrderFailed(CreateOrderFailed evt)
@@ -107,7 +111,7 @@ namespace PinetreeShop.Domain.OrderProcess
 
         private void Apply(OrderCancelled obj)
         {
-            foreach (var ol in _orderLines)
+            foreach (var ol in _orderLines.Values)
             {
                 DispatchCommand<ProductAggregate>(new CancelProductReservation(ol.ProductId, ol.Quantity));
             }
@@ -121,7 +125,7 @@ namespace PinetreeShop.Domain.OrderProcess
 
         private void Apply(OrderShipped evt)
         {
-            foreach(var ol in _orderLines)
+            foreach(var ol in _orderLines.Values)
             {
                 DispatchCommand<ProductAggregate>(new RemoveProductFromStock(ol.ProductId, ol.Quantity));
             }
@@ -136,56 +140,6 @@ namespace PinetreeShop.Domain.OrderProcess
         private void Apply(OrderDelivered obj)
         {
             DispatchCommand<DummyNotifier>(new NotifyAdmin(AggregateRepositoryBase.CreateGuid()));
-        }
-   
-        private void BuildOrderLines()
-        {
-            var orderEvents = _events.Where(e => e.AggregateId == _basketId && (e is BasketItemAdded || e is BasketItemRemoved)).ToList();
-
-            foreach (var oe in orderEvents)
-            {
-                if (oe is BasketItemAdded)
-                    AddProductToOrderLines(oe as BasketItemAdded);
-                else
-                    RemoveProductFromOrderLines(oe as BasketItemRemoved);
-            }
-        }
-
-        private void AddProductToOrderLines(BasketItemAdded evt)
-        {
-            var productId = evt.ProductId;
-            var productName = evt.ProductName;
-            var price = evt.Price;
-            var quantity = evt.Quantity;
-            var orderLine = _orderLines.SingleOrDefault(ol => ol.ProductId == productId);
-            if (orderLine == null)
-            {
-                orderLine = new OrderLine
-                {
-                    ProductId = productId,
-                    ProductName = productName,
-                    Price = price,
-                    Quantity = quantity
-                };
-                _orderLines.Add(orderLine);
-            }
-            else
-            {
-                orderLine.Quantity += quantity;
-            }
-        }
-
-        private void RemoveProductFromOrderLines(BasketItemRemoved evt)
-        {
-            var productId = evt.ProductId;
-            var quantity = evt.Quantity;
-            var orderLine = _orderLines.Single(ol => ol.ProductId == productId);
-            orderLine.Quantity = orderLine.Quantity - quantity;
-
-            if (orderLine.Quantity == 0)
-            {
-                _orderLines.Remove(orderLine);
-            }
         }
     }
 }

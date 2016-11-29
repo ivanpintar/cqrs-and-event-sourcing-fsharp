@@ -78,6 +78,54 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PinetreeShop.Domain.Baskets
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PinetreeShop.Domain.Orders.WebAPI", "PinetreeShop.Domain.Orders.WebAPI\PinetreeShop.Domain.Orders.WebAPI.csproj", "{9E0F6481-C5D5-4D70-B65D-FC38172F4018}"
 EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "PinetreeShop.Domain.Baskets.WebUI", "PinetreeShop.Domain.Baskets.WebUI\", "{6EBF1579-10BD-4EFF-B064-DC8598E447D9}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_53268"
+		Debug.AspNetCompiler.PhysicalPath = "PinetreeShop.Domain.Baskets.WebUI\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_53268\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_53268"
+		Release.AspNetCompiler.PhysicalPath = "PinetreeShop.Domain.Baskets.WebUI\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_53268\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "53268"
+		SlnRelativePath = "PinetreeShop.Domain.Baskets.WebUI\"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PinetreeShop.Domain.OrderProcess.Listeners", "PinetreeShop.Domain.OrderProcess.Listeners\PinetreeShop.Domain.OrderProcess.Listeners.csproj", "{F27437A6-9278-44B7-A0A7-E5BB94F40D99}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PinetreeShop.Domain.Orders.ReadModel", "PinetreeShop.Domain.Orders.ReadModel\PinetreeShop.Domain.Orders.ReadModel.csproj", "{332BFC1D-0A29-4870-A365-90043892CEEA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PinetreeShop.Domain.Orders.Listeners", "PinetreeShop.Domain.Orders.Listeners\PinetreeShop.Domain.Orders.Listeners.csproj", "{191B48E4-B39E-4151-AB9C-F183A7D8018C}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "PinetreeShop.Domain.Orders.WebUI", "PinetreeShop.Domain.Orders.WebUI\", "{76C7AB36-5BD1-4455-BDCC-4644EA8E7A10}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_63089"
+		Debug.AspNetCompiler.PhysicalPath = "PinetreeShop.Domain.Orders.WebUI\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_63089\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_63089"
+		Release.AspNetCompiler.PhysicalPath = "PinetreeShop.Domain.Orders.WebUI\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_63089\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "63089"
+		SlnRelativePath = "PinetreeShop.Domain.Orders.WebUI\"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -167,6 +215,24 @@ Global
 		{9E0F6481-C5D5-4D70-B65D-FC38172F4018}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E0F6481-C5D5-4D70-B65D-FC38172F4018}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E0F6481-C5D5-4D70-B65D-FC38172F4018}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EBF1579-10BD-4EFF-B064-DC8598E447D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EBF1579-10BD-4EFF-B064-DC8598E447D9}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EBF1579-10BD-4EFF-B064-DC8598E447D9}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{F27437A6-9278-44B7-A0A7-E5BB94F40D99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F27437A6-9278-44B7-A0A7-E5BB94F40D99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F27437A6-9278-44B7-A0A7-E5BB94F40D99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F27437A6-9278-44B7-A0A7-E5BB94F40D99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{332BFC1D-0A29-4870-A365-90043892CEEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{332BFC1D-0A29-4870-A365-90043892CEEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{332BFC1D-0A29-4870-A365-90043892CEEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{332BFC1D-0A29-4870-A365-90043892CEEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{191B48E4-B39E-4151-AB9C-F183A7D8018C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{191B48E4-B39E-4151-AB9C-F183A7D8018C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{191B48E4-B39E-4151-AB9C-F183A7D8018C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{191B48E4-B39E-4151-AB9C-F183A7D8018C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76C7AB36-5BD1-4455-BDCC-4644EA8E7A10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76C7AB36-5BD1-4455-BDCC-4644EA8E7A10}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{76C7AB36-5BD1-4455-BDCC-4644EA8E7A10}.Release|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -193,5 +259,10 @@ Global
 		{54E0CA80-93BD-4F03-986A-5F8137656F51} = {58973138-8686-4202-93F7-AA9954A6E79E}
 		{A31DE4B4-0594-4759-BFD8-EA9ABE60EA06} = {BE55598C-0571-4DC9-A146-601CAF4DFBE9}
 		{9E0F6481-C5D5-4D70-B65D-FC38172F4018} = {46B77768-10AC-4E5C-BE79-189716F0FA9D}
+		{6EBF1579-10BD-4EFF-B064-DC8598E447D9} = {BE55598C-0571-4DC9-A146-601CAF4DFBE9}
+		{F27437A6-9278-44B7-A0A7-E5BB94F40D99} = {9FA122FA-EE4E-444A-B2EF-10CB722BC0E6}
+		{332BFC1D-0A29-4870-A365-90043892CEEA} = {46B77768-10AC-4E5C-BE79-189716F0FA9D}
+		{191B48E4-B39E-4151-AB9C-F183A7D8018C} = {46B77768-10AC-4E5C-BE79-189716F0FA9D}
+		{76C7AB36-5BD1-4455-BDCC-4644EA8E7A10} = {46B77768-10AC-4E5C-BE79-189716F0FA9D}
 	EndGlobalSection
 EndGlobal

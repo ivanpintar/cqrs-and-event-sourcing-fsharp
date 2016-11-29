@@ -4,6 +4,7 @@ using PinetreeShop.Domain.Baskets.Events;
 using PinetreeShop.Domain.Baskets.Exceptions;
 using PinetreeShop.Domain.Shared.Types;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -38,7 +39,7 @@ namespace PinetreeShop.Domain.Baskets.Tests
         public void When_CancelCheckedOut_ThrowsInvalidStateException()
         {
             var initialEvents = InitialEvents.ToList();
-            initialEvents.Add(new BasketCheckedOut(id, shippingAddress));
+            initialEvents.Add(new BasketCheckedOut(id, new List<OrderLine>(), shippingAddress));
             Given(initialEvents.ToArray());
             WhenThrows<CancelBasket, InvalidStateException>(new CancelBasket(id));
         }

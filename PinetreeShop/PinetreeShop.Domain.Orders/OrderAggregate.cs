@@ -6,58 +6,87 @@ using PinetreeShop.Domain.Shared.Types;
 using PinetreeShop.Domain.Tests.Order.Exceptions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace PinetreeShop.Domain.Orders
 {
     public class OrderAggregate : AggregateBase
     {
-        public enum OrderState { Pending, Shipped, Cancelled, Delivered };
-        private OrderState _state;
-        private IEnumerable<OrderLine> _orderLines = new List<OrderLine>();
-        private Guid _basketId { get; set; }
-        private Address _shippingAddress { get; set; }
+        public enum OrderState { Pending, ReadyForShipping, Shipped, Cancelled, Delivered };
+        public OrderState State { get; set; }
+        public IList<OrderLine> OrderLines { get; set; }
+        public Guid BasketId { get; set; }
+        public Guid ProcessId { get; set; }
+        public Address ShippingAddress { get; set; }
 
         public OrderAggregate()
         {
             RegisterEventHandler<OrderCreated>(Apply);
+            RegisterEventHandler<OrderLineAdded>(Apply);
+            RegisterEventHandler<OrderReadyForShipping>(Apply);
             RegisterEventHandler<OrderCancelled>(Apply);
             RegisterEventHandler<OrderShipped>(Apply);
             RegisterEventHandler<OrderDelivered>(Apply);
+        }
+
+        private void Apply(OrderReadyForShipping obj)
+        {
+            State = OrderState.ReadyForShipping;
+        }
+
+        private void Apply(OrderLineAdded obj)
+        {
+            OrderLines.Add(obj.OrderLine);
+        }
+
+        internal void PrepareForShipping(PrepareOrderForShipping cmd)
+        {
+            if (State != OrderState.Pending)
+                throw new InvalidOrderStateException(cmd.AggregateId, $"State should be {OrderState.Pending} but is {State}");
+
+            if (State == OrderState.ReadyForShipping)
+                return;
+
+            RaiseEvent(new OrderReadyForShipping(cmd.AggregateId));
         }
 
         public OrderAggregate(CreateOrder cmd) : base()
         {
             var orderId = cmd.AggregateId;
             var basketId = cmd.BasketId;
-            var orderLines = cmd.Lines;
             var shippingAddress = cmd.ShippingAddress;
+            var processId = cmd.ProcessId;
 
-            if (orderLines.Count() == 0) throw new EmptyOrderLinesException(orderId, "Can't create an order without empty lines");
             if (shippingAddress == null) throw new ParameterNullException(orderId, "shippingAddress");
 
-            RaiseEvent(new OrderCreated(orderId, basketId, orderLines, shippingAddress));
+            RaiseEvent(new OrderCreated(orderId, basketId, processId, shippingAddress));
+        }
+
+        internal void AddOrderLine(AddOrderLine cmd)
+        {
+            if(State != OrderState.Pending)
+                throw new InvalidOrderStateException(cmd.AggregateId, $"State should be {OrderState.Pending} but is {State}");
+
+            RaiseEvent(new OrderLineAdded(cmd.AggregateId, cmd.OrderLine));
         }
 
         private void Apply(OrderCreated evt)
         {
-            _state = OrderState.Pending;
+            State = OrderState.Pending;
+            OrderLines = new List<OrderLine>();
+
             AggregateId = evt.AggregateId;
-            _basketId = evt.BasketId;
-            _shippingAddress = evt.ShippingAddress;
-            _orderLines = evt.Lines;
+            BasketId = evt.BasketId;
+            ProcessId = evt.ProcessId;
+            ShippingAddress = evt.ShippingAddress;
         }
 
         internal void Cancel(CancelOrder cmd)
         {
-            switch (_state)
+            switch (State)
             {
                 case OrderState.Shipped:
-                    RaiseEvent(new CancelOrderFailed(cmd.AggregateId, CancelOrderFailed.OrderShipped));
-                    break;
                 case OrderState.Delivered:
-                    RaiseEvent(new CancelOrderFailed(cmd.AggregateId, CancelOrderFailed.OrderDelivered));
-                    break;
+                    throw new InvalidOrderStateException(cmd.AggregateId, $"State should be {OrderState.Pending} or {OrderState.ReadyForShipping} but is {State}");
                 default:
                     RaiseEvent(new OrderCancelled(cmd.AggregateId));
                     break;
@@ -66,31 +95,33 @@ namespace PinetreeShop.Domain.Orders
 
         internal void Ship(ShipOrder cmd)
         {
-            if (_state != OrderState.Pending) throw new InvalidOrderStateException(cmd.AggregateId, $"State should be {OrderState.Pending} but is {_state}");
+            if (State != OrderState.ReadyForShipping)
+                throw new InvalidOrderStateException(cmd.AggregateId, $"State should be {OrderState.ReadyForShipping} but is {State}");
 
-            RaiseEvent(new OrderShipped(cmd.AggregateId, _shippingAddress));
+            RaiseEvent(new OrderShipped(cmd.AggregateId));
         }
 
         internal void Deliver(DeliverOrder cmd)
         {
-            if (_state != OrderState.Shipped) throw new InvalidOrderStateException(cmd.AggregateId, $"State should be {OrderState.Shipped} but is {_state}");
+            if (State != OrderState.Shipped) 
+                throw new InvalidOrderStateException(cmd.AggregateId, $"State should be {OrderState.Shipped} but is {State}");
 
-            RaiseEvent(new OrderDelivered(cmd.AggregateId, _shippingAddress));
+            RaiseEvent(new OrderDelivered(cmd.AggregateId));
         }
 
         private void Apply(OrderCancelled evt)
         {
-            _state = OrderState.Cancelled;
+            State = OrderState.Cancelled;
         }
 
         private void Apply(OrderShipped evt)
         {
-            _state = OrderState.Shipped;
+            State = OrderState.Shipped;
         }
 
         private void Apply(OrderDelivered evt)
         {
-            _state = OrderState.Delivered;
+            State = OrderState.Delivered;
         }
 
         internal static OrderAggregate Create(CreateOrder cmd)

@@ -2,21 +2,27 @@ import React from 'react';
 import { Button, Table } from 'react-bootstrap';
 import OrderLine from './OrderLine';
 import ChangeQuantityModal from './ChangeQuantityModal'; 
+import CheckOutModal from './CheckOutModal'; 
 
 class Basket extends React.Component {
     constructor(props){
         super(props);
-        this.state = { selectedOrder: null };
+        this.state = { selectedOrder: null, checkingOut: false };
         this.changeQuantityModal = this.changeQuantityModal.bind(this);
+        this.checkOutModal = this.checkOutModal.bind(this);
     }    
 
     changeQuantityModal(order) {
         this.setState({ selectedOrder: order });
     }
 
+    checkOutModal(show) {
+        this.setState({ checkingOut: show });
+    }
+
     render() {
-        let { basket, changeQuantity, cancelBasket } = this.props;
-        let { selectedOrder } = this.state;
+        let { basket, changeQuantity, cancelBasket, checkOutBasket } = this.props;
+        let { selectedOrder, checkingOut } = this.state;
         let orderLines = [];
 
         if(!basket.id) {
@@ -37,6 +43,11 @@ class Basket extends React.Component {
                     show={selectedOrder !== null}
                     onClose={() => this.changeQuantityModal(null)}/>
 
+                <CheckOutModal
+                    checkOutBasket={(address) => checkOutBasket(basket.id, address)}
+                    show={checkingOut}
+                    onClose={() => this.checkOutModal(false)}/>
+
                 <Table striped hover>
                     <thead>
                         <tr>
@@ -50,7 +61,7 @@ class Basket extends React.Component {
                     <tfoot>
                         <tr>
                             <td colSpan='4' className='text-right'>
-                                <Button>Check Out</Button>
+                                <Button onClick={() => this.checkOutModal(true)}>Check Out</Button>
                                 <Button 
                                     bsStyle='danger' 
                                     onClick={() => cancelBasket(basket.id)}>Cancel</Button>

@@ -2,6 +2,7 @@
 using PinetreeShop.Domain.Orders.Commands;
 using PinetreeShop.Domain.Orders.Events;
 using PinetreeShop.Domain.Shared.Types;
+using PinetreeShop.Domain.Tests.Order.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace PinetreeShop.Domain.Orders.Tests
         [Fact]
         public void When_CancelOrder_OrderCancelled()
         {
-            Given(InitialEvents.Take(1).ToArray());
+            Given(InitialEvents.Take(2).ToArray());
 
             var command = new CancelOrder(id);
             command.Metadata.CausationId = command.Metadata.CommandId;
@@ -38,23 +39,17 @@ namespace PinetreeShop.Domain.Orders.Tests
         [Fact]
         public void When_CancelOrderWhenShipped_CancelOrderFailed()
         {
-            Given(InitialEvents.Take(2).ToArray());
+            Given(InitialEvents.Take(3).ToArray());
 
             var command = new CancelOrder(id);
             command.Metadata.CausationId = command.Metadata.CommandId;
             command.Metadata.CorrelationId = causationAndCorrelationId;
 
-            When(command);
-
-            var expectedEvent = new CancelOrderFailed(id, CancelOrderFailed.OrderShipped);
-            expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
-            expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
-
-            Then(expectedEvent);
+            WhenThrows<CancelOrder, InvalidOrderStateException>(command);
         }
 
         [Fact]
-        public void When_CancelOrderWhenDelivered_CancelOrderFailed()
+        public void When_CancelOrderWhenDelivered_ThrowsInvalidOrderStateException()
         {
             Given(InitialEvents);
 
@@ -62,13 +57,7 @@ namespace PinetreeShop.Domain.Orders.Tests
             command.Metadata.CausationId = command.Metadata.CommandId;
             command.Metadata.CorrelationId = causationAndCorrelationId;
 
-            When(command);
-
-            var expectedEvent = new CancelOrderFailed(id, CancelOrderFailed.OrderDelivered);
-            expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
-            expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
-
-            Then(expectedEvent);
+            WhenThrows<CancelOrder, InvalidOrderStateException>(command);
         }
 
         private IEvent[] InitialEvents
@@ -77,9 +66,10 @@ namespace PinetreeShop.Domain.Orders.Tests
             {
                 return new IEvent[]
                 {
-                    new OrderCreated(id, basketId, OrderLines, shippingAddress),
-                    new OrderShipped(id,shippingAddress),
-                    new OrderDelivered(id,shippingAddress)
+                    new OrderCreated(id, basketId, causationAndCorrelationId, shippingAddress),
+                    new OrderReadyForShipping(id),
+                    new OrderShipped(id),
+                    new OrderDelivered(id)
                 };
             }
         }

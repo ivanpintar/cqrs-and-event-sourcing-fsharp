@@ -57,7 +57,7 @@ namespace PinetreeShop.Domain.Baskets.Tests
         [InlineData("cancelled")]
         public void When_RemoveItemNotPending_ThrowsInvalidStateException(string checkedOutOrCancelled)
         {
-            IEvent evt = new BasketCheckedOut(id, new Address());
+            IEvent evt = new BasketCheckedOut(id, OrderLines, new Address());
             if (checkedOutOrCancelled == "cancelled")
                 evt = new BasketCancelled(id);
 
@@ -93,5 +93,23 @@ namespace PinetreeShop.Domain.Baskets.Tests
                 return _initialEvents;
             }
         }
+
+        private List<OrderLine> OrderLines
+        {
+            get
+            {
+                return new List<OrderLine>
+                {
+                    new OrderLine
+                    {
+                        ProductName = "Test Item",
+                        ProductId = productId,
+                        Price = 2,
+                        Quantity = 10
+                    }
+                };
+            }
+        }
     }
 }
+
