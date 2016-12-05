@@ -16,6 +16,7 @@ namespace PinetreeShop.Domain.Products
             RegisterHandler(RemoveFromStock);
             RegisterHandler(Reserve);
             RegisterHandler(CancelReservation);
+            RegisterHandler(PurchaseReserved);
         }
 
         private Func<ProductAggregate, CreateProduct, ProductAggregate> Create = (product, command) =>
@@ -37,6 +38,12 @@ namespace PinetreeShop.Domain.Products
         private Func<ProductAggregate, AddProductToStock, ProductAggregate> AddToStock = (product, command) =>
         {
             (product as ProductAggregate).AddToStock(command as AddProductToStock);
+            return product;
+        };
+
+        private Func<ProductAggregate, PurchaseReservedProduct, ProductAggregate> PurchaseReserved = (product, command) =>
+        {
+            (product as ProductAggregate).PurchaseReserved(command as PurchaseReservedProduct);
             return product;
         };
 

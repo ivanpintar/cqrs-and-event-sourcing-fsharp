@@ -69,13 +69,7 @@ namespace PinetreeShop.CQRS.Persistence.SQL
                 ctx.SaveChanges();
             }
         }
-
-        public void DispatchCommand(string queueName, ICommand command)
-        {
-            var cmds = new List<ICommand> { command };
-            DispatchCommands(queueName, cmds);
-        }
-
+        
         public IEnumerable<IEvent> GetEvents(int lastEventNumber)
         {
             using (var ctx = new EventStoreContext())
@@ -89,7 +83,7 @@ namespace PinetreeShop.CQRS.Persistence.SQL
             }
         }
 
-        public IEnumerable<IEvent> GetEvents<TAggregate>(int lastEventNumber) where TAggregate : IAggregate
+        public IEnumerable<IEvent> GetEvents<TAggregate>(int lastEventNumber)
         {
             using (var ctx = new EventStoreContext())
             {
@@ -102,27 +96,13 @@ namespace PinetreeShop.CQRS.Persistence.SQL
                 return events.Select(DeserializeEvent).ToList();
             }
         }
-
-        public IEnumerable<IEvent> GetAggregateEvents(Guid aggregateId, int lastEventNumber)
+        public IEnumerable<IEvent> GetAggregateEvents<TAggregate>(Guid aggregateId, int lastEventNumber)
         {
             using (var ctx = new EventStoreContext())
             {
                 var events = ctx.Events
+                    .Where(e => e.Category == typeof(TAggregate).Name)
                     .Where(e => e.AggregateId == aggregateId)
-                    .Where(e => e.Id > lastEventNumber)
-                    .OrderBy(e => e.Id)
-                    .ToList();
-
-                return events.Select(DeserializeEvent).ToList();
-            }
-        }
-
-        public IEnumerable<IEvent> GetProcessEvents(Guid correlationId, int lastEventNumber)
-        {
-            using (var ctx = new EventStoreContext())
-            {
-                var events = ctx.Events
-                    .Where(e => e.CorrelationId == correlationId)
                     .Where(e => e.Id > lastEventNumber)
                     .OrderBy(e => e.Id)
                     .ToList();

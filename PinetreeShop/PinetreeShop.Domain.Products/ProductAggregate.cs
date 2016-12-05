@@ -1,4 +1,5 @@
-﻿using PinetreeShop.CQRS.Infrastructure;
+﻿using System;
+using PinetreeShop.CQRS.Infrastructure;
 using PinetreeShop.Domain.Products.Commands;
 using PinetreeShop.Domain.Products.Events;
 using PinetreeShop.Domain.Products.Exceptions;
@@ -22,6 +23,13 @@ namespace PinetreeShop.Domain.Products
             RegisterEventHandler<ProductQuantityChanged>(Apply);
             RegisterEventHandler<ProductReserved>(Apply);
             RegisterEventHandler<ProductReservationCancelled>(Apply);
+            RegisterEventHandler<ReservedProductPurchased>(Apply);
+        }
+
+        private void Apply(ReservedProductPurchased obj)
+        {
+            Quantity -= obj.Quantity;
+            Reserved -= obj.Quantity;
         }
 
         private ProductAggregate(CreateProduct cmd) : this()
@@ -57,6 +65,13 @@ namespace PinetreeShop.Domain.Products
             ChangeQuantity(newQuantity);
         }
 
+        internal void PurchaseReserved(PurchaseReservedProduct cmd)
+        {
+            // TODO: throw exception if reserved or available less than quantity
+
+            RaiseEvent(new ReservedProductPurchased(cmd.AggregateId, cmd.Quantity));
+        }
+
         internal void RemoveFromStock(RemoveProductFromStock cmd)
         {
             var newQuantity = Quantity - cmd.Quantity;
@@ -80,16 +95,15 @@ namespace PinetreeShop.Domain.Products
         internal void Reserve(ReserveProduct cmd)
         {
             var productId = cmd.AggregateId;
-            var basketId = cmd.BasketId;
             var quantity = cmd.Quantity;
 
             if (AvailableQuantity < quantity)
             {
-                RaiseEvent(new ProductReservationFailed(productId, basketId, quantity, ProductReservationFailed.NotAvailable));
+                RaiseEvent(new ProductReservationFailed(productId, quantity, ProductReservationFailed.NotAvailable));
             }
             else
             {
-                RaiseEvent(new ProductReserved(productId, basketId, quantity));
+                RaiseEvent(new ProductReserved(productId, quantity));
             }
         }
 

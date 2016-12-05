@@ -17,7 +17,7 @@ namespace PinetreeShop.Domain.Tests
         protected List<Tuple<Type, IEvent>> _preConditions = new List<Tuple<Type, IEvent>>();
         protected ProcessManagerRepository _processManagerRepository;
 
-        protected abstract IProcessEventHandler BuildApplication();        
+        protected abstract IProcessEventHandler BuildApplication();
 
         protected void TearDown()
         {
@@ -27,9 +27,10 @@ namespace PinetreeShop.Domain.Tests
         protected void Given(params Tuple<Type, IEvent>[] existingEvents)
         {
             _preConditions = existingEvents.ToList();
+
         }
 
-        protected void When<TEvent>(TEvent command)
+        protected void WhenProcessed<TEvent>(TEvent command)
             where TEvent : IEvent
         {
             var handler = BuildApplication();
@@ -51,7 +52,24 @@ namespace PinetreeShop.Domain.Tests
             {
                 Assert.True(ObjectsAreEqual(le.L, le.E));
             }
+        }
 
+        protected void Then(params IEvent[] expectedEvents)
+        {
+            var latestEvents = _eventStore.LatestEvents.ToList();
+            var expectedEventsList = expectedEvents != null
+                ? expectedEvents.ToList()
+                : new List<IEvent>();
+
+            Assert.Equal(latestEvents.Count, expectedEventsList.Count);
+
+            var latestAndExpected = latestEvents
+                .Zip(expectedEventsList, (l, e) => new { L = l, E = e });
+
+            foreach (var le in latestAndExpected)
+            {
+                Assert.True(ObjectsAreEqual(le.L, le.E));
+            }
         }
 
         private bool ObjectsAreEqual(object evt1, object evt2)
@@ -78,12 +96,23 @@ namespace PinetreeShop.Domain.Tests
 
             return json1 == json2;
         }
-        
+
         protected List<Tuple<Type, IEvent>> _initialEvents = new List<Tuple<Type, IEvent>>();
 
-        protected void AddInitialEvent<TAggregate>(IEvent evt)
+        protected Guid AddPreviousEvent<TAggregate>(IEvent evt)
         {
             _initialEvents.Add(new Tuple<Type, IEvent>(typeof(TAggregate), evt));
+            return evt.Metadata.ProcessId;
+        }
+
+        protected Guid AddProcessedEvent<TAggregate>(IEvent evt, Guid? processId = null)
+        {
+            if (processId == null) processId = evt.Metadata.ProcessId;
+
+            AddPreviousEvent<TAggregate>(evt);
+            _initialEvents.Add(new Tuple<Type, IEvent>(typeof(TProcessManager), new EventProcessed(processId.Value, evt)));
+
+            return evt.Metadata.ProcessId;
         }
     }
 }

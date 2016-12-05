@@ -63,6 +63,7 @@
     <Compile Include="ProductTestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemoveProductsFromStock.cs" />
+    <Compile Include="PurchaseReservedProductTests.cs" />
     <Compile Include="ReserveProductTests.cs" />
   </ItemGroup>
   <ItemGroup>

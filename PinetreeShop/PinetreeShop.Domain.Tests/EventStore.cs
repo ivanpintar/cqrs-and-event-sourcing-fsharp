@@ -54,18 +54,12 @@ namespace PinetreeShop.Domain.Tests
             }
         }
 
-        public void DispatchCommand(string queueName, ICommand command)
-        {
-            var cmds = new List<ICommand> { command };
-            DispatchCommands(queueName, cmds);
-        }
-
         public IEnumerable<IEvent> GetEvents(int startingPoint)
         {
             return _events.Select(t => t.Item2).Skip(startingPoint).ToList();
         }
-
-        public IEnumerable<IEvent> GetEvents<TAggregate>(int startingPoint) where TAggregate : IAggregate
+        
+        public IEnumerable<IEvent> GetEvents<TAggregate>(int startingPoint)
         {
             return _events
                 .Where(t => t.Item1 == typeof(TAggregate))
@@ -74,20 +68,12 @@ namespace PinetreeShop.Domain.Tests
                 .ToList();
         }
 
-        public IEnumerable<IEvent> GetAggregateEvents(Guid aggregateId, int startingPoint)
-        { 
-            return _events
-                .Select(t => t.Item2)
-                .Where(e => e.AggregateId == aggregateId)
-                .Skip(startingPoint)
-                .ToList();
-        }
-
-        public IEnumerable<IEvent> GetProcessEvents(Guid correlatioId, int startingPoint)
+        public IEnumerable<IEvent> GetAggregateEvents<TAggregate>(Guid aggregateId, int startingPoint)
         {
             return _events
+                .Where(t => t.Item1 == typeof(TAggregate))
+                .Where(e => e.Item2.AggregateId == aggregateId)
                 .Select(t => t.Item2)
-                .Where(e => e.Metadata.CorrelationId == correlatioId)
                 .Skip(startingPoint)
                 .ToList();
         }

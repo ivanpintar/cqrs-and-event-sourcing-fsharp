@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace PinetreeShop.CQRS.Infrastructure.Repositories
 {
-    public class ProcessManagerRepository : ProcessManagerRepositoryBase
+    public class ProcessManagerRepository : IProcessManagerRepository
     {
         private IEventStore _eventStore;
 
@@ -16,13 +16,13 @@ namespace PinetreeShop.CQRS.Infrastructure.Repositories
             _eventStore = eventStore;
         }
 
-        public override TProcessManager GetProcessManagerById<TProcessManager>(Guid id, int upToEventNumber)
+        public TProcessManager GetProcessManagerById<TProcessManager>(Guid id) where TProcessManager : IProcessManager, new()
         {
-            var events = GetEventsForProcessManager<TProcessManager>(id).Where(e => e.Metadata.EventNumber < upToEventNumber);
+            var events = GetEventsForProcessManager<TProcessManager>(id);
             return BuildProcessManager<TProcessManager>(events);
         }
 
-        public override void SaveProcessManager<TProcessManager>(TProcessManager processManager)
+        public void SaveProcessManager<TProcessManager>(TProcessManager processManager) where TProcessManager : IProcessManager
         {
             var eventsToSave = processManager.UncommittedEvents.ToList();
             var commandsToDispatch = processManager.UndispatchedCommands;
@@ -55,7 +55,27 @@ namespace PinetreeShop.CQRS.Infrastructure.Repositories
 
         private List<IEvent> GetEventsForProcessManager<TProcessManager>(Guid processManagerId)
         {
-            return _eventStore.GetProcessEvents(processManagerId, 0).ToList();
+            return _eventStore.GetAggregateEvents<TProcessManager>(processManagerId, 0).ToList();
+        }
+
+        private int CalculateExpectedVersion<T>(IProcessManager processManager, List<T> events)
+        {
+            return processManager.Version - events.Count;
+        }
+
+        private TProcessManager BuildProcessManager<TProcessManager>(IEnumerable<IEvent> events) where TProcessManager : IProcessManager, new()
+        {
+            var result = new TProcessManager();
+            foreach (var e in events)
+            {
+                var evt = (e is EventProcessed) ? ((EventProcessed)e).Event : e;
+
+                result.Transition(evt);
+            }
+
+            result.ClearUncommittedEvents();
+            result.ClearUndispatchedCommands();
+            return result;
         }
     }
 }

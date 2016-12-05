@@ -24,6 +24,7 @@ namespace PinetreeShop.Domain.Products.Tests
             var expectedEvent = new ProductCreated(id, "Test Product", 2);
             expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
             expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
+            expectedEvent.Metadata.ProcessId = command.Metadata.ProcessId;
 
             Then(expectedEvent);
         }

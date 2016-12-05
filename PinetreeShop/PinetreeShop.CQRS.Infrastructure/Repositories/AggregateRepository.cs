@@ -6,8 +6,10 @@ using System.Linq;
 
 namespace PinetreeShop.CQRS.Infrastructure.Repositories
 {
-    public class AggregateRepository : AggregateRepositoryBase
+    public class AggregateRepository : IAggregateRepository
     {
+        public static Func<Guid> CreateGuid = () => Guid.NewGuid();
+
         private IEventStore _eventStore;
 
         public AggregateRepository(IEventStore eventStore)
@@ -15,9 +17,9 @@ namespace PinetreeShop.CQRS.Infrastructure.Repositories
             _eventStore = eventStore;
         }
 
-        public override TAggregate GetAggregateById<TAggregate>(Guid id)
+        public TAggregate GetAggregateById<TAggregate>(Guid id) where TAggregate : IAggregate, new()
         {
-            var events = GetEventsForAggregate(id);
+            var events = GetEventsForAggregate<TAggregate>(id);
             if (events.Any())
             {
                 return BuildAggregate<TAggregate>(events);
@@ -26,14 +28,14 @@ namespace PinetreeShop.CQRS.Infrastructure.Repositories
             return default(TAggregate);
         }
 
-        public override void SaveAggregate<TAggregate>(TAggregate aggregate)
+        public void SaveAggregate<TAggregate>(TAggregate aggregate) where TAggregate : IAggregate
         {
             var eventsToSave = aggregate.UncommittedEvents.ToList();
             var expectedVersion = CalculateExpectedVersion(aggregate, eventsToSave);
 
             if (expectedVersion >= 0)
             {
-                var existingEvents = GetEventsForAggregate(aggregate.AggregateId);
+                var existingEvents = GetEventsForAggregate<TAggregate>(aggregate.AggregateId);
                 var currentversion = existingEvents.Count - 1;
                 if (currentversion != expectedVersion)
                 {
@@ -45,9 +47,25 @@ namespace PinetreeShop.CQRS.Infrastructure.Repositories
             aggregate.ClearUncommittedEvents();
         }
         
-        private List<IEvent> GetEventsForAggregate(Guid aggregateId)
+        private List<IEvent> GetEventsForAggregate<TAggregate>(Guid aggregateId)
         {
-            return _eventStore.GetAggregateEvents(aggregateId, 0).ToList();                
+            return _eventStore.GetAggregateEvents<TAggregate>(aggregateId, 0).ToList();                
+        }
+
+
+        private int CalculateExpectedVersion<T>(IAggregate aggregate, List<T> events)
+        {
+            return aggregate.Version - events.Count;
+        }
+
+        private TAggregate BuildAggregate<TAggregate>(IEnumerable<IEvent> events) where TAggregate : IAggregate, new()
+        {
+            var result = new TAggregate();
+            foreach (var evt in events)
+            {
+                result.ApplyEvent(evt);
+            }
+            return result;
         }
     }
 }

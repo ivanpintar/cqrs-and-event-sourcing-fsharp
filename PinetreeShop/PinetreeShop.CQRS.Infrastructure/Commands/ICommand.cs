@@ -35,10 +35,12 @@ namespace PinetreeShop.CQRS.Infrastructure.Commands
         public Guid CommandId { get; private set; }
         public Guid CausationId { get; set; }
         public Guid CorrelationId { get; set; }
+        public Guid ProcessId { get; set; }
 
         public Metadata()
         {
             CommandId = Guid.NewGuid();
+            ProcessId = Guid.NewGuid();
             CausationId = CommandId;
             CorrelationId = CommandId;
         }

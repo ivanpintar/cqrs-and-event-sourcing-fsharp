@@ -42,12 +42,13 @@ namespace PinetreeShop.Domain.OrderProcess
 
         private void Apply(BasketCheckedOut evt)
         {
-            ProcessId = evt.Metadata.CorrelationId;
+            ProcessId = evt.Metadata.ProcessId;
+            _orderId = ProcessId;
             _basketId = evt.AggregateId;
             _shippingAddress = evt.ShippingAddress;
             _orderLines = evt.OrderLines.ToDictionary(ol => ol.ProductId, ol => ol);
             
-            DispatchCommand<OrderAggregate>(new CreateOrder(AggregateRepositoryBase.CreateGuid(), _basketId, _shippingAddress, ProcessId));
+            DispatchCommand<OrderAggregate>(new CreateOrder(_orderId, _basketId, _shippingAddress));
         }
 
         internal void ProductReserved(ProductReserved evt)
@@ -75,7 +76,7 @@ namespace PinetreeShop.Domain.OrderProcess
 
         private void Apply(ProductReservationFailed obj)
         {
-            DispatchCommand<DummyNotifier>(new NotifyAdmin(AggregateRepositoryBase.CreateGuid()));
+            DispatchCommand<DummyNotifier>(new NotifyAdmin(AggregateRepository.CreateGuid()));
         }
 
         internal void OrderCreated(OrderCreated evt)
@@ -90,7 +91,7 @@ namespace PinetreeShop.Domain.OrderProcess
             foreach (var orderLine in _orderLines.Values)
             {
                 _reservations[orderLine.ProductId] = false;
-                DispatchCommand<ProductAggregate>(new ReserveProduct(orderLine.ProductId, _basketId, orderLine.Quantity));
+                DispatchCommand<ProductAggregate>(new ReserveProduct(orderLine.ProductId, orderLine.Quantity));
             }
         }
 
@@ -101,7 +102,7 @@ namespace PinetreeShop.Domain.OrderProcess
 
         private void Apply(CreateOrderFailed obj)
         {
-            DispatchCommand<DummyNotifier>(new NotifyAdmin(AggregateRepositoryBase.CreateGuid()));
+            DispatchCommand<DummyNotifier>(new NotifyAdmin(AggregateRepository.CreateGuid()));
         }
 
         internal void OrderCancelled(OrderCancelled evt)
@@ -115,7 +116,7 @@ namespace PinetreeShop.Domain.OrderProcess
             {
                 DispatchCommand<ProductAggregate>(new CancelProductReservation(ol.ProductId, ol.Quantity));
             }
-            DispatchCommand<DummyNotifier>(new NotifyCustomer(AggregateRepositoryBase.CreateGuid()));
+            DispatchCommand<DummyNotifier>(new NotifyCustomer(AggregateRepository.CreateGuid()));
         }
 
         internal void OrderShipped(OrderShipped evt)
@@ -125,11 +126,12 @@ namespace PinetreeShop.Domain.OrderProcess
 
         private void Apply(OrderShipped evt)
         {
-            foreach(var ol in _orderLines.Values)
+            var reservedOrders = _orderLines.Values.Where(ol => _reservations.Any(r => r.Key == ol.ProductId && r.Value));
+            foreach (var ol in reservedOrders)
             {
-                DispatchCommand<ProductAggregate>(new RemoveProductFromStock(ol.ProductId, ol.Quantity));
+                DispatchCommand<ProductAggregate>(new PurchaseReservedProduct(ol.ProductId, ol.Quantity));
             }
-            DispatchCommand<DummyNotifier>(new NotifyCustomer(AggregateRepositoryBase.CreateGuid()));
+            DispatchCommand<DummyNotifier>(new NotifyCustomer(AggregateRepository.CreateGuid()));
         }
 
         internal void OrderDelivered(OrderDelivered evt)
@@ -139,7 +141,7 @@ namespace PinetreeShop.Domain.OrderProcess
 
         private void Apply(OrderDelivered obj)
         {
-            DispatchCommand<DummyNotifier>(new NotifyAdmin(AggregateRepositoryBase.CreateGuid()));
+            DispatchCommand<DummyNotifier>(new NotifyAdmin(AggregateRepository.CreateGuid()));
         }
     }
 }

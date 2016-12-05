@@ -11,12 +11,12 @@ namespace PinetreeShop.CQRS.Infrastructure
 
         public Guid ProcessId { get; protected set; }
 
-        private int _version = -1;
+        private int _version = 0;
         public int Version
         {
             get { return _version; }
         }
-        
+
         private List<IEvent> _uncommittedEvents = new List<IEvent>();
         public IEnumerable<IEvent> UncommittedEvents { get { return _uncommittedEvents; } }
 
@@ -46,12 +46,7 @@ namespace PinetreeShop.CQRS.Infrastructure
         protected void HandleEvent(IEvent evt)
         {
             Transition(evt);
-
-            // only save events from the process itself. Other events were already saved by the aggregates
-            if (evt.AggregateId == ProcessId)
-            {
-                _uncommittedEvents.Add(evt);
-            }
+            _uncommittedEvents.Add(new EventProcessed(ProcessId, evt));
         }
 
         protected void DispatchCommand<TAggregate>(ICommand command)
@@ -67,16 +62,6 @@ namespace PinetreeShop.CQRS.Infrastructure
         protected void RegisterEventHandler<T>(Action<T> handler) where T : class
         {
             _eventHandlers.Add(typeof(T), o => handler(o as T));
-        }
-
-        protected TResult BuildAggregate<TResult>(IEnumerable<IEvent> events) where TResult : IAggregate, new()
-        {
-            var result = new TResult();
-            foreach (var evt in events)
-            {
-                result.ApplyEvent(evt);
-            }
-            return result;
         }
     }
 }

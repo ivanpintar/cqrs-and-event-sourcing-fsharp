@@ -21,15 +21,16 @@ namespace PinetreeShop.Domain.Orders.Tests
         [Fact]
         public void When_CreateOrder_OrderCreated()
         {
-            var command = new CreateOrder(id, basketId, shippingAddress, causationAndCorrelationId);
+            var command = new CreateOrder(id, basketId, shippingAddress);
             command.Metadata.CausationId = command.Metadata.CommandId;
             command.Metadata.CorrelationId = causationAndCorrelationId;
 
             When(command);
 
-            var expectedEvent = new OrderCreated(id, basketId, causationAndCorrelationId, shippingAddress);
+            var expectedEvent = new OrderCreated(id, basketId, shippingAddress);
             expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
             expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
+            expectedEvent.Metadata.ProcessId = command.Metadata.ProcessId;
 
             Then(expectedEvent);
         }
@@ -37,14 +38,14 @@ namespace PinetreeShop.Domain.Orders.Tests
         [Fact]
         public void When_CreateOrderWithNoShippingAddress_ThrowParameterNullException()
         {
-            WhenThrows<CreateOrder, ParameterNullException>(new CreateOrder(id, basketId, null, causationAndCorrelationId));
+            WhenThrows<CreateOrder, ParameterNullException>(new CreateOrder(id, basketId, null));
         }
         
         [Fact]
         public void When_CreateOrderWithSameGuid_ThrowAggregateExistsException()
         {
-            Given(new OrderCreated(id, basketId, causationAndCorrelationId, shippingAddress));
-            WhenThrows<CreateOrder, AggregateExistsException>(new CreateOrder(id, basketId, shippingAddress, causationAndCorrelationId));
+            Given(new OrderCreated(id, basketId, shippingAddress));
+            WhenThrows<CreateOrder, AggregateExistsException>(new CreateOrder(id, basketId, shippingAddress));
         }
     }
 }

@@ -54,7 +54,6 @@
     <Compile Include="Exceptions\AggregateNotFoundException.cs" />
     <Compile Include="Exceptions\WrongExpectedVersionException.cs" />
     <Compile Include="IEventStore.cs" />
-    <Compile Include="Repositories\AggregateRepositoryBase.cs" />
     <Compile Include="IAggregate.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Repositories\IAggregateRepository.cs" />
@@ -62,7 +61,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\IProcessManagerRepository.cs" />
     <Compile Include="Repositories\ProcessManagerRepository.cs" />
-    <Compile Include="Repositories\ProcessManagerRepositoryBase.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -36,7 +36,7 @@ namespace PinetreeShop.CQRS.Infrastructure.Events
                 return;
             }
 
-            var processManager = _processManagerRepository.GetProcessManagerById<TProcessManager>(evt.Metadata.CorrelationId);
+            var processManager = _processManagerRepository.GetProcessManagerById<TProcessManager>(evt.Metadata.ProcessId);
 
             processManager = (_eventHandlers[eventType] as Func<TProcessManager, TEvent, TProcessManager>)(processManager, evt);
 
@@ -44,6 +44,14 @@ namespace PinetreeShop.CQRS.Infrastructure.Events
             {
                 cmd.Metadata.CausationId = evt.Metadata.EventId;
                 cmd.Metadata.CorrelationId = evt.Metadata.CorrelationId;
+                cmd.Metadata.ProcessId = evt.Metadata.ProcessId;
+            }
+
+            foreach (var e in processManager.UncommittedEvents)
+            {
+                e.Metadata.CausationId = evt.Metadata.EventId;
+                e.Metadata.CorrelationId = evt.Metadata.CorrelationId;
+                e.Metadata.ProcessId = evt.Metadata.ProcessId;
             }
 
             _processManagerRepository.SaveProcessManager(processManager);

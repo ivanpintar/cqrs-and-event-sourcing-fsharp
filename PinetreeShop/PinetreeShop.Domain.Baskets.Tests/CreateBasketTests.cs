@@ -23,6 +23,7 @@ namespace PinetreeShop.Domain.Baskets.Tests
             var expectedEvent = new BasketCreated(id);
             expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
             expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
+            expectedEvent.Metadata.ProcessId = command.Metadata.ProcessId;
 
             Then(expectedEvent);
         }

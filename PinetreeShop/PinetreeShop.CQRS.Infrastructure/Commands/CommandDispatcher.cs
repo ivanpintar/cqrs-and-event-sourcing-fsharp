@@ -44,6 +44,7 @@ namespace PinetreeShop.CQRS.Infrastructure.Commands
             {
                 evt.Metadata.CausationId = command.Metadata.CommandId;
                 evt.Metadata.CorrelationId = command.Metadata.CorrelationId;
+                evt.Metadata.ProcessId = command.Metadata.ProcessId;
             }
 
             _aggregateRepository.SaveAggregate((TAggregate)aggregate);

@@ -27,6 +27,7 @@ namespace PinetreeShop.Domain.Products.Tests
             var expectedEvent = new ProductReservationCancelled(id, 2);
             expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
             expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
+            expectedEvent.Metadata.ProcessId = command.Metadata.ProcessId;
 
             Then(expectedEvent);
         }
@@ -45,6 +46,7 @@ namespace PinetreeShop.Domain.Products.Tests
             var expectedEvent = new ProductReservationCancelled(id, 3);
             expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
             expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
+            expectedEvent.Metadata.ProcessId = command.Metadata.ProcessId;
 
             Then(expectedEvent);
         }
@@ -57,7 +59,7 @@ namespace PinetreeShop.Domain.Products.Tests
                 {
                     new ProductCreated(id, "Test Product", 2),
                     new ProductQuantityChanged(id, 5),
-                    new ProductReserved(id, basketId, 3)
+                    new ProductReserved(id, 3)
                 };
             }
         }

@@ -20,14 +20,14 @@ namespace PinetreeShop.Domain.Orders
 
         private Func<OrderAggregate, PrepareOrderForShipping, OrderAggregate> PrepareForShipping = (order, command) =>
         {
-            command.Metadata.CorrelationId = order.ProcessId;
+            command.Metadata.ProcessId = order.AggregateId;
             order.PrepareForShipping(command);
             return order;
         };
 
         private Func<OrderAggregate, AddOrderLine, OrderAggregate> AddOrderLine = (order, command) =>
         {
-            command.Metadata.CorrelationId = order.ProcessId;
+            command.Metadata.ProcessId = order.AggregateId;
             order.AddOrderLine(command);
             return order;
         };
@@ -38,27 +38,26 @@ namespace PinetreeShop.Domain.Orders
             {
                 throw new AggregateExistsException(order.AggregateId, "Product already exists");
             }
-            command.Metadata.CorrelationId = command.ProcessId;
             return OrderAggregate.Create(command);
         };
 
         private Func<OrderAggregate, CancelOrder, OrderAggregate> Cancel = (order, command) =>
         {
-            command.Metadata.CorrelationId = order.ProcessId;
+            command.Metadata.ProcessId = order.AggregateId;
             order.Cancel(command);
             return order;
         };
 
         private Func<OrderAggregate, ShipOrder, OrderAggregate> Ship = (order, command) =>
         {
-            command.Metadata.CorrelationId = order.ProcessId;
+            command.Metadata.ProcessId = order.AggregateId;
             order.Ship(command);
             return order;
         };
 
         private Func<OrderAggregate, DeliverOrder, OrderAggregate> Deliver = (order, command) =>
         {
-            command.Metadata.CorrelationId = order.ProcessId;
+            command.Metadata.ProcessId = order.AggregateId;
             order.Deliver(command);
             return order;
         };

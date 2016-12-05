@@ -5,6 +5,7 @@ using PinetreeShop.Domain.Products.ReadModel;
 using PinetreeShop.Domain.Products.ReadModel.Entities;
 using System.Linq;
 using System.Transactions;
+using System;
 
 namespace PinetreeShop.Domain.Products.Listeners
 {
@@ -22,6 +23,16 @@ namespace PinetreeShop.Domain.Products.Listeners
             _eventStreamListener.RegisterEventHandler<ProductQuantityChanged>(OnProductQuantityChanged);
             _eventStreamListener.RegisterEventHandler<ProductReserved>(OnProductReserved);
             _eventStreamListener.RegisterEventHandler<ProductReservationCancelled>(OnProductReservationCancelled);
+            _eventStreamListener.RegisterEventHandler<ReservedProductPurchased>(OnResrvedProductPurchased);
+        }
+
+        private void OnResrvedProductPurchased(ReservedProductPurchased evt)
+        {
+            var product = GetProduct(evt);
+            product.Reserved -= evt.Quantity;
+            product.Quantity -= evt.Quantity;
+            product.LastEventNumber = evt.Metadata.EventNumber;
+            _ctx.SaveChanges();
         }
 
         private void OnProductReservationCancelled(ProductReservationCancelled evt)

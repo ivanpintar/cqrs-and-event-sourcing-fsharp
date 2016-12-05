@@ -8,13 +8,11 @@ namespace PinetreeShop.Domain.Orders.Events
     public class OrderCreated : EventBase
     {
         public Guid BasketId { get; private set; }
-        public Guid ProcessId { get; private set; }
         public Address ShippingAddress { get; private set; }
 
-        public OrderCreated(Guid orderId, Guid basketId, Guid processId, Address shippingAddress) : base(orderId)
+        public OrderCreated(Guid orderId, Guid basketId, Address shippingAddress) : base(orderId)
         {
             BasketId = basketId;
-            ProcessId = processId; 
             ShippingAddress = shippingAddress;
         }
     }

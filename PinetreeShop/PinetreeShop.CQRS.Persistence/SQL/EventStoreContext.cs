@@ -10,7 +10,7 @@ namespace PinetreeShop.CQRS.Persistence.SQL
         {
 
         }
-
+        
         public DbSet<EventEntity> Events { get; set; }
         public DbSet<CommandEntity> Commands { get; set; }
 

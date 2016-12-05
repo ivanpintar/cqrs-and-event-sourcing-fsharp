@@ -41,19 +41,17 @@ namespace PinetreeShop.Domain.Products.Commands
 
         public SetProductQuantity(Guid productId, int quantity) : base(productId)
         {
-                Quantity = quantity;
+             Quantity = quantity;
         }
     }
 
     public class ReserveProduct : CommandBase
     {
         public int Quantity { get; private set; }
-        public Guid BasketId { get; private set; }
 
-        public ReserveProduct(Guid productId, Guid basketId, int quantity) : base(productId)
+        public ReserveProduct(Guid productId, int quantity) : base(productId)
         {
             Quantity = quantity;
-            BasketId = basketId;
         }
     }
 
@@ -62,6 +60,16 @@ namespace PinetreeShop.Domain.Products.Commands
         public int Quantity { get; private set; }
 
         public CancelProductReservation(Guid productId, int quantity) : base(productId)
+        {
+            Quantity = quantity;
+        }
+    }
+
+    public class PurchaseReservedProduct : CommandBase
+    {
+        public int Quantity { get; private set; }
+
+        public PurchaseReservedProduct(Guid productId, int quantity) : base(productId)
         {
             Quantity = quantity;
         }

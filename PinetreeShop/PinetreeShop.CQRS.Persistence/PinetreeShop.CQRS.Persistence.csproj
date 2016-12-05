@@ -63,6 +63,10 @@
     <Compile Include="Migrations\201610152329574_Added_Category_QueueName.Designer.cs">
       <DependentUpon>201610152329574_Added_Category_QueueName.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201612022314395_Added_ProcessId_To_Event_And_Command.cs" />
+    <Compile Include="Migrations\201612022314395_Added_ProcessId_To_Event_And_Command.Designer.cs">
+      <DependentUpon>201612022314395_Added_ProcessId_To_Event_And_Command.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SQL\Entities\CommandEntity.cs" />
@@ -86,6 +90,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201610152329574_Added_Category_QueueName.resx">
       <DependentUpon>201610152329574_Added_Category_QueueName.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201612022314395_Added_ProcessId_To_Event_And_Command.resx">
+      <DependentUpon>201612022314395_Added_ProcessId_To_Event_And_Command.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

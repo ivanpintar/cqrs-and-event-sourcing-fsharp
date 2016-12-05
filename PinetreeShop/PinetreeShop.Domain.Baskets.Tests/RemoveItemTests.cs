@@ -30,6 +30,7 @@ namespace PinetreeShop.Domain.Baskets.Tests
             var expectedEvent = new BasketItemRemoved(id, productId, 5);
             expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
             expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
+            expectedEvent.Metadata.ProcessId = command.Metadata.ProcessId;
 
             Then(expectedEvent);
         }
@@ -48,6 +49,7 @@ namespace PinetreeShop.Domain.Baskets.Tests
             var expectedEvent = new BasketItemRemoved(id, productId, 10);
             expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
             expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
+            expectedEvent.Metadata.ProcessId = command.Metadata.ProcessId;
 
             Then(expectedEvent);
         }

@@ -32,6 +32,7 @@ namespace PinetreeShop.Domain.Orders.Tests
             var expectedEvent = new OrderCancelled(id);
             expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
             expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
+            expectedEvent.Metadata.ProcessId = command.Metadata.ProcessId;
 
             Then(expectedEvent);
         }
@@ -66,7 +67,7 @@ namespace PinetreeShop.Domain.Orders.Tests
             {
                 return new IEvent[]
                 {
-                    new OrderCreated(id, basketId, causationAndCorrelationId, shippingAddress),
+                    new OrderCreated(id, basketId, shippingAddress),
                     new OrderReadyForShipping(id),
                     new OrderShipped(id),
                     new OrderDelivered(id)

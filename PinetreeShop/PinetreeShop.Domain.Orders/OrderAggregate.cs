@@ -54,11 +54,10 @@ namespace PinetreeShop.Domain.Orders
             var orderId = cmd.AggregateId;
             var basketId = cmd.BasketId;
             var shippingAddress = cmd.ShippingAddress;
-            var processId = cmd.ProcessId;
 
             if (shippingAddress == null) throw new ParameterNullException(orderId, "shippingAddress");
 
-            RaiseEvent(new OrderCreated(orderId, basketId, processId, shippingAddress));
+            RaiseEvent(new OrderCreated(orderId, basketId, shippingAddress));
         }
 
         internal void AddOrderLine(AddOrderLine cmd)
@@ -76,7 +75,7 @@ namespace PinetreeShop.Domain.Orders
 
             AggregateId = evt.AggregateId;
             BasketId = evt.BasketId;
-            ProcessId = evt.ProcessId;
+            ProcessId = evt.Metadata.ProcessId;
             ShippingAddress = evt.ShippingAddress;
         }
 

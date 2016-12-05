@@ -25,12 +25,14 @@ namespace PinetreeShop.Domain.Baskets.Tests
             var command = new CheckOutBasket(id, shippingAddress);
             command.Metadata.CausationId = command.Metadata.CommandId;
             command.Metadata.CorrelationId = causationAndCorrelationId;
+            command.Metadata.ProcessId = causationAndCorrelationId;
 
             When(command);
 
             var expectedEvent = new BasketCheckedOut(id, OrderLines, shippingAddress);
             expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
             expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
+            expectedEvent.Metadata.ProcessId = command.Metadata.ProcessId;
 
             Then(expectedEvent);
         }

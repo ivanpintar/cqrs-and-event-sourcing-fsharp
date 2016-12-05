@@ -9,13 +9,11 @@ namespace PinetreeShop.Domain.Orders.Commands
     {
         public Guid BasketId { get; private set; }
         public Address ShippingAddress { get; private set; }
-        public Guid ProcessId { get; private set; }
 
-        public CreateOrder(Guid orderId, Guid basketId, Address shippingAddress, Guid processId) : base(orderId)
+        public CreateOrder(Guid orderId, Guid basketId, Address shippingAddress) : base(orderId)
         {
             BasketId = basketId;
             ShippingAddress = shippingAddress;
-            ProcessId = processId;
         }
     }
 

@@ -31,9 +31,20 @@ namespace PinetreeShop.CQRS.Infrastructure.Events
         }
     }
 
+    public class EventProcessed : EventBase 
+    {
+        public IEvent Event { get; private set; }
+
+        public EventProcessed(Guid aggregateId, IEvent evt) : base(aggregateId)
+        {
+            Event = evt;
+        } 
+    }
+
     public class Metadata
     {
         public Guid EventId { get; private set; }
+        public Guid ProcessId { get; set; }
         public Guid CausationId { get; set; }
         public Guid CorrelationId { get; set; }
         public DateTime Date { get; private set; }
@@ -42,6 +53,7 @@ namespace PinetreeShop.CQRS.Infrastructure.Events
         public Metadata()
         {
             EventId = Guid.NewGuid();
+            ProcessId = Guid.NewGuid();
             Date = DateTime.Now;
         }
     }
