@@ -112,7 +112,8 @@ namespace PinetreeShop.Domain.OrderProcess
 
         private void Apply(OrderCancelled obj)
         {
-            foreach (var ol in _orderLines.Values)
+            var reservedOrders = _orderLines.Values.Where(ol => _reservations.Any(r => r.Key == ol.ProductId && r.Value));
+            foreach (var ol in reservedOrders)
             {
                 DispatchCommand<ProductAggregate>(new CancelProductReservation(ol.ProductId, ol.Quantity));
             }

@@ -185,6 +185,40 @@ namespace PinetreeShop.Domain.OrderProcess.Tests
         }
 
         [Fact]
+        public void When_OrderCancelled_And_SomeReservationsFailed_DecreaseProductQuantity_And_NotifyCustomer()
+        {
+            var notificationId = Guid.NewGuid();
+            AggregateRepository.CreateGuid = () => notificationId;
+            SetupPreviousEvents();
+
+            orderId = AddProcessedEvent<BasketAggregate>(new BasketCheckedOut(basketId, OrderLines, shippingAddress));
+            AddProcessedEvent<OrderAggregate>(new OrderCreated(orderId, basketId, shippingAddress), orderId);
+            AddProcessedEvent<ProductAggregate>(new ProductReserved(productOneId, 10), orderId);
+            AddProcessedEvent<ProductAggregate>(new ProductReservationFailed(productTwoId, 20, ProductReservationFailed.NotAvailable), orderId);
+            AddProcessedEvent<OrderAggregate>(new OrderLineAdded(orderId, OrderLines[0]), orderId);
+            AddProcessedEvent<OrderAggregate>(new OrderLineAdded(orderId, OrderLines[1]), orderId);
+
+            var evt = new OrderCancelled(orderId);
+            AddPreviousEvent<OrderAggregate>(evt);
+            SetInitalMetadata();
+
+            Given(_initialEvents.ToArray());
+
+            WhenProcessed(evt);
+
+            var expectedCommands = new List<ICommand>
+            {
+                new CancelProductReservation(productOneId, 10),
+                new NotifyCustomer(notificationId)
+            };
+            var expectedEvents = new List<IEvent> { new EventProcessed(orderId, evt) };
+            SetMetadata(evt, expectedCommands, expectedEvents);
+
+            Then(expectedCommands.ToArray());
+            Then(expectedEvents.ToArray());
+        }
+
+        [Fact]
         public void When_OrderShipped_DecreaseProductQuantity_And_NotifyCustomer()
         {
             var notificationId = Guid.NewGuid();
