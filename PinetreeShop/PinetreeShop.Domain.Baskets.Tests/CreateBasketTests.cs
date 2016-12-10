@@ -28,7 +28,6 @@ namespace PinetreeShop.Domain.Baskets.Tests
             Then(expectedEvent);
         }
 
-
         [Fact]
         public void When_CreateBasketWithSameGuid_ThrowAggregateExistsException()
         {

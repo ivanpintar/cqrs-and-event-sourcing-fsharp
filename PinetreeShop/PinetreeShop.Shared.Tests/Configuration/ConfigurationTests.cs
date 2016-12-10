@@ -32,11 +32,12 @@ namespace PinetreeShop.Shared.Tests
             var config = new WorkingConfig(new ConfigurationDictionary());
 
             Assert.Equal(config.MissingIntValueWithDefault, 2);
-            Assert.Equal(config.OverridenIntValue, 1);
+            Assert.Equal(config.IntWithDefaultTwo, 1);
             Assert.Equal(config.IntValue, 1);
             Assert.Equal(config.TrueValue, true);
             Assert.Equal(config.FalseValue, false);
             Assert.Equal(config.StringValue, "some string");
+            Assert.Equal(config.DecimalValue, (decimal)1.5);
         }
     }
 }

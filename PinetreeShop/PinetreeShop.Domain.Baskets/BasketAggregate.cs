@@ -15,6 +15,7 @@ namespace PinetreeShop.Domain.Baskets
         public BasketState State { get; private set; }
         public List<OrderLine> OrderLines { get; private set; }
 
+        #region Contructor
 
         private BasketAggregate(CreateBasket cmd) : this()
         {
@@ -33,15 +34,43 @@ namespace PinetreeShop.Domain.Baskets
             RegisterEventHandler<BasketCheckedOut>(Apply);
         }
 
-        internal static BasketAggregate Create(CreateBasket cmd)
-        {
-            return new BasketAggregate(cmd);
-        }
+        #endregion
+
+        #region Event handlers
 
         private void Apply(BasketCreated evt)
         {
             AggregateId = evt.AggregateId;
             State = BasketState.Pending;
+        }
+
+        private void Apply(BasketItemAdded evt)
+        {
+            AddProductToOrderLines(evt);
+        }
+
+        private void Apply(BasketItemRemoved evt)
+        {
+            RemoveProductFromOrderLines(evt);
+        }
+
+        private void Apply(BasketCancelled evt)
+        {
+            State = BasketState.Cancelled;
+        }
+
+        private void Apply(BasketCheckedOut evt)
+        {
+            State = BasketState.CheckedOut;
+        }
+
+        #endregion
+
+        #region Command handlers
+
+        internal static BasketAggregate Create(CreateBasket cmd)
+        {
+            return new BasketAggregate(cmd);
         }
 
         internal void AddItemToBasket(AddItemToBasket cmd)
@@ -50,11 +79,6 @@ namespace PinetreeShop.Domain.Baskets
                 throw new InvalidStateException(AggregateId, $"Cannot add item. Basket is {State}");
 
             RaiseEvent(new BasketItemAdded(cmd.AggregateId, cmd.ProductId, cmd.ProductName, cmd.Price, cmd.Quantity));
-        }
-
-        private void Apply(BasketItemAdded evt)
-        {
-            AddProductToOrderLines(evt);
         }
 
         internal void RemoveItemFromBasket(RemoveItemFromBasket cmd)
@@ -73,11 +97,6 @@ namespace PinetreeShop.Domain.Baskets
             }
         }
 
-        private void Apply(BasketItemRemoved evt)
-        {
-            RemoveProductFromOrderLines(evt);
-        }
-
         internal void Cancel(CancelBasket cmd)
         {
             if (State == BasketState.Cancelled) return;
@@ -86,11 +105,6 @@ namespace PinetreeShop.Domain.Baskets
                 throw new InvalidStateException(cmd.AggregateId, $"Cannot cancel, basket is {State}");
 
             RaiseEvent(new BasketCancelled(cmd.AggregateId));
-        }
-
-        private void Apply(BasketCancelled evt)
-        {
-            State = BasketState.Cancelled;
         }
 
         internal void CheckOut(CheckOutBasket cmd)
@@ -106,10 +120,9 @@ namespace PinetreeShop.Domain.Baskets
             RaiseEvent(new BasketCheckedOut(cmd.AggregateId, OrderLines, cmd.ShippingAddress));
         }
 
-        private void Apply(BasketCheckedOut evt)
-        {
-            State = BasketState.CheckedOut;
-        }
+        #endregion
+
+        #region Helpers
 
         private void AddProductToOrderLines(BasketItemAdded evt)
         {
@@ -147,5 +160,7 @@ namespace PinetreeShop.Domain.Baskets
                 OrderLines.Remove(orderLine);
             }
         }
+
+        #endregion
     }
 }

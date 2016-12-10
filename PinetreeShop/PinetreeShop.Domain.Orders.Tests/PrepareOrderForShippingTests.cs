@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace PinetreeShop.Domain.Orders.Tests
 {
@@ -19,6 +20,7 @@ namespace PinetreeShop.Domain.Orders.Tests
         Guid causationAndCorrelationId = Guid.NewGuid();
         Address shippingAddress = new Address { Country = "US", StateOrProvince = "CA", StreetAndNumber = "A2", ZipAndCity = "LA" };
 
+        [Fact]
         private void When_PrepareForShipping_OrderReadyForShipping()
         {
             Given(InitialEvents.ToArray());
@@ -32,10 +34,12 @@ namespace PinetreeShop.Domain.Orders.Tests
             var expectedEvent = new OrderReadyForShipping(id);
             expectedEvent.Metadata.CausationId = command.Metadata.CommandId;
             expectedEvent.Metadata.CorrelationId = causationAndCorrelationId;
+            expectedEvent.Metadata.ProcessId = command.Metadata.ProcessId;
 
             Then(expectedEvent);
         }
 
+        [Fact]
         private void When_PrepareForShippingNoOrderLinesAdded_ThrowsInvalidOrderStateException()
         {
             Given(InitialEvents.Take(1).ToArray());
@@ -47,6 +51,7 @@ namespace PinetreeShop.Domain.Orders.Tests
             WhenThrows<PrepareOrderForShipping, InvalidOrderStateException>(command);
         }
 
+        [Fact]
         private void When_PrepareForShippingCancelled_ThrowsInvalidOrderStateException()
         {
             Given(InitialEvents, new OrderCancelled(id));
@@ -58,6 +63,7 @@ namespace PinetreeShop.Domain.Orders.Tests
             WhenThrows<PrepareOrderForShipping, InvalidOrderStateException>(command);
         }
 
+        [Fact]
         private void When_PrepareForShippingShipped_ThrowsInvalidOrderStateException()
         {
             Given(InitialEvents, new OrderReadyForShipping(id), new OrderShipped(id));
@@ -69,6 +75,7 @@ namespace PinetreeShop.Domain.Orders.Tests
             WhenThrows<PrepareOrderForShipping, InvalidOrderStateException>(command);
         }
 
+        [Fact]
         private void When_PrepareForShippingDelivered_ThrowsInvalidOrderStateException()
         {
             Given(InitialEvents, new OrderReadyForShipping(id), new OrderShipped(id), new OrderDelivered(id));

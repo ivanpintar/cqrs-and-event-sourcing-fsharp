@@ -6,6 +6,7 @@ using PinetreeShop.Domain.Shared.Types;
 using PinetreeShop.Domain.Tests.Order.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PinetreeShop.Domain.Orders
 {
@@ -18,6 +19,8 @@ namespace PinetreeShop.Domain.Orders
         public Guid ProcessId { get; set; }
         public Address ShippingAddress { get; set; }
 
+        #region Constructors 
+
         public OrderAggregate()
         {
             RegisterEventHandler<OrderCreated>(Apply);
@@ -26,27 +29,6 @@ namespace PinetreeShop.Domain.Orders
             RegisterEventHandler<OrderCancelled>(Apply);
             RegisterEventHandler<OrderShipped>(Apply);
             RegisterEventHandler<OrderDelivered>(Apply);
-        }
-
-        private void Apply(OrderReadyForShipping obj)
-        {
-            State = OrderState.ReadyForShipping;
-        }
-
-        private void Apply(OrderLineAdded obj)
-        {
-            OrderLines.Add(obj.OrderLine);
-        }
-
-        internal void PrepareForShipping(PrepareOrderForShipping cmd)
-        {
-            if (State != OrderState.Pending)
-                throw new InvalidOrderStateException(cmd.AggregateId, $"State should be {OrderState.Pending} but is {State}");
-
-            if (State == OrderState.ReadyForShipping)
-                return;
-
-            RaiseEvent(new OrderReadyForShipping(cmd.AggregateId));
         }
 
         public OrderAggregate(CreateOrder cmd) : base()
@@ -60,12 +42,18 @@ namespace PinetreeShop.Domain.Orders
             RaiseEvent(new OrderCreated(orderId, basketId, shippingAddress));
         }
 
-        internal void AddOrderLine(AddOrderLine cmd)
-        {
-            if(State != OrderState.Pending)
-                throw new InvalidOrderStateException(cmd.AggregateId, $"State should be {OrderState.Pending} but is {State}");
+#endregion
 
-            RaiseEvent(new OrderLineAdded(cmd.AggregateId, cmd.OrderLine));
+        #region Event handlers
+
+        private void Apply(OrderReadyForShipping obj)
+        {
+            State = OrderState.ReadyForShipping;
+        }
+
+        private void Apply(OrderLineAdded obj)
+        {
+            OrderLines.Add(obj.OrderLine);
         }
 
         private void Apply(OrderCreated evt)
@@ -77,6 +65,47 @@ namespace PinetreeShop.Domain.Orders
             BasketId = evt.BasketId;
             ProcessId = evt.Metadata.ProcessId;
             ShippingAddress = evt.ShippingAddress;
+        }
+
+        private void Apply(OrderCancelled evt)
+        {
+            State = OrderState.Cancelled;
+        }
+
+        private void Apply(OrderShipped evt)
+        {
+            State = OrderState.Shipped;
+        }
+
+        private void Apply(OrderDelivered evt)
+        {
+            State = OrderState.Delivered;
+        }
+
+        #endregion
+
+        #region Command handlers
+
+        internal void PrepareForShipping(PrepareOrderForShipping cmd)
+        {
+            if (State != OrderState.Pending)
+                throw new InvalidOrderStateException(cmd.AggregateId, $"State should be {OrderState.Pending} but is {State}");
+
+            if (State == OrderState.ReadyForShipping)
+                return;
+
+            if(!OrderLines.Any())
+                throw new InvalidOrderStateException(cmd.AggregateId, $"Order has no order lines");
+
+            RaiseEvent(new OrderReadyForShipping(cmd.AggregateId));
+        }
+
+        internal void AddOrderLine(AddOrderLine cmd)
+        {
+            if(State != OrderState.Pending)
+                throw new InvalidOrderStateException(cmd.AggregateId, $"State should be {OrderState.Pending} but is {State}");
+
+            RaiseEvent(new OrderLineAdded(cmd.AggregateId, cmd.OrderLine));
         }
 
         internal void Cancel(CancelOrder cmd)
@@ -108,24 +137,11 @@ namespace PinetreeShop.Domain.Orders
             RaiseEvent(new OrderDelivered(cmd.AggregateId));
         }
 
-        private void Apply(OrderCancelled evt)
-        {
-            State = OrderState.Cancelled;
-        }
-
-        private void Apply(OrderShipped evt)
-        {
-            State = OrderState.Shipped;
-        }
-
-        private void Apply(OrderDelivered evt)
-        {
-            State = OrderState.Delivered;
-        }
-
         internal static OrderAggregate Create(CreateOrder cmd)
         {
             return new OrderAggregate(cmd);
         }
+
+        #endregion
     }
 }

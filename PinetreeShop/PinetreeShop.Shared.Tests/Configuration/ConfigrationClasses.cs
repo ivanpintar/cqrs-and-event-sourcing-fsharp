@@ -7,7 +7,7 @@ namespace PinetreeShop.Shared.ConfigurationTests
     {
         protected override string Namespace { get { return "ConfigTest_"; } }
 
-        public int MissingValue { get; private set;  }
+        public long MissingValue { get; private set;  }
 
         public MissingValueConfig(IConfigurationDictionary configSettings) : base(configSettings)
         {
@@ -18,7 +18,7 @@ namespace PinetreeShop.Shared.ConfigurationTests
     {
         protected override string Namespace { get { return "ConfigTest_"; } }
 
-        public int FailingIntValue { get; private set; }
+        public long FailingIntValue { get; private set; }
 
         public UnparsableValueConfig(IConfigurationDictionary configSettings) : base(configSettings)
         {
@@ -30,12 +30,13 @@ namespace PinetreeShop.Shared.ConfigurationTests
         protected override string Namespace { get { return "ConfigTest_"; } }
 
         [DefaultSettingValue("2")]
-        public int MissingIntValueWithDefault { get; private set; }
+        public long MissingIntValueWithDefault { get; private set; }
 
         [DefaultSettingValue("2")]
-        public int OverridenIntValue { get; private set; }
+        public long IntWithDefaultTwo { get; private set; }
 
-        public int IntValue { get; private set; }
+        public long IntValue { get; private set; }
+        public decimal DecimalValue { get; private set; }
 
         public bool TrueValue { get; private set; }
         public bool FalseValue { get; private set; }

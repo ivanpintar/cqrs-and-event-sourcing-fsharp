@@ -50,7 +50,6 @@ namespace PinetreeShop.Domain.Baskets.Tests
             WhenThrows<AddItemToBasket, InvalidStateException>(new AddItemToBasket(id, productId, "Test Product", 2, 10));
         }
 
-
         private List<IEvent> _initialEvents = null;
         private List<IEvent> InitialEvents
         {

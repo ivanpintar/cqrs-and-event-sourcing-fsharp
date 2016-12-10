@@ -35,10 +35,7 @@ namespace PinetreeShop.Domain.OrderProcess
             RegisterEventHandler<OrderCancelled>(Apply);
         }
 
-        internal void BasketCheckedOut(BasketCheckedOut evt)
-        {
-            HandleEvent(evt);
-        }
+        #region Internal Event handlers
 
         private void Apply(BasketCheckedOut evt)
         {
@@ -49,11 +46,6 @@ namespace PinetreeShop.Domain.OrderProcess
             _orderLines = evt.OrderLines.ToDictionary(ol => ol.ProductId, ol => ol);
             
             DispatchCommand<OrderAggregate>(new CreateOrder(_orderId, _basketId, _shippingAddress));
-        }
-
-        internal void ProductReserved(ProductReserved evt)
-        {
-            HandleEvent(evt);
         }
 
         private void Apply(ProductReserved evt)
@@ -69,19 +61,9 @@ namespace PinetreeShop.Domain.OrderProcess
             }
         }
 
-        internal void ProductReservationFailed(ProductReservationFailed evt)
-        {
-            HandleEvent(evt);
-        }
-
         private void Apply(ProductReservationFailed obj)
         {
             DispatchCommand<DummyNotifier>(new NotifyAdmin(AggregateRepository.CreateGuid()));
-        }
-
-        internal void OrderCreated(OrderCreated evt)
-        {
-            HandleEvent(evt);
         }
 
         private void Apply(OrderCreated evt)
@@ -95,19 +77,9 @@ namespace PinetreeShop.Domain.OrderProcess
             }
         }
 
-        internal void CreateOrderFailed(CreateOrderFailed evt)
-        {
-            HandleEvent(evt);
-        }
-
         private void Apply(CreateOrderFailed obj)
         {
             DispatchCommand<DummyNotifier>(new NotifyAdmin(AggregateRepository.CreateGuid()));
-        }
-
-        internal void OrderCancelled(OrderCancelled evt)
-        {
-            HandleEvent(evt);
         }
 
         private void Apply(OrderCancelled obj)
@@ -120,11 +92,6 @@ namespace PinetreeShop.Domain.OrderProcess
             DispatchCommand<DummyNotifier>(new NotifyCustomer(AggregateRepository.CreateGuid()));
         }
 
-        internal void OrderShipped(OrderShipped evt)
-        {
-            HandleEvent(evt);
-        }
-
         private void Apply(OrderShipped evt)
         {
             var reservedOrders = _orderLines.Values.Where(ol => _reservations.Any(r => r.Key == ol.ProductId && r.Value));
@@ -135,14 +102,55 @@ namespace PinetreeShop.Domain.OrderProcess
             DispatchCommand<DummyNotifier>(new NotifyCustomer(AggregateRepository.CreateGuid()));
         }
 
+        private void Apply(OrderDelivered obj)
+        {
+            DispatchCommand<DummyNotifier>(new NotifyAdmin(AggregateRepository.CreateGuid()));
+        }
+
+        #endregion
+
+        #region External Event Handlers
+
+        internal void BasketCheckedOut(BasketCheckedOut evt)
+        {
+            HandleEvent(evt);
+        }
+
+        internal void ProductReserved(ProductReserved evt)
+        {
+            HandleEvent(evt);
+        }
+
+        internal void ProductReservationFailed(ProductReservationFailed evt)
+        {
+            HandleEvent(evt);
+        }
+
+        internal void OrderCreated(OrderCreated evt)
+        {
+            HandleEvent(evt);
+        }
+
+        internal void CreateOrderFailed(CreateOrderFailed evt)
+        {
+            HandleEvent(evt);
+        }
+
+        internal void OrderCancelled(OrderCancelled evt)
+        {
+            HandleEvent(evt);
+        }
+
+        internal void OrderShipped(OrderShipped evt)
+        {
+            HandleEvent(evt);
+        }
+
         internal void OrderDelivered(OrderDelivered evt)
         {
             HandleEvent(evt);
         }
 
-        private void Apply(OrderDelivered obj)
-        {
-            DispatchCommand<DummyNotifier>(new NotifyAdmin(AggregateRepository.CreateGuid()));
-        }
+        #endregion
     }
 }

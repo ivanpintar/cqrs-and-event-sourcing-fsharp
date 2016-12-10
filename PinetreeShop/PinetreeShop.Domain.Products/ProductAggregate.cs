@@ -14,6 +14,8 @@ namespace PinetreeShop.Domain.Products
         public int Reserved { get; set; }
         private int AvailableQuantity { get { return Quantity - Reserved; } }
 
+        #region Constructors
+
         public ProductAggregate()
         {
             Quantity = 0;
@@ -26,22 +28,19 @@ namespace PinetreeShop.Domain.Products
             RegisterEventHandler<ReservedProductPurchased>(Apply);
         }
 
-        private void Apply(ReservedProductPurchased obj)
-        {
-            Quantity -= obj.Quantity;
-            Reserved -= obj.Quantity;
-        }
-
         private ProductAggregate(CreateProduct cmd) : this()
         {
             RaiseEvent(new ProductCreated(cmd.AggregateId, cmd.Name, cmd.Price));
         }
 
-        internal static ProductAggregate Create(CreateProduct cmd)
-        {
-            if (cmd.Price <= 0) throw new ProductCreationException(cmd.AggregateId, $"Price {cmd.Price} must be a positive value.");
+        #endregion
 
-            return new ProductAggregate(cmd);
+        #region Event handlers
+
+        private void Apply(ReservedProductPurchased obj)
+        {
+            Quantity -= obj.Quantity;
+            Reserved -= obj.Quantity;
         }
 
         private void Apply(ProductReservationCancelled evt)
@@ -57,6 +56,24 @@ namespace PinetreeShop.Domain.Products
         private void Apply(ProductQuantityChanged evt)
         {
             Quantity += evt.Difference;
+        }
+
+        private void Apply(ProductCreated evt)
+        {
+            AggregateId = evt.AggregateId;
+            Name = evt.Name;
+            Price = evt.Price;
+        }
+
+        #endregion
+
+        #region Command handlers
+
+        internal static ProductAggregate Create(CreateProduct cmd)
+        {
+            if (cmd.Price <= 0) throw new ProductCreationException(cmd.AggregateId, $"Price {cmd.Price} must be a positive value.");
+
+            return new ProductAggregate(cmd);
         }
 
         internal void AddToStock(AddProductToStock cmd)
@@ -107,12 +124,9 @@ namespace PinetreeShop.Domain.Products
             }
         }
 
-        private void Apply(ProductCreated evt)
-        {
-            AggregateId = evt.AggregateId;
-            Name = evt.Name;
-            Price = evt.Price;
-        }
+        #endregion
+
+        #region Helpers
 
         private void ChangeQuantity(int newQuantity)
         {
@@ -125,5 +139,7 @@ namespace PinetreeShop.Domain.Products
 
             RaiseEvent(new ProductQuantityChanged(productId, difference));
         }
+
+        #endregion
     }
 }

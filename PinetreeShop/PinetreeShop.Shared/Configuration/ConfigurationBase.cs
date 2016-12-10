@@ -6,9 +6,10 @@ namespace PinetreeShop.Shared.Configuration
 {
     public abstract class ConfigurationBase
     {
-        private static Type intType = typeof(int);
+        private static Type intType = typeof(long);
         private static Type dateType = typeof(DateTime);
-        private static Type booltype = typeof(bool);
+        private static Type boolType = typeof(bool);
+        private static Type decimalType = typeof(decimal);
         private readonly IConfigurationDictionary _configSettings;
 
         protected virtual string Namespace { get { return ""; } }
@@ -54,15 +55,19 @@ namespace PinetreeShop.Shared.Configuration
             {
                 if (intType == propertyType)
                 {
-                    return int.Parse(value);
+                    return long.Parse(value);
                 }
                 else if (propertyType == dateType)
                 {
                     return DateTime.Parse(value);
                 }
-                else if (propertyType == booltype)
+                else if (propertyType == boolType)
                 {
                     return bool.Parse(value);
+                }
+                else if (propertyType == decimalType)
+                {
+                    return decimal.Parse(value);
                 }
                 else
                 {
