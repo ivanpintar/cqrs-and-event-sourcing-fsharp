@@ -62,7 +62,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EventStore.cs" />
     <Compile Include="ProcessManagerTestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AggregateTestBase.cs" />
@@ -71,6 +70,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\PinetreeShop.CQRS.Infrastructure.Tests\PinetreeShop.CQRS.Infrastructure.Tests.csproj">
+      <Project>{4903412F-15A7-4356-9ED2-2ED849AEDFC7}</Project>
+      <Name>PinetreeShop.CQRS.Infrastructure.Tests</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PinetreeShop.CQRS.Infrastructure\PinetreeShop.CQRS.Infrastructure.csproj">
       <Project>{1F715587-CCCE-4289-B3B7-FD3299475337}</Project>
       <Name>PinetreeShop.CQRS.Infrastructure</Name>

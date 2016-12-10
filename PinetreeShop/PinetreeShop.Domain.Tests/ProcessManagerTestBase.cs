@@ -3,7 +3,7 @@ using PinetreeShop.CQRS.Infrastructure;
 using PinetreeShop.CQRS.Infrastructure.Commands;
 using PinetreeShop.CQRS.Infrastructure.Events;
 using PinetreeShop.CQRS.Infrastructure.Repositories;
-using PinetreeShop.CQRS.Persistence;
+using PinetreeShop.CQRS.Infrastructure.Tests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +14,7 @@ namespace PinetreeShop.Domain.Tests
     public abstract class ProcessManagerTestBase<TProcessManager> where TProcessManager : IProcessManager, new()
     {
         protected TestEventStore _eventStore = new TestEventStore();
+        protected TestCommandQueue _commandQueue = new TestCommandQueue();
         protected List<Tuple<Type, IEvent>> _preConditions = new List<Tuple<Type, IEvent>>();
         protected ProcessManagerRepository _processManagerRepository;
 
@@ -39,7 +40,7 @@ namespace PinetreeShop.Domain.Tests
 
         protected void Then(params ICommand[] expectedCommands)
         {
-            var latestCommands = _eventStore.LatestCommands;
+            var latestCommands = _commandQueue.LatestCommands;
             var expectedCommandsList = expectedCommands != null
                 ? expectedCommands.ToList()
                 : new List<ICommand>();

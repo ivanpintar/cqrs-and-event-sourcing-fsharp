@@ -60,7 +60,8 @@
   <ItemGroup>
     <Compile Include="CommandListenerTests.cs" />
     <Compile Include="EventStreamListenerTests.cs" />
-    <Compile Include="EventStore.cs" />
+    <Compile Include="TestCommandQueue.cs" />
+    <Compile Include="TestEventStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -34,6 +34,7 @@ namespace PinetreeShop.CQRS.Infrastructure.Tests
     public class CommandListenerTests
     {
         IEventStore _eventStore = new TestEventStore();
+        ICommandQueue _commandQueue = new TestCommandQueue();
 
         [Fact]
         public void When_CommandIsQueued_CommandDispatcherIsCalled()
@@ -52,9 +53,9 @@ namespace PinetreeShop.CQRS.Infrastructure.Tests
                 }
             };
 
-            var commandListener = new CommandQueueListener<TestAggregate>(_eventStore, commandDispatcher);
+            var commandListener = new CommandQueueListener<TestAggregate>(_eventStore, _commandQueue, commandDispatcher);
 
-            _eventStore.DispatchCommands(typeof(TestAggregate).Name, new List<ICommand> { new TestCommand(cmdGuid) });
+            _commandQueue.DispatchCommands(typeof(TestAggregate).Name, new List<ICommand> { new TestCommand(cmdGuid) });
             commandListener.DequeueAndDispatchCommands();
 
             Assert.True(state == 2);

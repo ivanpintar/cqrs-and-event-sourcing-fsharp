@@ -9,7 +9,7 @@ namespace PinetreeShop.Domain.OrderProcess.Tests
         protected override IProcessEventHandler BuildApplication()
         {
             _eventStore.AddPreviousEvents(_preConditions);
-            _processManagerRepository = new ProcessManagerRepository(_eventStore);
+            _processManagerRepository = new ProcessManagerRepository(_eventStore, _commandQueue);
             return new OrderProcessEventHandler(_processManagerRepository);
         }
     }

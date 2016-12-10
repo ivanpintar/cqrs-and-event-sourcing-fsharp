@@ -8,18 +8,20 @@ namespace PinetreeShop.CQRS.Infrastructure.Commands
     {
         private ICommandDispatcher _commandDispatcher;
         private IEventStore _eventStore;
+        private ICommandQueue _commandQueue;
         private string _queueName;
 
-        public CommandQueueListener(IEventStore eventStore, ICommandDispatcher commandDispatcher)
+        public CommandQueueListener(IEventStore eventStore, ICommandQueue commandQueue, ICommandDispatcher commandDispatcher)
         {
             _eventStore = eventStore;
+            _commandQueue = commandQueue;
             _commandDispatcher = commandDispatcher;
             _queueName = typeof(TAggregate).Name;
         }
 
         public void DequeueAndDispatchCommands()
         {
-            var commands = _eventStore.DeQueueCommands(_queueName);
+            var commands = _commandQueue.DeQueueCommands(_queueName);
             foreach(var cmd in commands)
             {
                 try

@@ -12,7 +12,7 @@ namespace PinetreeShop.Domain.Products.Listeners
         {
             var eventStore =  new SqlEventStore();
             var commandDispatcher = new ProductCommandDispatcher(new AggregateRepository(eventStore));
-            _commandQueueListener = new CommandQueueListener<ProductAggregate>(eventStore, commandDispatcher);
+            _commandQueueListener = new CommandQueueListener<ProductAggregate>(eventStore, eventStore, commandDispatcher);
         }
 
         public void ProcessCommands()

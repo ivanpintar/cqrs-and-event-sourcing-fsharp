@@ -10,7 +10,7 @@ using System.Transactions;
 
 namespace PinetreeShop.CQRS.Persistence.SQL
 {
-    public class SqlEventStore : IEventStore
+    public class SqlEventStore : IEventStore, ICommandQueue
     {
         public void CommitEvents<TAggregate>(IEnumerable<IEvent> events)
         {

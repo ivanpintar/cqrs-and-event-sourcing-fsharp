@@ -9,11 +9,9 @@ namespace PinetreeShop.CQRS.Infrastructure.Tests
 {
     public class TestEventStore : IEventStore
     {
-        private Dictionary<string, List<ICommand>> _commandQueues = new Dictionary<string, List<ICommand>>();
         private List<Tuple<Type, IEvent>> _events = new List<Tuple<Type, IEvent>>();
 
         public List<IEvent> LatestEvents = new List<IEvent>();
-        public List<ICommand> LatestCommands = new List<ICommand>();
 
         public void AddPreviousEvents(List<Tuple<Type, IEvent>> preConditions)
         {
@@ -34,31 +32,7 @@ namespace PinetreeShop.CQRS.Infrastructure.Tests
                 LatestEvents.Add(evt);
             }
         }
-
-        public IEnumerable<ICommand> DeQueueCommands(string queueName)
-        {
-            if(!_commandQueues.ContainsKey(queueName) || _commandQueues[queueName] == null)
-            {
-                return Enumerable.Empty<ICommand>();
-            }
-
-            var commands = _commandQueues[queueName].ToList();
-            _commandQueues[queueName].Clear();
-            return commands;
-        }
-
-        public void DispatchCommands(string queueName, IEnumerable<ICommand> commands)
-        {
-            foreach (var cmd in commands)
-            {
-                if (!_commandQueues.ContainsKey(queueName))
-                    _commandQueues[queueName] = new List<ICommand>();
-
-                _commandQueues[queueName].Add(cmd);
-                LatestCommands.Add(cmd);
-            }
-        }
-
+        
         public IEnumerable<IEvent> GetEvents(int startingPoint)
         {
             return _events.Select(t => t.Item2).Skip(startingPoint).ToList();

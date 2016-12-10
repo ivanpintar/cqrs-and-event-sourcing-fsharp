@@ -10,10 +10,12 @@ namespace PinetreeShop.CQRS.Infrastructure.Repositories
     public class ProcessManagerRepository : IProcessManagerRepository
     {
         private IEventStore _eventStore;
+        private ICommandQueue _commandQueue;
 
-        public ProcessManagerRepository(IEventStore eventStore)
+        public ProcessManagerRepository(IEventStore eventStore, ICommandQueue commandQueue)
         {
             _eventStore = eventStore;
+            _commandQueue = commandQueue;
         }
 
         public TProcessManager GetProcessManagerById<TProcessManager>(Guid id) where TProcessManager : IProcessManager, new()
@@ -49,7 +51,7 @@ namespace PinetreeShop.CQRS.Infrastructure.Repositories
         {
             foreach (var kvp in commandsToDispatch)
             {
-                _eventStore.DispatchCommands(kvp.Key.Name, kvp.Value);
+                _commandQueue.DispatchCommands(kvp.Key.Name, kvp.Value);
             }
         }
 

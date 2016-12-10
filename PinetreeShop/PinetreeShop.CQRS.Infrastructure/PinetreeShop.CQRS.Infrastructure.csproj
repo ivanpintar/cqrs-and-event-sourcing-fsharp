@@ -43,6 +43,7 @@
     <Compile Include="Events\IProcessEventHandler.cs" />
     <Compile Include="Events\ProcessEventHandler.cs" />
     <Compile Include="Exceptions\ProcessManagerNotFoundException.cs" />
+    <Compile Include="ICommandQueue.cs" />
     <Compile Include="IProcessManager.cs" />
     <Compile Include="ProcessManagerBase.cs" />
     <Compile Include="Repositories\AggregateRepository.cs" />

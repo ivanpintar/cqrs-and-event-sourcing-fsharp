@@ -20,7 +20,7 @@ namespace PinetreeShop.Domain.OrderProcess.Listeners
             var eventStore = new SqlEventStore();
             _eventStreamListener = new EventStreamListener(eventStore);
 
-            _processManagerRepository = new ProcessManagerRepository(eventStore);
+            _processManagerRepository = new ProcessManagerRepository(eventStore, eventStore);
             _orderProcessEventHandler = new OrderProcessEventHandler(_processManagerRepository);
 
             _eventStreamListener.RegisterEventHandler<BasketCheckedOut>(OnBasketCheckedOut);

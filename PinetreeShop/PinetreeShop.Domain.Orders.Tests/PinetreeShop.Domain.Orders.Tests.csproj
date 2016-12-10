@@ -69,6 +69,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\PinetreeShop.CQRS.Infrastructure.Tests\PinetreeShop.CQRS.Infrastructure.Tests.csproj">
+      <Project>{4903412F-15A7-4356-9ED2-2ED849AEDFC7}</Project>
+      <Name>PinetreeShop.CQRS.Infrastructure.Tests</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PinetreeShop.CQRS.Infrastructure\PinetreeShop.CQRS.Infrastructure.csproj">
       <Project>{1f715587-ccce-4289-b3b7-fd3299475337}</Project>
       <Name>PinetreeShop.CQRS.Infrastructure</Name>

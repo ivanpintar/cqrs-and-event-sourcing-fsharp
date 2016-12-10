@@ -11,8 +11,5 @@ namespace PinetreeShop.CQRS.Infrastructure
         IEnumerable<IEvent> GetEvents<TAggregate>(int lastEventNumber);
         IEnumerable<IEvent> GetAggregateEvents<TAggregate>(Guid aggregateId, int lastEventNumber);
         void CommitEvents<TAggregate>(IEnumerable<IEvent> events);
-
-        IEnumerable<ICommand> DeQueueCommands(string queueName);
-        void DispatchCommands(string queueName, IEnumerable<ICommand> commands);
     }
 }
