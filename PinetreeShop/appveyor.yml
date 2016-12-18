@@ -1,0 +1,6 @@
+version: 1.0.{build}
+build:
+  project: PinetreeShop/PinetreeShop.sln
+  verbosity: minimal
+before_build:
+  - nuget restore
