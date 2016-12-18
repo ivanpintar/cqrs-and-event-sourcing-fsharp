@@ -43,7 +43,7 @@ namespace PinetreeShop.CQRS.Infrastructure
             _version++;
         }
 
-        protected void HandleEvent(IEvent evt)
+        public void HandleEvent(IEvent evt)
         {
             Transition(evt);
             _uncommittedEvents.Add(new EventProcessed(ProcessId, evt));

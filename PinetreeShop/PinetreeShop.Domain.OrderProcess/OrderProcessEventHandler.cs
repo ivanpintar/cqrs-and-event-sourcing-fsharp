@@ -23,49 +23,49 @@ namespace PinetreeShop.Domain.OrderProcess
 
         private Func<OrderProcessManager, CreateOrderFailed, OrderProcessManager> CreateOrderFailed = (process, evt) =>
         {
-            process.CreateOrderFailed(evt);
+            process.HandleEvent(evt);
             return process;
         };
 
         private Func<OrderProcessManager, OrderShipped, OrderProcessManager> OrderShipped = (process, evt) =>
         {
-            process.OrderShipped(evt);
+            process.HandleEvent(evt);
             return process;
         };
 
         private Func<OrderProcessManager, OrderDelivered, OrderProcessManager> OrderDelivered = (process, evt) =>
         {
-            process.OrderDelivered(evt);
+            process.HandleEvent(evt);
             return process;
         };
 
         private Func<OrderProcessManager, OrderCancelled, OrderProcessManager> OrderCancelled = (process, evt) =>
         {
-            process.OrderCancelled(evt);
+            process.HandleEvent(evt);
             return process;
         };
 
         private Func<OrderProcessManager, OrderCreated, OrderProcessManager> OrderCreated = (process, evt) =>
         {
-            process.OrderCreated(evt);
+            process.HandleEvent(evt);
             return process;
         };
 
         private Func<OrderProcessManager, ProductReservationFailed, OrderProcessManager> ProductReservationFailed = (process, evt) =>
         {
-            process.ProductReservationFailed(evt);
+            process.HandleEvent(evt);
             return process;
         };
 
         private Func<OrderProcessManager, BasketCheckedOut, OrderProcessManager> BasketCheckedOut = (process, evt) =>
         {
-            process.BasketCheckedOut(evt);
+            process.HandleEvent(evt);
             return process;
         };
 
         private Func<OrderProcessManager, ProductReserved, OrderProcessManager> ProductReserved = (process, evt) =>
         {
-            process.ProductReserved(evt);
+            process.HandleEvent(evt);
             return process;
         };
     }
