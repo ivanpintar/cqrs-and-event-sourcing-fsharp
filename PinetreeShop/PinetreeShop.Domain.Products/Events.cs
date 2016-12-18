@@ -1,4 +1,4 @@
-﻿using PinetreeShop.CQRS.Infrastructure.Events;
+﻿using PinetreeCQRS.Infrastructure.Events;
 using System;
 
 namespace PinetreeShop.Domain.Products.Events

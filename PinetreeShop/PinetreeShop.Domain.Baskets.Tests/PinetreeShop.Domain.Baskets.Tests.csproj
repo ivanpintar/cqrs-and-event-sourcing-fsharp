@@ -65,17 +65,17 @@
     <Compile Include="RemoveItemTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PinetreeShop.CQRS.Infrastructure.Tests\PinetreeShop.CQRS.Infrastructure.Tests.csproj">
+    <ProjectReference Include="..\PinetreeCQRS.Infrastructure.Tests\PinetreeCQRS.Infrastructure.Tests.csproj">
       <Project>{4903412F-15A7-4356-9ED2-2ED849AEDFC7}</Project>
-      <Name>PinetreeShop.CQRS.Infrastructure.Tests</Name>
+      <Name>PinetreeCQRS.Infrastructure.Tests</Name>
     </ProjectReference>
-    <ProjectReference Include="..\PinetreeShop.CQRS.Infrastructure\PinetreeShop.CQRS.Infrastructure.csproj">
+    <ProjectReference Include="..\PinetreeCQRS.Infrastructure\PinetreeCQRS.Infrastructure.csproj">
       <Project>{1F715587-CCCE-4289-B3B7-FD3299475337}</Project>
-      <Name>PinetreeShop.CQRS.Infrastructure</Name>
+      <Name>PinetreeCQRS.Infrastructure</Name>
     </ProjectReference>
-    <ProjectReference Include="..\PinetreeShop.CQRS.Persistence\PinetreeShop.CQRS.Persistence.csproj">
-      <Project>{0E2B6EBB-B5EA-4FF4-833F-AD02F424A7FB}</Project>
-      <Name>PinetreeShop.CQRS.Persistence</Name>
+    <ProjectReference Include="..\PinetreeCQRS.Persistence\PinetreeCQRS.Persistence.csproj">
+      <Project>{0e2b6ebb-b5ea-4ff4-833f-ad02f424a7fb}</Project>
+      <Name>PinetreeCQRS.Persistence</Name>
     </ProjectReference>
     <ProjectReference Include="..\PinetreeShop.Domain.Baskets\PinetreeShop.Domain.Baskets.csproj">
       <Project>{73FB242D-8716-47A9-99C0-F288D4D6B021}</Project>

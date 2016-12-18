@@ -1,4 +1,4 @@
-﻿using PinetreeShop.CQRS.Infrastructure.Events;
+﻿using PinetreeCQRS.Infrastructure.Events;
 using PinetreeShop.Domain.Orders.Commands;
 using PinetreeShop.Domain.Orders.Events;
 using PinetreeShop.Domain.Shared.Types;

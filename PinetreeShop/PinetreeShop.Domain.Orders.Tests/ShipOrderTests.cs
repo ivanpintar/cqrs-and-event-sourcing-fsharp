@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using PinetreeShop.Domain.Orders.Commands;
 using PinetreeShop.Domain.Tests.Order.Exceptions;
 using System.Linq;
-using PinetreeShop.CQRS.Infrastructure.Events;
+using PinetreeCQRS.Infrastructure.Events;
 using PinetreeShop.Domain.Shared.Types;
 
 namespace PinetreeShop.Domain.Orders.Tests

@@ -47,9 +47,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PinetreeShop.CQRS.Infrastructure\PinetreeShop.CQRS.Infrastructure.csproj">
+    <ProjectReference Include="..\PinetreeCQRS.Infrastructure\PinetreeCQRS.Infrastructure.csproj">
       <Project>{1f715587-ccce-4289-b3b7-fd3299475337}</Project>
-      <Name>PinetreeShop.CQRS.Infrastructure</Name>
+      <Name>PinetreeCQRS.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PinetreeCQRS.Persistence\PinetreeCQRS.Persistence.csproj">
+      <Project>{0e2b6ebb-b5ea-4ff4-833f-ad02f424a7fb}</Project>
+      <Name>PinetreeCQRS.Persistence</Name>
     </ProjectReference>
     <ProjectReference Include="..\PinetreeShop.Domain.Baskets\PinetreeShop.Domain.Baskets.csproj">
       <Project>{73FB242D-8716-47A9-99C0-F288D4D6B021}</Project>

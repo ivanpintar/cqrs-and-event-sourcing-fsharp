@@ -1,5 +1,5 @@
-﻿using PinetreeShop.CQRS.Infrastructure.Events;
-using PinetreeShop.CQRS.Infrastructure.Repositories;
+﻿using PinetreeCQRS.Infrastructure.Events;
+using PinetreeCQRS.Infrastructure.Repositories;
 using PinetreeShop.Domain.Tests;
 
 namespace PinetreeShop.Domain.OrderProcess.Tests

@@ -1,5 +1,5 @@
-﻿using PinetreeShop.CQRS.Infrastructure.Events;
-using PinetreeShop.CQRS.Persistence.SQL;
+﻿using PinetreeCQRS.Infrastructure.Events;
+using PinetreeCQRS.Persistence.SQL;
 using PinetreeShop.Domain.Products.Events;
 using PinetreeShop.Domain.Products.ReadModel;
 using PinetreeShop.Domain.Products.ReadModel.Entities;

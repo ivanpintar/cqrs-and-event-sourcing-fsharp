@@ -1,4 +1,4 @@
-﻿using PinetreeShop.CQRS.Infrastructure;
+﻿using PinetreeCQRS.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using PinetreeShop.Domain.Baskets.Events;
 using PinetreeShop.Domain.Products.Commands;
 using PinetreeShop.Domain.Products.Events;
 using PinetreeShop.Domain.Orders.Commands;
-using PinetreeShop.CQRS.Infrastructure.Repositories;
+using PinetreeCQRS.Infrastructure.Repositories;
 using PinetreeShop.Domain.Orders;
 using PinetreeShop.Domain.Orders.Events;
 using PinetreeShop.Domain.OrderProcess.Commands;

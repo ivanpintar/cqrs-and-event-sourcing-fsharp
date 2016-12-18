@@ -63,13 +63,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PinetreeShop.CQRS.Infrastructure\PinetreeShop.CQRS.Infrastructure.csproj">
+    <ProjectReference Include="..\PinetreeCQRS.Infrastructure\PinetreeCQRS.Infrastructure.csproj">
       <Project>{1F715587-CCCE-4289-B3B7-FD3299475337}</Project>
-      <Name>PinetreeShop.CQRS.Infrastructure</Name>
+      <Name>PinetreeCQRS.Infrastructure</Name>
     </ProjectReference>
-    <ProjectReference Include="..\PinetreeShop.CQRS.Persistence\PinetreeShop.CQRS.Persistence.csproj">
+    <ProjectReference Include="..\PinetreeCQRS.Persistence\PinetreeCQRS.Persistence.csproj">
       <Project>{0E2B6EBB-B5EA-4FF4-833F-AD02F424A7FB}</Project>
-      <Name>PinetreeShop.CQRS.Persistence</Name>
+      <Name>PinetreeCQRS.Persistence</Name>
     </ProjectReference>
     <ProjectReference Include="..\PinetreeShop.Domain.Orders.ReadModel\PinetreeShop.Domain.Orders.ReadModel.csproj">
       <Project>{332BFC1D-0A29-4870-A365-90043892CEEA}</Project>

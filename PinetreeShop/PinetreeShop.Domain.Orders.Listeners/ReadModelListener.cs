@@ -1,11 +1,10 @@
-﻿using PinetreeShop.CQRS.Infrastructure.Events;
-using PinetreeShop.CQRS.Persistence.SQL;
+﻿using PinetreeCQRS.Infrastructure.Events;
+using PinetreeCQRS.Persistence.SQL;
 using PinetreeShop.Domain.Orders.Events;
 using PinetreeShop.Domain.Orders.ReadModel;
 using PinetreeShop.Domain.Orders.ReadModel.Entitites;
 using System;
 using System.Linq;
-using System.Transactions;
 using PinetreeShop.Domain.Shared.Types;
 
 namespace PinetreeShop.Domain.Orders.Listeners

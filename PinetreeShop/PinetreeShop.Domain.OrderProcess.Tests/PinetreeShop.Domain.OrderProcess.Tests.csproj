@@ -64,17 +64,17 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PinetreeShop.CQRS.Infrastructure.Tests\PinetreeShop.CQRS.Infrastructure.Tests.csproj">
-      <Project>{4903412F-15A7-4356-9ED2-2ED849AEDFC7}</Project>
-      <Name>PinetreeShop.CQRS.Infrastructure.Tests</Name>
+    <ProjectReference Include="..\PinetreeCQRS.Infrastructure.Tests\PinetreeCQRS.Infrastructure.Tests.csproj">
+      <Project>{4903412f-15a7-4356-9ed2-2ed849aedfc7}</Project>
+      <Name>PinetreeCQRS.Infrastructure.Tests</Name>
     </ProjectReference>
-    <ProjectReference Include="..\PinetreeShop.CQRS.Infrastructure\PinetreeShop.CQRS.Infrastructure.csproj">
+    <ProjectReference Include="..\PinetreeCQRS.Infrastructure\PinetreeCQRS.Infrastructure.csproj">
       <Project>{1F715587-CCCE-4289-B3B7-FD3299475337}</Project>
-      <Name>PinetreeShop.CQRS.Infrastructure</Name>
+      <Name>PinetreeCQRS.Infrastructure</Name>
     </ProjectReference>
-    <ProjectReference Include="..\PinetreeShop.CQRS.Persistence\PinetreeShop.CQRS.Persistence.csproj">
-      <Project>{0E2B6EBB-B5EA-4FF4-833F-AD02F424A7FB}</Project>
-      <Name>PinetreeShop.CQRS.Persistence</Name>
+    <ProjectReference Include="..\PinetreeCQRS.Persistence\PinetreeCQRS.Persistence.csproj">
+      <Project>{0e2b6ebb-b5ea-4ff4-833f-ad02f424a7fb}</Project>
+      <Name>PinetreeCQRS.Persistence</Name>
     </ProjectReference>
     <ProjectReference Include="..\PinetreeShop.Domain.Baskets\PinetreeShop.Domain.Baskets.csproj">
       <Project>{73FB242D-8716-47A9-99C0-F288D4D6B021}</Project>
@@ -99,14 +99,6 @@
     <ProjectReference Include="..\PinetreeShop.Domain.Tests\PinetreeShop.Domain.Tests.csproj">
       <Project>{117D52E7-FA11-46DF-BB75-E82A291A76FE}</Project>
       <Name>PinetreeShop.Domain.Tests</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PinetreeShop.Shared.Tests\PinetreeShop.Shared.Tests.csproj">
-      <Project>{b0a04400-830c-485e-a8bc-e1beb951b2f4}</Project>
-      <Name>PinetreeShop.Shared.Tests</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PinetreeShop.Shared\PinetreeShop.Shared.csproj">
-      <Project>{6f9fdfee-9626-4295-b7c9-3f2525b160ff}</Project>
-      <Name>PinetreeShop.Shared</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

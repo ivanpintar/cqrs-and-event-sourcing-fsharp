@@ -1,4 +1,4 @@
-﻿using PinetreeShop.Shared.Configuration;
+﻿using PinetreeUtilities.Configuration;
 
 namespace PinetreeShop.Domain.Baskets.WebAPI
 {

@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json;
-using PinetreeShop.CQRS.Infrastructure;
-using PinetreeShop.CQRS.Infrastructure.Commands;
-using PinetreeShop.CQRS.Infrastructure.Events;
-using PinetreeShop.CQRS.Infrastructure.Repositories;
-using PinetreeShop.CQRS.Infrastructure.Tests;
+using PinetreeCQRS.Infrastructure;
+using PinetreeCQRS.Infrastructure.Commands;
+using PinetreeCQRS.Infrastructure.Events;
+using PinetreeCQRS.Infrastructure.Repositories;
+using PinetreeCQRS.Infrastructure.Tests;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,6 +1,6 @@
-﻿using PinetreeShop.CQRS.Infrastructure;
-using PinetreeShop.CQRS.Infrastructure.Repositories;
-using PinetreeShop.CQRS.Persistence.SQL;
+﻿using PinetreeCQRS.Infrastructure;
+using PinetreeCQRS.Infrastructure.Repositories;
+using PinetreeCQRS.Persistence.SQL;
 using PinetreeShop.Domain.Products.Commands;
 using PinetreeShop.Domain.Products.ReadModel;
 using PinetreeShop.Domain.Products.WebAPI.Models;

@@ -1,9 +1,8 @@
-﻿using PinetreeShop.CQRS.Infrastructure.Commands;
-using PinetreeShop.CQRS.Infrastructure.Repositories;
+﻿using PinetreeCQRS.Infrastructure.Commands;
+using PinetreeCQRS.Infrastructure.Repositories;
 using PinetreeShop.Domain.Baskets.Commands;
 using PinetreeShop.Domain.Shared.Exceptions;
 using System;
-using PinetreeShop.CQRS.Infrastructure;
 
 namespace PinetreeShop.Domain.Baskets
 {

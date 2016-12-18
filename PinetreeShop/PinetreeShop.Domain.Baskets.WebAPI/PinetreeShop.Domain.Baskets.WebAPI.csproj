@@ -128,13 +128,13 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PinetreeShop.CQRS.Infrastructure\PinetreeShop.CQRS.Infrastructure.csproj">
+    <ProjectReference Include="..\PinetreeCQRS.Infrastructure\PinetreeCQRS.Infrastructure.csproj">
       <Project>{1F715587-CCCE-4289-B3B7-FD3299475337}</Project>
-      <Name>PinetreeShop.CQRS.Infrastructure</Name>
+      <Name>PinetreeCQRS.Infrastructure</Name>
     </ProjectReference>
-    <ProjectReference Include="..\PinetreeShop.CQRS.Persistence\PinetreeShop.CQRS.Persistence.csproj">
+    <ProjectReference Include="..\PinetreeCQRS.Persistence\PinetreeCQRS.Persistence.csproj">
       <Project>{0E2B6EBB-B5EA-4FF4-833F-AD02F424A7FB}</Project>
-      <Name>PinetreeShop.CQRS.Persistence</Name>
+      <Name>PinetreeCQRS.Persistence</Name>
     </ProjectReference>
     <ProjectReference Include="..\PinetreeShop.Domain.Baskets\PinetreeShop.Domain.Baskets.csproj">
       <Project>{73FB242D-8716-47A9-99C0-F288D4D6B021}</Project>
@@ -144,9 +144,9 @@
       <Project>{2248252d-5385-42b4-bcd4-281ca370087e}</Project>
       <Name>PinetreeShop.Domain.Shared</Name>
     </ProjectReference>
-    <ProjectReference Include="..\PinetreeShop.Shared\PinetreeShop.Shared.csproj">
+    <ProjectReference Include="..\PinetreeUtilities\PinetreeUtilities.csproj">
       <Project>{6F9FDFEE-9626-4295-B7C9-3F2525B160FF}</Project>
-      <Name>PinetreeShop.Shared</Name>
+      <Name>PinetreeUtilities</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

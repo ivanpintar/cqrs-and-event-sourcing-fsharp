@@ -2,7 +2,7 @@
 using PinetreeShop.Domain.Products.Events;
 using System;
 using Xunit;
-using PinetreeShop.CQRS.Infrastructure.Events;
+using PinetreeCQRS.Infrastructure.Events;
 
 namespace PinetreeShop.Domain.Products.Tests
 {

@@ -1,4 +1,4 @@
-﻿using PinetreeShop.CQRS.Infrastructure.Commands;
+﻿using PinetreeCQRS.Infrastructure.Commands;
 using System;
 
 namespace PinetreeShop.Domain.OrderProcess.Commands

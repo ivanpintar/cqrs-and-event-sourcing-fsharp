@@ -1,6 +1,6 @@
-﻿using PinetreeShop.CQRS.Infrastructure.Events;
+﻿using PinetreeCQRS.Infrastructure.Events;
 using System;
-using PinetreeShop.CQRS.Infrastructure.Repositories;
+using PinetreeCQRS.Infrastructure.Repositories;
 using PinetreeShop.Domain.Orders.Events;
 using PinetreeShop.Domain.Products.Events;
 using PinetreeShop.Domain.Baskets.Events;

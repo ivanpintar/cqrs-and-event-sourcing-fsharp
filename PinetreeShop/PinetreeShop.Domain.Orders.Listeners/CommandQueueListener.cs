@@ -1,6 +1,6 @@
-﻿using PinetreeShop.CQRS.Infrastructure.Commands;
-using PinetreeShop.CQRS.Infrastructure.Repositories;
-using PinetreeShop.CQRS.Persistence.SQL;
+﻿using PinetreeCQRS.Infrastructure.Commands;
+using PinetreeCQRS.Infrastructure.Repositories;
+using PinetreeCQRS.Persistence.SQL;
 
 namespace PinetreeShop.Domain.Orders.Listeners
 {
