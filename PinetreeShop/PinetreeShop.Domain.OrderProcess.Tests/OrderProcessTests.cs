@@ -94,6 +94,31 @@ namespace PinetreeShop.Domain.OrderProcess.Tests
             Then(expectedEvents.ToArray());
         }
 
+
+        [Fact]
+        public void When_ProductReservedOrderCanceled_RevertReservation()
+        {
+            SetupPreviousEvents();
+            orderId = AddProcessedEvent<BasketAggregate>(new BasketCheckedOut(basketId, OrderLines, shippingAddress));
+            AddProcessedEvent<OrderAggregate>(new OrderCreated(orderId, basketId, shippingAddress), orderId);
+            AddProcessedEvent<OrderAggregate>(new OrderCancelled(orderId), orderId);
+
+            var nonProcessedEvent = new ProductReserved(productTwoId, 20);
+            AddPreviousEvent<ProductAggregate>(nonProcessedEvent);
+            SetInitalMetadata();
+
+            Given(_initialEvents.ToArray());
+
+            WhenProcessed(nonProcessedEvent);
+
+            var expectedCommands = new List<ICommand> { new CancelProductReservation(productTwoId, 20) };
+            var expectedEvents = new List<IEvent> { new EventProcessed(orderId, nonProcessedEvent) };
+            SetMetadata(nonProcessedEvent, expectedCommands, expectedEvents);
+
+            Then(expectedCommands.ToArray());
+            Then(expectedEvents.ToArray());
+        }
+
         [Fact]
         public void When_AllProductsReserved_PrepareOrderForShipping()
         {

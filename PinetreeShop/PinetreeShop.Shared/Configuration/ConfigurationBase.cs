@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using System.Globalization;
 using System.Reflection;
 
 namespace PinetreeShop.Shared.Configuration
@@ -67,7 +68,7 @@ namespace PinetreeShop.Shared.Configuration
                 }
                 else if (propertyType == decimalType)
                 {
-                    return decimal.Parse(value);
+                    return decimal.Parse(value, NumberStyles.Any, CultureInfo.InvariantCulture);
                 }
                 else
                 {

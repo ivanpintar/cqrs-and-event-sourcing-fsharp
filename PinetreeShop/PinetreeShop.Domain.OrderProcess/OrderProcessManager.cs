@@ -22,6 +22,7 @@ namespace PinetreeShop.Domain.OrderProcess
         private Dictionary<Guid, OrderLine> _orderLines = new Dictionary<Guid, OrderLine>();
         private Address _shippingAddress;
         private Guid _orderId;
+        private OrderAggregate.OrderState _state;
 
         public OrderProcessManager()
         {
@@ -50,8 +51,16 @@ namespace PinetreeShop.Domain.OrderProcess
 
         private void Apply(ProductReserved evt)
         {
+            // todo: if order not pending revoke reservation
+            if(_state != OrderAggregate.OrderState.Pending)
+            {
+                DispatchCommand<ProductAggregate>(new CancelProductReservation(evt.AggregateId, evt.QuantityToReserve));
+                return;
+            }
+
             _reservations[evt.AggregateId] = true;
 
+            
             var orderLine = _orderLines[evt.AggregateId];
             DispatchCommand<OrderAggregate>(new AddOrderLine(_orderId, orderLine));
 
@@ -69,6 +78,7 @@ namespace PinetreeShop.Domain.OrderProcess
         private void Apply(OrderCreated evt)
         {
             _orderId = evt.AggregateId;
+            _state = OrderAggregate.OrderState.Pending;
 
             foreach (var orderLine in _orderLines.Values)
             {
@@ -84,6 +94,8 @@ namespace PinetreeShop.Domain.OrderProcess
 
         private void Apply(OrderCancelled obj)
         {
+            _state = OrderAggregate.OrderState.Cancelled;
+
             var reservedOrders = _orderLines.Values.Where(ol => _reservations.Any(r => r.Key == ol.ProductId && r.Value));
             foreach (var ol in reservedOrders)
             {
@@ -94,6 +106,7 @@ namespace PinetreeShop.Domain.OrderProcess
 
         private void Apply(OrderShipped evt)
         {
+            _state = OrderAggregate.OrderState.Shipped;
             var reservedOrders = _orderLines.Values.Where(ol => _reservations.Any(r => r.Key == ol.ProductId && r.Value));
             foreach (var ol in reservedOrders)
             {
@@ -104,51 +117,8 @@ namespace PinetreeShop.Domain.OrderProcess
 
         private void Apply(OrderDelivered obj)
         {
+            _state = OrderAggregate.OrderState.Delivered;
             DispatchCommand<DummyNotifier>(new NotifyAdmin(AggregateRepository.CreateGuid()));
-        }
-
-        #endregion
-
-        #region External Event Handlers
-
-        internal void BasketCheckedOut(BasketCheckedOut evt)
-        {
-            HandleEvent(evt);
-        }
-
-        internal void ProductReserved(ProductReserved evt)
-        {
-            HandleEvent(evt);
-        }
-
-        internal void ProductReservationFailed(ProductReservationFailed evt)
-        {
-            HandleEvent(evt);
-        }
-
-        internal void OrderCreated(OrderCreated evt)
-        {
-            HandleEvent(evt);
-        }
-
-        internal void CreateOrderFailed(CreateOrderFailed evt)
-        {
-            HandleEvent(evt);
-        }
-
-        internal void OrderCancelled(OrderCancelled evt)
-        {
-            HandleEvent(evt);
-        }
-
-        internal void OrderShipped(OrderShipped evt)
-        {
-            HandleEvent(evt);
-        }
-
-        internal void OrderDelivered(OrderDelivered evt)
-        {
-            HandleEvent(evt);
         }
 
         #endregion
