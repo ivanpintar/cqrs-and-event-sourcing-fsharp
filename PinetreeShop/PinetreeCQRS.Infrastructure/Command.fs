@@ -34,10 +34,10 @@ let createMetadata payload (command:Command<'TCommand>) : Event<'TEvent> =
       correlationId = command.correlationId
       eventNumber = None }
 
-let createFailedCommand payload reason (command:Command<'TCommand>) : Failed<'TCommand> = 
+let createFailedCommand payload reasons (command:Command<'TCommand>) : Failed<'TCommand> = 
     { aggregateId = command.aggregateId
       payload = payload
-      reason = reason
+      reasons = reasons
       eventId = Guid.NewGuid()
       processId = command.processId
       causationId = command.commandId
@@ -58,7 +58,7 @@ let makeHandler (aggregate : Aggregate<'TState, 'TEvent, 'TCommand>) (load : Typ
             |> Seq.map (fun e -> createMetadata e command) 
             |> commit
             |> Success
-        | Failure (failedCommand, reason) -> 
-            createFailedCommand failedCommand reason command
+        | Failure (failedCommand, reasons) -> 
+            createFailedCommand failedCommand reasons command
             |> onFailure
             |> Failure

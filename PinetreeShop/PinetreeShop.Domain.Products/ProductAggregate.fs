@@ -33,7 +33,6 @@ type State =
           quantity = 0
           reserved = 0 }
 
-let available state = state.quantity - state.reserved
 
 let applyEvent state event = 
     match event with
@@ -47,24 +46,31 @@ let applyEvent state event =
                      quantity = state.quantity - qty }
 
 module private Validate =
-    let notCreated s = validator (fun s' -> s'.created = false) "Product already created" s
-    let created s = validator (fun s' -> s'.created) "Product must be created first" s
-    let positiveQuantity (s, q) cmd = created s cmd <* validator (fun q' -> q' > 0) "Quantity must be a positive number" q cmd
-    let canCreate (s, p) cmd = notCreated s cmd <* validator (fun p' -> p' >= 0m) "Price must be a positive number" p cmd
-    let canChangeQuantity (s, diff) cmd = created s cmd <* validator (fun (s', diff') -> (diff' < 0 && available s' >= -diff') || diff >= 0) "Not enough available items" (s, diff) cmd
-    let enoughReservedItems (s, q) cmd = created s cmd <* positiveQuantity (s, q) cmd <* validator (fun (s', q) -> s'.reserved >= q) "Not enough resreved items" (s, q) cmd
+    module private Inner =
+        let available state = state.quantity - state.reserved
+        let notCreated s = validator (fun s' -> s'.created = false) "Product already created" s
+        let positiveQuantity q = validator (fun q' -> q' > 0) "Quantity must be a positive number" q
+        let positivePrice p = validator (fun p' -> p' >= 0m) "Price must be a positive number" p
+        let canChangeQuantity (s, d) = validator (fun (s', d') -> (d' < 0 && available s' >= -d') || d' >= 0) "Not enough available items" (s, d)
+        let enoughReservedItems (s, q) = validator (fun (s', q') -> s'.reserved >= q') "Not enough reserved items" (s, q)
+        let created s = validator (fun s' -> s'.created) "Product must be created first" s
+
+    let canCreate (s, p) cmd = Inner.notCreated s cmd <* Inner.positivePrice p cmd
+    let createdAndPositiveQuantity (s, q) cmd = Inner.created s cmd <* Inner.positiveQuantity q cmd
+    let createdAndCanChangeQuantity (s, d) cmd = Inner.created s cmd <* Inner.canChangeQuantity (s, d) cmd
+    let createdAndEnoughReservedItems (s, q) cmd = Inner.created s cmd <* Inner.positiveQuantity q cmd <* Inner.enoughReservedItems (s, q) cmd
 
 
 let executeCommand state command = 
     match command with
     | Create(name, price) -> command |> Validate.canCreate (state, price) <?> [ ProductCreated(name, price) ]
-    | AddToStock qty -> [ ProductQuantityChanged(qty) ] |> Success
-    | RemoveFromStock qty -> command |> Validate.canChangeQuantity (state, -qty) <?> [ ProductQuantityChanged(-qty) ]
-    | ChangeQuantity diff -> command |> Validate.canChangeQuantity (state, diff) <?> [ ProductQuantityChanged(diff) ]
-    | CancelReservation qty -> command |> Validate.enoughReservedItems (state, qty) <?> [ ProductReservationCanceled(qty) ]
-    | PurchaseReserved qty -> command |> Validate.enoughReservedItems (state, qty) <?> [ ProductPurchased(qty) ]
+    | AddToStock qty -> command |> Validate.createdAndPositiveQuantity (state, qty) <?> [ ProductQuantityChanged(qty) ]
+    | RemoveFromStock qty -> command |> Validate.createdAndCanChangeQuantity (state, -qty) <?> [ ProductQuantityChanged(-qty) ]
+    | ChangeQuantity diff -> command |> Validate.createdAndCanChangeQuantity (state, diff) <?> [ ProductQuantityChanged(diff) ]
+    | CancelReservation qty -> command |> Validate.createdAndEnoughReservedItems (state, qty) <?> [ ProductReservationCanceled(qty) ]
+    | PurchaseReserved qty -> command |> Validate.createdAndEnoughReservedItems (state, qty) <?> [ ProductPurchased(qty) ]
     | Reserve qty -> 
-        let r = command |> Validate.canChangeQuantity (state, -qty) 
+        let r = command |> Validate.createdAndCanChangeQuantity (state, -qty) 
         match r with
         | Success s -> [ProductReserved(qty)] |> Success
         | Failure (c, f) -> [ProductReservationFailed(qty, f)] |> Success

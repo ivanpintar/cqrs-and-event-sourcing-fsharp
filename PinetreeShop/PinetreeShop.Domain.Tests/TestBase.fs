@@ -24,10 +24,10 @@ let createExpectedEvent (command:Command<'TCommand>) payload : Event<'TEvent> =
       eventId = Guid.Empty
       eventNumber = None }
 
-let createExpectedFailure (command:Command<'TCommand>) reason : Failed<'TCommand> = 
+let createExpectedFailure (command:Command<'TCommand>) reasons : Failed<'TCommand> = 
     { aggregateId = command.aggregateId
       payload = command.payload
-      reason = reason
+      reasons = reasons
       causationId = command.commandId
       correlationId = command.correlationId
       processId = command.processId

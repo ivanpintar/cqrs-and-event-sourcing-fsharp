@@ -11,3 +11,5 @@ let handleCommand initialEvents cmd =
     let commit e = Seq.map (fun e' -> e') e
     let handler = Product.commandHandler load commit onFailure
     handler cmd
+
+let fail reasons = String.concat "; " reasons |> failwith

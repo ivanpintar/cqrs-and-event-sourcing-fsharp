@@ -22,7 +22,7 @@ let ``When Create ProductCreated``() =
     | Success s -> 
         let actual = Seq.head s |> createComparableEvent
         Assert.Equal(expected, actual)
-    | Failure f -> failwith "failed"
+    | Failure f -> fail f.reasons
 
 [<Fact>]
 let ``When Create with negative price Failure``() = 

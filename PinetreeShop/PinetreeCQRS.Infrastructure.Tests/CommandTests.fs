@@ -73,7 +73,7 @@ module TestAggregateTests =
             let actual = Seq.head e |> comparableEvent
             Assert.Equal(expected, actual)                 
         | Failure f -> 
-            failwith (f.reason.ToString())
+            failwith (f.reasons.ToString())
 
         
     
@@ -86,7 +86,7 @@ module TestAggregateTests =
         let expected : Failed<'TEvent> = 
             { aggregateId = aggregateId
               eventId = Guid.Empty
-              reason = [ "Failed" ]
+              reasons = [ "Failed" ]
               processId = None
               causationId = command.commandId
               correlationId = command.commandId

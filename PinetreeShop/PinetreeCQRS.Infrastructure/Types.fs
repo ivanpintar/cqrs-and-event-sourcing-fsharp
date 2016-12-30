@@ -26,7 +26,7 @@ type FailureReason = string
 type Failed<'TCommand> = 
     { aggregateId : Guid
       payload : 'TCommand
-      reason : FailureReason list
+      reasons : FailureReason list
       eventId : Guid
       processId : Guid Option
       causationId : Guid
