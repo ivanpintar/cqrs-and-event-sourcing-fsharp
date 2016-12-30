@@ -2,34 +2,29 @@
 
 open System
 open Types
-    
-let createEvent aggregateId payload causationId processId correlationId : Event<'TEvent> = 
+
+let createEvent aggregateId (causationId, processId, correlationId) payload = 
     { aggregateId = aggregateId
       payload = payload
-      eventId = Guid.NewGuid()
+      eventId = Guid.NewGuid() |> EventId
       processId = processId
       causationId = causationId
       correlationId = correlationId
-      eventNumber = None }
-    
-let processEvents handler (events : Event<'TEvent> list) = 
-    let handle (e:Event<'TEvent>) = handler e.payload
-    List.map handle events
-    
+      eventNumber = 0 }
+
+let createEventMetadata payload command = 
+    let (CommandId cmdGuid) = command.commandId 
+    { aggregateId = command.aggregateId
+      payload = payload
+      eventId = Guid.NewGuid() |> EventId
+      processId = command.processId
+      causationId = CausationId cmdGuid
+      correlationId = command.correlationId
+      eventNumber = 0 }
+
 let readAndHandleEvents loadEvents handler lastEventNumber = 
+    let processEvents handler = List.map (fun (e : EventEnvelope<'TEvent>) -> handler e.payload)
     let events = loadEvents lastEventNumber
     let result = processEvents handler events
-        
-    let rec eventProcessed = 
-        function 
-        | head :: [] -> (head:Event<'TEvent>).eventNumber
-        | head :: tail -> eventProcessed tail
-        | [] -> Some(lastEventNumber)
-        
-    let lastProcessed = 
-        let res = eventProcessed events
-        match res with
-        | Some r -> r
-        | _ -> lastEventNumber
-        
-    (result, lastProcessed)
+    let eventProcessed = List.fold (fun acc e -> e.eventNumber) lastEventNumber events
+    (result, eventProcessed)

@@ -7,7 +7,7 @@ let validator pred (error:string) value command =
     let result = pred value
     match result with
     | true -> Success value
-    | false -> Failure(command, [ error ])
+    | false -> Failure([ FailureReason error ])
 
 /// Given a value, creates a choice 1. (Applicative functor)
 let puree = Success
@@ -17,9 +17,9 @@ let puree = Success
 let apply f x = 
     match f, x with
     | Success f, Success x -> Success(f x)
-    | Failure(c, reason), Success x -> Failure(c, reason)
-    | Success f, Failure(c, reason) -> Failure(c, reason)
-    | Failure(c, reason), Failure(c2, reason2) -> Failure(c, reason @ reason2)
+    | Failure(e), Success x -> Failure(e)
+    | Success f, Failure(e) -> Failure(e)
+    | Failure(e1), Failure(e2) -> Failure(e1 @ e2)
 
 let (<*>) = apply
 

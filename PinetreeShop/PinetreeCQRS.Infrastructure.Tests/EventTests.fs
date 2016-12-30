@@ -22,9 +22,11 @@ let events =
       NotInteresting(2) ]
 
 let loadEvents lastEventNumber = 
-    let aggregateId = Guid.NewGuid()
+    let aggregateId = Guid.NewGuid() |> AggregateId
+    let causationId = Guid.NewGuid() |> CausationId
+    let correlationId = Guid.NewGuid() |> CorrelationId
     let guid = Guid.NewGuid()
-    let evt e = createEvent aggregateId e guid (Some(guid)) guid
+    let evt = createEvent aggregateId (causationId, None, correlationId)
     List.map evt events
 
 let handleEvents = readAndHandleEvents loadEvents handler

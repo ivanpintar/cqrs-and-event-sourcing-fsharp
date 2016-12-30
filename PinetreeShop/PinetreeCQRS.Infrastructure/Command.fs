@@ -5,60 +5,69 @@ open PinetreeCQRS.Infrastructure.Types
 open PinetreeCQRS.Infrastructure.Events
 open FSharpx.Validation
 
-let createCommand aggregateId commandData causationId processId correlationId = 
+let createCommand aggregateId (version, causationId, correlationId, processId) payload = 
     let commandId = Guid.NewGuid()
     
     let causationId' = 
         match causationId with
         | Some c -> c
-        | _ -> commandId
+        | _ -> CausationId commandId
     
     let correlationId' = 
         match correlationId with
         | Some c -> c
-        | _ -> commandId
-    
+        | _ -> CorrelationId commandId
+
     { aggregateId = aggregateId
-      payload = commandData
-      commandId = commandId
+      payload = payload
+      commandId = CommandId commandId
       processId = processId
       causationId = causationId'
-      correlationId = correlationId' }
+      correlationId = correlationId'
+      version = version }
 
-let createMetadata payload (command:Command<'TCommand>) : Event<'TEvent> = 
+let createFailedCommand command reasons = 
+    let (CommandId cmdGuid) = command.commandId
     { aggregateId = command.aggregateId
-      payload = payload
-      eventId = Guid.NewGuid()
-      processId = command.processId
-      causationId = command.commandId
-      correlationId = command.correlationId
-      eventNumber = None }
-
-let createFailedCommand payload reasons (command:Command<'TCommand>) : Failed<'TCommand> = 
-    { aggregateId = command.aggregateId
-      payload = payload
+      payload = command.payload
       reasons = reasons
-      eventId = Guid.NewGuid()
+      failureId = Guid.NewGuid() |> FailureId
       processId = command.processId
-      causationId = command.commandId
-      correlationId = command.correlationId
-      eventNumber = None }
+      causationId = CausationId cmdGuid
+      correlationId = command.correlationId }
 
-
-let makeHandler (aggregate : Aggregate<'TState, 'TEvent, 'TCommand>) (load : Type -> Guid -> Event<'TEvent> seq) 
-    (commit : Event<'TEvent> seq -> Event<'TEvent> seq) (onFailure : Failed<'TCommand> -> Failed<'TCommand>) = 
-    fun (command:Command<'TCommand>) -> 
+let makeHandler 
+    (aggregate : Aggregate<'TState, 'TEvent, 'TCommand>) 
+    (load : Type -> AggregateId -> EventEnvelope<'TEvent> seq) 
+    (commit : EventEnvelope<'TEvent> seq -> EventEnvelope<'TEvent> seq) 
+    (onFailure : CommandFailedEnvelope<'TCommand> -> CommandFailedEnvelope<'TCommand>) = 
+    fun (command : CommandEnvelope<'TCommand>) -> 
         let id = command.aggregateId
-        let events = load typeof<'TState> id |> Seq.map (fun e -> e.payload)
-        let state = Seq.fold aggregate.applyEvent aggregate.zero events
-        let result = aggregate.executeCommand state command.payload
-        match result with
-        | Success createdEvents -> 
-            createdEvents
-            |> Seq.map (fun e -> createMetadata e command) 
-            |> commit
-            |> Success
-        | Failure (failedCommand, reasons) -> 
-            createFailedCommand failedCommand reasons command
-            |> onFailure
+        let events = load typeof<'TState> id
+        let lastEventNumber = Seq.fold (fun acc e -> e.eventNumber) 0 events
+
+        let e = lastEventNumber
+        let v = 
+            match command.version with
+            | Irrelevant -> None
+            | Expected v' -> Some(v')
+
+        match e, v with
+        | (x, Some(y)) when x > y -> 
+            [ FailureReason "Version mismatch" ]
+            |> createFailedCommand command
             |> Failure
+        | _ -> 
+            let eventPayloads = Seq.map (fun (e : EventEnvelope<'TEvent>) -> e.payload) events
+            let state = Seq.fold aggregate.applyEvent aggregate.zero eventPayloads
+            let result = aggregate.executeCommand state command.payload
+            match result with
+            | Success createdEvents -> 
+                createdEvents
+                |> Seq.map (fun e -> createEventMetadata e command)
+                |> commit
+                |> Success
+            | Failure(reasons) -> 
+                createFailedCommand command reasons
+                |> onFailure
+                |> Failure

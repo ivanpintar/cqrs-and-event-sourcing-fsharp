@@ -11,7 +11,6 @@ type Command =
     | Create of string * decimal
     | AddToStock of int
     | RemoveFromStock of int
-    | ChangeQuantity of int
     | Reserve of int
     | CancelReservation of int
     | PurchaseReserved of int
@@ -53,27 +52,26 @@ module private Validate =
         let positivePrice p = validator (fun p' -> p' >= 0m) "Price must be a positive number" p
         let canChangeQuantity (s, d) = validator (fun (s', d') -> (d' < 0 && available s' >= -d') || d' >= 0) "Not enough available items" (s, d)
         let enoughReservedItems (s, q) = validator (fun (s', q') -> s'.reserved >= q') "Not enough reserved items" (s, q)
-        let created s = validator (fun s' -> s'.created) "Product must be created first" s
+        let created s = validator (fun s' -> s'.created) "Product must be created" s
 
     let canCreate (s, p) cmd = Inner.notCreated s cmd <* Inner.positivePrice p cmd
     let createdAndPositiveQuantity (s, q) cmd = Inner.created s cmd <* Inner.positiveQuantity q cmd
-    let createdAndCanChangeQuantity (s, d) cmd = Inner.created s cmd <* Inner.canChangeQuantity (s, d) cmd
     let createdAndEnoughReservedItems (s, q) cmd = Inner.created s cmd <* Inner.positiveQuantity q cmd <* Inner.enoughReservedItems (s, q) cmd
+    let createdAndCanRemoveItems (s, q) cmd = Inner.created s cmd <* Inner.positiveQuantity q cmd <* Inner.canChangeQuantity (s, -q) cmd
 
 
 let executeCommand state command = 
     match command with
     | Create(name, price) -> command |> Validate.canCreate (state, price) <?> [ ProductCreated(name, price) ]
     | AddToStock qty -> command |> Validate.createdAndPositiveQuantity (state, qty) <?> [ ProductQuantityChanged(qty) ]
-    | RemoveFromStock qty -> command |> Validate.createdAndCanChangeQuantity (state, -qty) <?> [ ProductQuantityChanged(-qty) ]
-    | ChangeQuantity diff -> command |> Validate.createdAndCanChangeQuantity (state, diff) <?> [ ProductQuantityChanged(diff) ]
+    | RemoveFromStock qty -> command |> Validate.createdAndCanRemoveItems (state, qty) <?> [ ProductQuantityChanged(-qty) ]
     | CancelReservation qty -> command |> Validate.createdAndEnoughReservedItems (state, qty) <?> [ ProductReservationCanceled(qty) ]
     | PurchaseReserved qty -> command |> Validate.createdAndEnoughReservedItems (state, qty) <?> [ ProductPurchased(qty) ]
     | Reserve qty -> 
-        let r = command |> Validate.createdAndCanChangeQuantity (state, -qty) 
+        let r = command |> Validate.createdAndCanRemoveItems (state, qty) 
         match r with
         | Success s -> [ProductReserved(qty)] |> Success
-        | Failure (c, f) -> [ProductReservationFailed(qty, f)] |> Success
+        | Failure f -> [ProductReservationFailed(qty, f)] |> Success
 
 
 let commandHandler = 
