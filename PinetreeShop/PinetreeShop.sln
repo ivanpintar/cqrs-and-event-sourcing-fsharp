@@ -11,8 +11,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain.Products", "Domain.P
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{261CBAEA-7923-420C-9B8D-7C03F17B904B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PinetreeShop.Domain.Products.Tests", "PinetreeShop.Domain.Products.Tests\PinetreeShop.Domain.Products.Tests.csproj", "{F4117AC2-4F34-4F90-BC78-38A411BB8376}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PinetreeShop.Domain.Products.WebAPI", "PinetreeShop.Domain.Products.WebAPI\PinetreeShop.Domain.Products.WebAPI.csproj", "{8C9C68BF-1AF9-4CB1-B3F3-EF2737E6B8F5}"
 EndProject
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "PinetreeShop.Domain.Products.WebUI", "PinetreeShop.Domain.Products.WebUI\", "{54E0CA80-93BD-4F03-986A-5F8137656F51}"
@@ -40,9 +38,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PinetreeUtilities", "Pinetr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PinetreeUtilities.Tests", "PinetreeUtilities.Tests\PinetreeUtilities.Tests.csproj", "{B0A04400-830C-485E-A8BC-E1BEB951B2F4}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PinetreeCQRS.FSharp.Infrastructure", "PinetreeCQRS.FSharp.Infrastructure\PinetreeCQRS.FSharp.Infrastructure.fsproj", "{68043CDE-ADA2-41E1-B423-84AA38024DA9}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PinetreeCQRS.Infrastructure", "PinetreeCQRS.Infrastructure\PinetreeCQRS.Infrastructure.fsproj", "{68043CDE-ADA2-41E1-B423-84AA38024DA9}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PinetreeCQRS.FSharp.Infrastructure.Tests", "PinetreeCQRS.FSharp.Infrastructure.Tests\PinetreeCQRS.FSharp.Infrastructure.Tests.fsproj", "{E474A1CC-EC18-4805-A046-92D73815BD8F}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PinetreeCQRS.Infrastructure.Tests", "PinetreeCQRS.Infrastructure.Tests\PinetreeCQRS.Infrastructure.Tests.fsproj", "{E474A1CC-EC18-4805-A046-92D73815BD8F}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PinetreeShop.Domain.Products", "PinetreeShop.Domain.Products\PinetreeShop.Domain.Products.fsproj", "{7166EAE4-A34D-4807-9BD1-65042AC030A4}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PinetreeShop.Domain.Products.Tests", "PinetreeShop.Domain.Products.Tests\PinetreeShop.Domain.Products.Tests.fsproj", "{AACF430D-269D-4BEE-8834-0169196EF961}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PinetreeShop.Domain.Tests", "PinetreeShop.Domain.Tests\PinetreeShop.Domain.Tests.fsproj", "{B6B85A23-7D71-48BA-AC50-D4688F5E970F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,10 +54,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F4117AC2-4F34-4F90-BC78-38A411BB8376}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F4117AC2-4F34-4F90-BC78-38A411BB8376}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F4117AC2-4F34-4F90-BC78-38A411BB8376}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F4117AC2-4F34-4F90-BC78-38A411BB8376}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8C9C68BF-1AF9-4CB1-B3F3-EF2737E6B8F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8C9C68BF-1AF9-4CB1-B3F3-EF2737E6B8F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C9C68BF-1AF9-4CB1-B3F3-EF2737E6B8F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -77,17 +77,31 @@ Global
 		{E474A1CC-EC18-4805-A046-92D73815BD8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E474A1CC-EC18-4805-A046-92D73815BD8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E474A1CC-EC18-4805-A046-92D73815BD8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7166EAE4-A34D-4807-9BD1-65042AC030A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7166EAE4-A34D-4807-9BD1-65042AC030A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7166EAE4-A34D-4807-9BD1-65042AC030A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7166EAE4-A34D-4807-9BD1-65042AC030A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AACF430D-269D-4BEE-8834-0169196EF961}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AACF430D-269D-4BEE-8834-0169196EF961}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AACF430D-269D-4BEE-8834-0169196EF961}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AACF430D-269D-4BEE-8834-0169196EF961}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6B85A23-7D71-48BA-AC50-D4688F5E970F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6B85A23-7D71-48BA-AC50-D4688F5E970F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6B85A23-7D71-48BA-AC50-D4688F5E970F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6B85A23-7D71-48BA-AC50-D4688F5E970F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{F4117AC2-4F34-4F90-BC78-38A411BB8376} = {58973138-8686-4202-93F7-AA9954A6E79E}
 		{8C9C68BF-1AF9-4CB1-B3F3-EF2737E6B8F5} = {58973138-8686-4202-93F7-AA9954A6E79E}
 		{54E0CA80-93BD-4F03-986A-5F8137656F51} = {58973138-8686-4202-93F7-AA9954A6E79E}
 		{6F9FDFEE-9626-4295-B7C9-3F2525B160FF} = {D052523F-4202-47B9-A4C6-589450F2CA16}
 		{B0A04400-830C-485E-A8BC-E1BEB951B2F4} = {D052523F-4202-47B9-A4C6-589450F2CA16}
 		{68043CDE-ADA2-41E1-B423-84AA38024DA9} = {BADC2E38-1FBB-4F5D-B0DF-0C4D4CF2631C}
 		{E474A1CC-EC18-4805-A046-92D73815BD8F} = {BADC2E38-1FBB-4F5D-B0DF-0C4D4CF2631C}
+		{7166EAE4-A34D-4807-9BD1-65042AC030A4} = {58973138-8686-4202-93F7-AA9954A6E79E}
+		{AACF430D-269D-4BEE-8834-0169196EF961} = {58973138-8686-4202-93F7-AA9954A6E79E}
+		{B6B85A23-7D71-48BA-AC50-D4688F5E970F} = {261CBAEA-7923-420C-9B8D-7C03F17B904B}
 	EndGlobalSection
 EndGlobal
