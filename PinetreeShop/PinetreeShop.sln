@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{D052523F-4202-47B9-A4C6-589450F2CA16}"
 EndProject
@@ -46,7 +46,11 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PinetreeShop.Domain.Product
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PinetreeShop.Domain.Tests", "PinetreeShop.Domain.Tests\PinetreeShop.Domain.Tests.fsproj", "{B6B85A23-7D71-48BA-AC50-D4688F5E970F}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PinetreeShop.Domain.Products.ReadModel", "PinetreeShop.Domain.Products.ReadModel\PinetreeShop.Domain.Products.ReadModel.fsproj", "{08B7BD82-D7A3-4A39-A147-80112FB26C2D}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PinetreeCQRS.Persistence", "PinetreeCQRS.Persistence\PinetreeCQRS.Persistence.fsproj", "{404C4D7F-18B9-4CDD-941C-9CDBA2A73517}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PinetreeShop.Domain.Products.Listener", "PinetreeShop.Domain.Products.Listener\PinetreeShop.Domain.Products.Listener.fsproj", "{66DEB80D-4D73-4D3E-B9AF-FD67133487CB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PinetreeShop.Domain.Products.WebAPI", "PinetreeShop.Domain.Products.WebAPI\PinetreeShop.Domain.Products.WebAPI.csproj", "{8C9C68BF-1AF9-4CB1-B3F3-EF2737E6B8F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -85,10 +89,18 @@ Global
 		{B6B85A23-7D71-48BA-AC50-D4688F5E970F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6B85A23-7D71-48BA-AC50-D4688F5E970F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6B85A23-7D71-48BA-AC50-D4688F5E970F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{08B7BD82-D7A3-4A39-A147-80112FB26C2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{08B7BD82-D7A3-4A39-A147-80112FB26C2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{08B7BD82-D7A3-4A39-A147-80112FB26C2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{08B7BD82-D7A3-4A39-A147-80112FB26C2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{404C4D7F-18B9-4CDD-941C-9CDBA2A73517}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{404C4D7F-18B9-4CDD-941C-9CDBA2A73517}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{404C4D7F-18B9-4CDD-941C-9CDBA2A73517}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{404C4D7F-18B9-4CDD-941C-9CDBA2A73517}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66DEB80D-4D73-4D3E-B9AF-FD67133487CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66DEB80D-4D73-4D3E-B9AF-FD67133487CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66DEB80D-4D73-4D3E-B9AF-FD67133487CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66DEB80D-4D73-4D3E-B9AF-FD67133487CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C9C68BF-1AF9-4CB1-B3F3-EF2737E6B8F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C9C68BF-1AF9-4CB1-B3F3-EF2737E6B8F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C9C68BF-1AF9-4CB1-B3F3-EF2737E6B8F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C9C68BF-1AF9-4CB1-B3F3-EF2737E6B8F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -102,6 +114,8 @@ Global
 		{7166EAE4-A34D-4807-9BD1-65042AC030A4} = {58973138-8686-4202-93F7-AA9954A6E79E}
 		{AACF430D-269D-4BEE-8834-0169196EF961} = {58973138-8686-4202-93F7-AA9954A6E79E}
 		{B6B85A23-7D71-48BA-AC50-D4688F5E970F} = {261CBAEA-7923-420C-9B8D-7C03F17B904B}
-		{08B7BD82-D7A3-4A39-A147-80112FB26C2D} = {58973138-8686-4202-93F7-AA9954A6E79E}
+		{404C4D7F-18B9-4CDD-941C-9CDBA2A73517} = {BADC2E38-1FBB-4F5D-B0DF-0C4D4CF2631C}
+		{66DEB80D-4D73-4D3E-B9AF-FD67133487CB} = {58973138-8686-4202-93F7-AA9954A6E79E}
+		{8C9C68BF-1AF9-4CB1-B3F3-EF2737E6B8F5} = {58973138-8686-4202-93F7-AA9954A6E79E}
 	EndGlobalSection
 EndGlobal

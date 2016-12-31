@@ -5,15 +5,14 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>08b7bd82-d7a3-4a39-a147-80112fb26c2d</ProjectGuid>
+    <ProjectGuid>404c4d7f-18b9-4cdd-941c-9cdba2a73517</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>PinetreeShop.Domain.Products.ReadModel</RootNamespace>
-    <AssemblyName>PinetreeShop.Domain.Products.ReadModel</AssemblyName>
+    <RootNamespace>PinetreeCQRS.Persistence</RootNamespace>
+    <AssemblyName>PinetreeCQRS.Persistence</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <TargetFSharpCoreVersion>4.4.0.0</TargetFSharpCoreVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Name>PinetreeShop.Domain.Products.ReadModel</Name>
-    <TargetFrameworkProfile />
+    <Name>PinetreeCQRS.Persistence</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -23,7 +22,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Debug\PinetreeShop.Domain.Products.ReadModel.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\PinetreeCQRS.Persistence.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,8 +31,28 @@
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Release\PinetreeShop.Domain.Products.ReadModel.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\PinetreeCQRS.Persistence.XML</DocumentationFile>
   </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="SqlServer.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PinetreeCQRS.Infrastructure\PinetreeCQRS.Infrastructure.fsproj">
+      <Name>PinetreeCQRS.Infrastructure</Name>
+      <Project>{68043cde-ada2-41e1-b423-84aa38024da9}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
   </PropertyGroup>
@@ -50,29 +69,6 @@
     </Otherwise>
   </Choose>
   <Import Project="$(FSharpTargetsPath)" />
-  <ItemGroup>
-    <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="EventHandler.fs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="mscorlib" />
-    <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Numerics" />
-    <ProjectReference Include="..\PinetreeCQRS.Infrastructure\PinetreeCQRS.Infrastructure.fsproj">
-      <Name>PinetreeCQRS.Infrastructure</Name>
-      <Project>{68043cde-ada2-41e1-b423-84aa38024da9}</Project>
-      <Private>True</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\PinetreeShop.Domain.Products\PinetreeShop.Domain.Products.fsproj">
-      <Name>PinetreeShop.Domain.Products</Name>
-      <Project>{7166eae4-a34d-4807-9bd1-65042ac030a4}</Project>
-      <Private>True</Private>
-    </ProjectReference>
-  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

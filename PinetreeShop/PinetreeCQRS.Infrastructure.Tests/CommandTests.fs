@@ -16,6 +16,7 @@ module TestAggregate =
     type Event = 
         | EventOne of string
         | EventTwo of string
+        interface IEvent
     
     type State = 
         { one : string
@@ -26,18 +27,18 @@ module TestAggregate =
     
     let applyEvent state event = 
         match event with
-        | EventOne e -> { state with one = e }
-        | EventTwo e -> { state with two = e }
+         | EventOne e -> { state with one = e }
+            | EventTwo e -> { state with two = e }
     
-    let executeCommand state (c : Command) = 
-        match c with
-        | CommandOne c' -> [ EventOne(c') ] |> Success
+    let executeCommand state command = 
+        match command with
+        | CommandOne c -> [ EventOne(c) ] |> Success
         | CommandTwo _ -> Failure([ FailureReason "Failed" ])
 
 module TestAggregateTests = 
     let handleCommand initialEvents cmd = 
         let lastEventNumber = Seq.fold (fun acc e -> e.eventNumber) 0 initialEvents
-        let load t id = initialEvents
+        let load id = initialEvents
         let commit e = Seq.map (fun e' -> { e' with eventNumber = lastEventNumber + 1 }) e
         let onFailure e = e
         

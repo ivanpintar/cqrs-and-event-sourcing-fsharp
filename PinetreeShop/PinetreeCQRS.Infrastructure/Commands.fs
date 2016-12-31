@@ -38,12 +38,12 @@ let createFailedCommand command reasons =
 
 let makeHandler 
     (aggregate : Aggregate<'TState, 'TEvent, 'TCommand>) 
-    (load : Type -> AggregateId -> EventEnvelope<'TEvent> seq) 
+    (load : AggregateId -> EventEnvelope<'TEvent> seq) 
     (commit : EventEnvelope<'TEvent> seq -> EventEnvelope<'TEvent> seq) 
     (onFailure : CommandFailedEnvelope<'TCommand> -> CommandFailedEnvelope<'TCommand>) = 
     fun (command : CommandEnvelope<'TCommand>) -> 
         let id = command.aggregateId
-        let events = load typeof<'TState> id
+        let events = load id
         let lastEventNumber = Seq.fold (fun acc e -> e.eventNumber) 0 events
 
         let e = lastEventNumber
@@ -71,3 +71,8 @@ let makeHandler
                 createFailedCommand command reasons
                 |> onFailure
                 |> Failure
+
+let processCommandQueue dequeue handler =
+    dequeue ()
+    |> Seq.map handler
+    

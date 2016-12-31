@@ -1,5 +1,4 @@
-﻿using PinetreeShop.Domain.Products.ReadModel.Entities;
-using System;
+﻿using System;
 
 namespace PinetreeShop.Domain.Products.WebAPI.Models
 {
@@ -11,28 +10,9 @@ namespace PinetreeShop.Domain.Products.WebAPI.Models
         public int Quantity { get; set; }
         public int Reserved { get; set; }
 
-        public static ProductModel FromEntity(Product productEntity)
+        public static ProductModel FromEntity(object productEntity)
         {
-            return new ProductModel
-            {
-                Id = productEntity.Id,
-                Name = productEntity.Name,
-                Price = productEntity.Price,
-                Quantity = productEntity.Quantity,
-                Reserved = productEntity.Reserved
-            };
-        }
-
-        public static ProductModel FromAggregate(ProductAggregate productAggregate)
-        {
-            return new ProductModel
-            {
-                Id = productAggregate.AggregateId,
-                Name = productAggregate.Name,
-                Price = productAggregate.Price,
-                Quantity = productAggregate.Quantity,
-                Reserved = productAggregate.Reserved
-            };
-        }
+            throw new NotImplementedException();
+        }        
     }
 }

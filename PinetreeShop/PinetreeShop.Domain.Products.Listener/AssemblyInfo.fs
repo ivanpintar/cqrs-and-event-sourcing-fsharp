@@ -1,4 +1,4 @@
-﻿namespace PinetreeShop.Domain.Products.ReadModel.AssemblyInfo
+﻿namespace PinetreeShop.Domain.Products.Listener.AssemblyInfo
 
 open System.Reflection
 open System.Runtime.CompilerServices
@@ -7,11 +7,11 @@ open System.Runtime.InteropServices
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[<assembly: AssemblyTitle("PinetreeShop.Domain.Products.ReadModel")>]
+[<assembly: AssemblyTitle("PinetreeShop.Domain.Products.Listener")>]
 [<assembly: AssemblyDescription("")>]
 [<assembly: AssemblyConfiguration("")>]
 [<assembly: AssemblyCompany("")>]
-[<assembly: AssemblyProduct("PinetreeShop.Domain.Products.ReadModel")>]
+[<assembly: AssemblyProduct("PinetreeShop.Domain.Products.Listener")>]
 [<assembly: AssemblyCopyright("Copyright ©  2016")>]
 [<assembly: AssemblyTrademark("")>]
 [<assembly: AssemblyCulture("")>]
@@ -22,7 +22,7 @@ open System.Runtime.InteropServices
 [<assembly: ComVisible(false)>]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[<assembly: Guid("08b7bd82-d7a3-4a39-a147-80112fb26c2d")>]
+[<assembly: Guid("66deb80d-4d73-4d3e-b9af-fd67133487cb")>]
 
 // Version information for an assembly consists of the following four values:
 // 

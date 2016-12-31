@@ -51,6 +51,10 @@
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="FSharp.Core, Version=4.4.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\FSharp.Core.4.0.0.1\lib\net40\FSharp.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
@@ -110,7 +114,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\SetQuantityModel.cs" />
+    <Compile Include="Models\ChangeQuantityModel.cs" />
     <Compile Include="Models\CreateProductModel.cs" />
     <Compile Include="Models\ProductModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -126,6 +130,14 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\PinetreeCQRS.Infrastructure\PinetreeCQRS.Infrastructure.fsproj">
+      <Project>{68043cde-ada2-41e1-b423-84aa38024da9}</Project>
+      <Name>PinetreeCQRS.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PinetreeShop.Domain.Products\PinetreeShop.Domain.Products.fsproj">
+      <Project>{7166eae4-a34d-4807-9bd1-65042ac030a4}</Project>
+      <Name>PinetreeShop.Domain.Products</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PinetreeUtilities\PinetreeUtilities.csproj">
       <Project>{6F9FDFEE-9626-4295-B7C9-3F2525B160FF}</Project>
       <Name>PinetreeUtilities</Name>

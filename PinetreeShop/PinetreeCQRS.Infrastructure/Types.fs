@@ -24,7 +24,9 @@ type EventNumber = int
 
 type CommandResult<'a, 'b> = Choice<'a, 'b>
 
-type EventEnvelope<'TEvent> = 
+type IEvent = interface end
+
+type EventEnvelope<'TEvent when 'TEvent :> IEvent> = 
     { aggregateId : AggregateId
       payload : 'TEvent
       eventId : EventId

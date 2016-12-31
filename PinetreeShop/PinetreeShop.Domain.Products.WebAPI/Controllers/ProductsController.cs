@@ -1,64 +1,79 @@
-﻿using PinetreeCQRS.Infrastructure;
-using PinetreeCQRS.Infrastructure.Repositories;
-using PinetreeCQRS.Persistence.SQL;
-using PinetreeShop.Domain.Products.Commands;
-using PinetreeShop.Domain.Products.ReadModel;
-using PinetreeShop.Domain.Products.WebAPI.Models;
+﻿using PinetreeShop.Domain.Products.WebAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
+using PinetreeCQRS.Infrastructure;
+using static PinetreeShop.Domain.Products.ProductAggregate.Command;
+using static PinetreeShop.Domain.Products.CommandHandler;
+using static PinetreeCQRS.Infrastructure.Commands;
+using Microsoft.FSharp.Core;
+using static PinetreeCQRS.Infrastructure.Types;
 
 namespace PinetreeShop.Domain.Products.WebAPI.Controllers
 {
     [RoutePrefix("")]
     public class ProductsController : ApiController
     {
-        IEventStore _eventStore = new SqlEventStore();
-        string _queueName = typeof(ProductAggregate).Name;
-        private ProductCommandDispatcher _commandDispatcher;
-
-        public ProductsController()
-        {
-            _commandDispatcher = new ProductCommandDispatcher(new AggregateRepository(_eventStore));
-        }
-        
         [Route("list"), HttpGet]
         public List<ProductModel> GetProducts() 
         {
-            using(var ctx = new ProductContext())
-            {
-                return ctx.Products.Select(ProductModel.FromEntity).ToList();
-            }
+            throw new NotImplementedException();
         }
         
         [Route("create"), HttpPost]
         public IHttpActionResult CreateProduct([FromBody] CreateProductModel model)
         {
-            var productId = Guid.NewGuid();
 
-            var cmd = new CreateProduct(productId, model.Name, model.Price);
-            var product = _commandDispatcher.ExecuteCommand<ProductAggregate>(cmd);
+            var id = AggregateId.NewAggregateId(Guid.NewGuid());
+            var versionNumber = AggregateVersion.NewExpected(0);
+            var cmd = NewCreate(model.Name, model.Price);
+            var envelope = createCommand(id, versionNumber, null, null, null, cmd);
 
+            var res = HandleCommand(envelope);
+           
             if(model.Quantity > 0)
             {
-                return ChangeQuantity(new SetQuantityModel
-                {
-                    Id = productId,
-                    Quantity = model.Quantity
-                });
+                cmd = NewAddToStock(model.Quantity);
+                versionNumber = AggregateVersion.NewExpected(res.Last().eventNumber);
+                envelope = createCommand(id, versionNumber, null, null, null, cmd);
+                HandleCommand(envelope);
             }
 
-            return Ok(ProductModel.FromAggregate(product));
+            return Ok(new ProductModel
+            {
+                Id = id.Item,
+                Name = model.Name,
+                Price = model.Price,
+                Quantity = model.Quantity,
+                Reserved = 0
+            });
         }
         
         [Route("quantity"), HttpPost]
-        public IHttpActionResult ChangeQuantity([FromBody] SetQuantityModel model)
+        public IHttpActionResult ChangeQuantity([FromBody] ChangeQuantityModel model)
         {
-            var cmd = new SetProductQuantity(model.Id, model.Quantity);
-            var product = _commandDispatcher.ExecuteCommand<ProductAggregate>(cmd);
+            
 
-            return Ok(ProductModel.FromAggregate(product));
+            return Ok();
+        }
+
+        private IEnumerable<EventEnvelope<ProductAggregate.Event>> HandleCommand(CommandEnvelope<ProductAggregate.Command> cmd)
+        {
+            var res = handleCommand(cmd);
+
+            if (res.IsChoice1Of2)
+            {
+                var r = (res as FSharpChoice<IEnumerable<EventEnvelope<ProductAggregate.Event>>, CommandFailedEnvelope<ProductAggregate.Command>>.Choice1Of2).Item;
+                return r;
+            } 
+
+            var f = (res as FSharpChoice<IEnumerable<EventEnvelope<ProductAggregate.Event>>, CommandFailedEnvelope<ProductAggregate.Command>>.Choice2Of2).Item;
+
+            var reasons = f.reasons.Select(x => x.ToString()).ToArray();
+            var reason = string.Join("; ", reasons);
+            throw new Exception(reason);
         }
     }
+
 }

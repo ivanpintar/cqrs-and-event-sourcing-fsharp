@@ -9,11 +9,12 @@ type TestEvent =
     | ToLower of string
     | ToUpper of string
     | NotInteresting of int
+    interface IEvent
 
-let handler event = 
-    match event with
-    | ToUpper e -> e.ToUpper()
-    | ToLower e -> e.ToLower()
+let handler (event : EventEnvelope<TestEvent>) = 
+    match event.payload with
+    | ToUpper e' -> e'.ToUpper()
+    | ToLower e' -> e'.ToLower()
     | _ -> "not interested"
 
 let events = 
@@ -27,12 +28,13 @@ let loadEvents lastEventNumber =
     let correlationId = Guid.NewGuid() |> CorrelationId
     let guid = Guid.NewGuid()
     let evt = createEvent aggregateId (causationId, None, correlationId)
-    List.map evt events
+    events |> Seq.map evt
 
-let handleEvents = readAndHandleEvents loadEvents handler
+let handleEvents = readAndHandleTypeEvents<string, TestEvent> loadEvents handler
 
 [<Fact>]
 let ``When Handling Events Results Are Returned``() = 
-    let actual = handleEvents 0
+    let (res, num) = handleEvents 0
+    let actual = (res |> Seq.toList, num)
     let expected = ([ "lower"; "UPPER"; "not interested" ], 0)
     Assert.Equal(expected, actual)
