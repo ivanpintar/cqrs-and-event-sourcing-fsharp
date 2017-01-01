@@ -12,7 +12,7 @@ type TestEvent =
     interface IEvent
 
 let handler (event : EventEnvelope<TestEvent>) = 
-    match event.payload with
+    match event.Payload with
     | ToUpper e' -> e'.ToUpper()
     | ToLower e' -> e'.ToLower()
     | _ -> "not interested"

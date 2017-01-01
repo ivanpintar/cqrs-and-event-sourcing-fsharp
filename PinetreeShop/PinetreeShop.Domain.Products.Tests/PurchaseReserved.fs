@@ -1,4 +1,5 @@
 ﻿module PinetreeShop.Domain.Products.Tests.PurchaseReserved
+
 open PinetreeShop.Domain.Tests.TestBase
 open PinetreeShop.Domain.Products.ProductAggregate
 open PinetreeShop.Domain.Products.Tests.Base
@@ -6,7 +7,6 @@ open PinetreeCQRS.Infrastructure.Commands
 open PinetreeCQRS.Infrastructure.Events
 open PinetreeCQRS.Infrastructure.Types
 open Xunit
-open FSharpx.Validation
 open System
 
 let aggregateId = Guid.NewGuid() |> AggregateId
@@ -19,21 +19,20 @@ let initialEvents =
 [<Fact>]
 let ``When PurchaseReserved ProductPurchased``() = 
     let command = PurchaseReserved(10) |> createCommand aggregateId (Expected(3), None, None, None)
-    let result = handleCommand initialEvents command
     let expected = ProductPurchased(10) |> createExpectedEvent command 4
-    result |> checkSuccess expected
-
+    handleCommand initialEvents command |> checkSuccess expected
 
 [<Fact>]
 let ``When PurchaseReserved not created fail``() = 
-    let command = PurchaseReserved(5) |> createCommand aggregateId (Expected(0), None, None, None)
-    let result = handleCommand [] command
-    let expected = createExpectedFailure command ["Product must be created"; "Not enough reserved items"]
-    result |> checkFailure expected
+    PurchaseReserved(5)
+    |> createCommand aggregateId (Expected(0), None, None, None)
+    |> handleCommand []
+    |> checkFailure [ ValidationError "Product must be created"
+                      ValidationError "Not enough reserved items" ]
 
 [<Fact>]
 let ``When PurchaseReserved more than reserved fail``() = 
-    let command = PurchaseReserved(12) |> createCommand aggregateId (Expected(3), None, None, None)
-    let result = handleCommand initialEvents command
-    let expected = createExpectedFailure command ["Not enough reserved items"]
-    result |> checkFailure expected   
+    PurchaseReserved(12)
+    |> createCommand aggregateId (Expected(3), None, None, None)
+    |> handleCommand initialEvents
+    |> checkFailure [ ValidationError "Not enough reserved items" ]

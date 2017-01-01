@@ -54,6 +54,7 @@
     <Compile Include="ProductAggregate.fs" />
     <Compile Include="CommandHandler.fs" />
     <Compile Include="ReadModel.fs" />
+    <Content Include="App.config" />
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -62,22 +63,29 @@
       <Project>{404c4d7f-18b9-4cdd-941c-9cdba2a73517}</Project>
       <Private>True</Private>
     </ProjectReference>
-    <Reference Include="FSharpx.Core">
-      <HintPath>..\packages\FSharpx.Core.1.8.32\lib\40\FSharpx.Core.dll</HintPath>
+    <Reference Include="Chessie">
+      <HintPath>..\packages\Chessie.0.6.0\lib\net40\Chessie.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FSharp.Core">
+      <HintPath>..\packages\FSharp.Core.4.0.0.1\lib\net40\FSharp.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FSharp.Data.SqlProvider">
+      <HintPath>..\packages\SQLProvider.1.0.40\lib\FSharp.Data.SqlProvider.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />
-    <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Numerics" />
     <ProjectReference Include="..\PinetreeCQRS.Infrastructure\PinetreeCQRS.Infrastructure.fsproj">
       <Name>PinetreeCQRS.Infrastructure</Name>
       <Project>{68043cde-ada2-41e1-b423-84aa38024da9}</Project>
       <Private>True</Private>
     </ProjectReference>
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

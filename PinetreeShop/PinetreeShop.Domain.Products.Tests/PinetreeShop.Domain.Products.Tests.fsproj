@@ -66,9 +66,9 @@
     <Compile Include="RemoveFromStock.fs" />
     <Compile Include="Reserve.fs" />
     <Compile Include="PurchaseReserved.fs" />
+    <Compile Include="CancelReservation.fs" />
     <Content Include="packages.config" />
     <Content Include="App.config" />
-    <Compile Include="CancelReservation.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PinetreeCQRS.Infrastructure\PinetreeCQRS.Infrastructure.fsproj">
@@ -76,14 +76,15 @@
       <Project>{68043cde-ada2-41e1-b423-84aa38024da9}</Project>
       <Private>True</Private>
     </ProjectReference>
-    <Reference Include="FSharpx.Core">
-      <HintPath>..\packages\FSharpx.Core.1.8.32\lib\40\FSharpx.Core.dll</HintPath>
+    <Reference Include="Chessie">
+      <HintPath>..\packages\Chessie.0.6.0\lib\net40\Chessie.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FSharp.Core">
+      <HintPath>..\packages\FSharp.Core.4.0.0.1\lib\net40\FSharp.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />
-    <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />

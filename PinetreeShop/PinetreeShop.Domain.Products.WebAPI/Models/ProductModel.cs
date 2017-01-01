@@ -1,4 +1,5 @@
 ﻿using System;
+using static PinetreeShop.Domain.Products.ReadModel;
 
 namespace PinetreeShop.Domain.Products.WebAPI.Models
 {
@@ -13,6 +14,18 @@ namespace PinetreeShop.Domain.Products.WebAPI.Models
         public static ProductModel FromEntity(object productEntity)
         {
             throw new NotImplementedException();
-        }        
+        }
+
+        internal static ProductModel FromDTO(ProductDTO p)
+        {
+            return new ProductModel
+            {
+                Id = p.id,
+                Name = p.name,
+                Price = p.price,
+                Quantity = p.quantity,
+                Reserved = p.reserved
+            };
+        }
     }
 }
