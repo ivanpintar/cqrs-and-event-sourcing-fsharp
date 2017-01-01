@@ -10,6 +10,7 @@ open PinetreeCQRS.Infrastructure.Validation
 type ProductError =
     | ValidationError of string
     interface IError
+    override e.ToString() = sprintf "%A" e
 
 type Command = 
     | Create of string * decimal

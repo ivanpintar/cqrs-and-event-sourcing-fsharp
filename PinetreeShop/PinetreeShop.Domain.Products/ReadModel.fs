@@ -78,7 +78,7 @@ module Writer =
         let updateReserved event = true
         let updateReservedAndQuantity event = true
         let loadEvents eventNumber = 
-            let res = loadTypeEvents<Event> eventNumber
+            let res = Events.loadTypeEvents<Event> eventNumber
             match res with
             | Ok (r, _)-> r
             | Bad _ -> Seq.empty

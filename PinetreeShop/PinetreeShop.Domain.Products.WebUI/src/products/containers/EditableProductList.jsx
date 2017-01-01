@@ -1,5 +1,5 @@
 ﻿import { connect } from 'react-redux';
-import { addProduct, setProductQuantity } from '../actions';
+import { addProduct, changeProductQuantity } from '../actions';
 import ProductList from '../components/ProductList';
 
 const sortProducts = (a,b) => {
@@ -24,8 +24,8 @@ const mapDispatchToProps = (dispatch) => {
         addProduct: (name, price, quantity) => {
             dispatch(addProduct(name, price, quantity));
         },
-        setQuantity: (id, diff) => {
-            dispatch(setProductQuantity(id, diff));
+        changeQuantity: (id, diff) => {
+            dispatch(changeProductQuantity(id, diff));
         }
     };
 }

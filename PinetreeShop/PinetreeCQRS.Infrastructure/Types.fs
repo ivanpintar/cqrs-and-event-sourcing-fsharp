@@ -9,9 +9,7 @@ type CommandId = CommandId of Guid
 type FailureId = FailureId of Guid
 type CausationId = CausationId of Guid
 type CorrelationId = CorrelationId of Guid
-type ProcessId = 
-    | ProcessId of Guid
-    | NoProcessId
+type ProcessId = ProcessId of Guid
 type AggregateVersion =
     | Expected of int
     | Irrelevant
@@ -19,7 +17,10 @@ type EventNumber = int
 type IEvent = interface end
 type IError = interface end
 
-type Error =  Error of string interface IError
+type Error = 
+    | Error of string 
+    interface IError
+    override e.ToString() = sprintf "%A" e
 
 type EventEnvelope<'TEvent when 'TEvent :> IEvent> = 
     { AggregateId : AggregateId

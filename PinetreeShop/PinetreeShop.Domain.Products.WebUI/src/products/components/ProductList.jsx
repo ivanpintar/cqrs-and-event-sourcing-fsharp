@@ -20,7 +20,7 @@ class ProductList extends React.Component {
     }
 
     render() {
-        let { products, setQuantity, addProduct } = this.props;
+        let { products, changeQuantity, addProduct } = this.props;
         let { selectedProduct, showAddProductModal } = this.state;
         let productRows = products.map(p => ProductRow(p, () => this.showUpdateModal(p)));
         
@@ -29,7 +29,7 @@ class ProductList extends React.Component {
                 <UpdateModal 
                         product={selectedProduct} 
                         show={selectedProduct !== null}
-                        setQuantity={setQuantity}
+                        changeQuantity={changeQuantity}
                         onClose={() => this.showUpdateModal(null)}/>
                 <AddModal
                         addProduct={addProduct}

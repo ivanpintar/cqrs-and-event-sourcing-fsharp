@@ -6,7 +6,7 @@ const product = (state, action) => {
     switch (action.type) {
         case actionTypes.ADD_OR_UPDATE_PRODUCT:
             return new Product(action.product);
-        case actionTypes.SET_PRODUCT_QUANTITY:
+        case actionTypes.CHANGE_PRODUCT_QUANTITY:
             if(state.id !== action.id) return state;
             return state.set('quantity', action.quantity);
         default:
@@ -21,7 +21,7 @@ export const products = (state = Immutable.List(), action) => {
                 return state.map(p => p.id === action.product.id ? product(p, action) : p);
             } 
             return state.push(product(undefined, action));
-        case actionTypes.SET_PRODUCT_QUANTITY:
+        case actionTypes.CHANGE_PRODUCT_QUANTITY:
             return state.map(p => product(p, action));
         default:
             return state;

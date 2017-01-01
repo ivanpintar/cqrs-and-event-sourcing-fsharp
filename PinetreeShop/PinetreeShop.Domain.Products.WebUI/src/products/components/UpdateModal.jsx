@@ -24,7 +24,11 @@ class UpdateModal extends React.Component{
 
     submit() {
         if(this.props.product && this.props.product.quantity !== this.state.value) {
-            this.props.setQuantity(this.props.product.id, this.state.value);
+            let currentQuantity = this.props.product.quantity;
+            let diff = this.state.value - currentQuantity;
+            console.log("changing quantity " + diff)
+
+            this.props.changeQuantity(this.props.product.id, diff);
         }
         this.props.onClose();
     }
