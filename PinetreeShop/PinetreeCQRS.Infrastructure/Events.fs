@@ -21,15 +21,3 @@ let createEventMetadata payload command =
       CausationId = CausationId cmdGuid
       CorrelationId = command.CorrelationId
       EventNumber = 0 }
-
-let readAndHandleAllEvents loadEvents handler lastEventNumber = 
-    let events = loadEvents lastEventNumber
-    let result = Seq.map handler events
-    let eventProcessed = Seq.fold (fun acc e -> e.EventNumber) lastEventNumber events
-    (result, eventProcessed)
-
-let readAndHandleTypeEvents<'TResult, 'TEvent when 'TEvent :> IEvent> loadEvents (handler:EventEnvelope<'TEvent> -> 'TResult) lastEventNumber =
-    let events = loadEvents lastEventNumber
-    let result = Seq.map handler events
-    let eventProcessed = Seq.fold (fun acc e -> e.EventNumber) lastEventNumber events
-    (result, eventProcessed)

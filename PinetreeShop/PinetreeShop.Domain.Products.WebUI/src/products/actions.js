@@ -45,16 +45,15 @@ export const addProduct = (name, price, quantity) => {
     };
 }
 
-export const changeProductQuantity = (id, quantity) => {
+export const changeProductQuantity = (id, difference) => {
     return dispatch => {
         const url = config.API_URL + '/quantity';
 
-        fetch(url, createPostRequest({ id, quantity }))
-            .then(response => response.json())        
+        fetch(url, createPostRequest({ id, difference }))
             .then(product => dispatch({
                 type: actionTypes.CHANGE_PRODUCT_QUANTITY,
-                id: product.id,
-                quantity: product.quantity
+                id,
+                difference
             }));
     };
 }

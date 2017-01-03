@@ -25,16 +25,21 @@ module private DataAccess =
     let loadLastEvent() = 
         let r = 
             query { 
-                for p in ctx.Dbo.Product do
+                for p in ctx.Products.Product do
                     sortByDescending p.LastEventNumber
                     take 1
                     select p.LastEventNumber
             }
-        r.FirstOrDefault()
+            |> Seq.toList
+        try 
+            match r with
+            | [] -> ok 0
+            | _ -> ok (r.Head)
+        with ex -> Bad [ Error ex.Message :> IError ]
     
     let insertProduct (event : EventEnvelope<Event>) name price = 
         let (AggregateId id) = event.AggregateId
-        let newProduct = ctx.Dbo.Product.Create()
+        let newProduct = ctx.Products.Product.Create()
         newProduct.Id <- id
         newProduct.Name <- name
         newProduct.Price <- price
@@ -43,29 +48,29 @@ module private DataAccess =
         newProduct.LastEventNumber <- event.EventNumber
         try 
             ctx.SubmitUpdates()
-            true
-        with exn -> false
+            ok event
+        with ex -> Bad [ Error ex.Message :> IError ]
     
     let updateQuantityAndReserved (event : EventEnvelope<Event>) qDiff rDiff = 
-        let (AggregateId id) = event.AggregateId
-        
-        let update (p : dbSchema.dataContext.``dbo.ProductEntity``) = 
+        let (AggregateId id) = event.AggregateId        
+        let update (p : dbSchema.dataContext.``Products.ProductEntity``) = 
             p.Quantity <- p.Quantity + qDiff
             p.Reserved <- p.Reserved + rDiff
             p.LastEventNumber <- event.EventNumber
         query { 
-            for product in ctx.Dbo.Product do
-                where (product.Id = id)
+            for product in ctx.Products.Product do
+                where (product.Id = id)                
         }
-        |> Seq.iter update
+        |> Seq.toList
+        |> List.iter update
         try 
             ctx.SubmitUpdates()
-            true
-        with exn -> false
+            ok event
+        with ex -> Bad [ Error ex.Message :> IError ]
     
     let loadProducts() = 
         query { 
-            for p in ctx.Dbo.Product do
+            for p in ctx.Products.Product do
                 select { id = p.Id
                          name = p.Name
                          price = p.Price
@@ -77,11 +82,6 @@ module Writer =
     module private Helpers = 
         let updateReserved event = true
         let updateReservedAndQuantity event = true
-        let loadEvents eventNumber = 
-            let res = Events.loadTypeEvents<Event> eventNumber
-            match res with
-            | Ok (r, _)-> r
-            | Bad _ -> Seq.empty
         
         let handler (event : EventEnvelope<Event>) = 
             match event.Payload with
@@ -90,10 +90,11 @@ module Writer =
             | ProductReserved qty -> DataAccess.updateQuantityAndReserved event 0 qty
             | ProductReservationCanceled qty -> DataAccess.updateQuantityAndReserved event 0 -qty
             | ProductPurchased qty -> DataAccess.updateQuantityAndReserved event -qty -qty
-            | _ -> true
+            | _ -> Ok(event, [ Error "Skipped" :> IError ])
     
     let handleEvents() = 
-        DataAccess.loadLastEvent() |> readAndHandleTypeEvents<bool, Event> Helpers.loadEvents Helpers.handler
+        let events = DataAccess.loadLastEvent() >>= Events.loadTypeEvents<Event>
+        Seq.map Helpers.handler <!> events
 
 module Reader = 
     let getProducts() = DataAccess.loadProducts() |> Seq.toList

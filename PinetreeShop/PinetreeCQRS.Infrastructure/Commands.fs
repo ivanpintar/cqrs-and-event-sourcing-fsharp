@@ -39,20 +39,14 @@ let makeCommandHandler (aggregate : Aggregate<'TState, 'TEvent, 'TCommand>)
                 | Expected v' -> Some(v')
                 | Irrelevant -> None
             match e, v with
-            | (x, Some(y)) when x > y -> 
-                Bad [ Error "Version mismatch" :> IError ]
+            | (x, Some(y)) when x > y -> Bad [ Error "Version mismatch" :> IError ]
             | _ -> 
                 let eventPayloads = Seq.map (fun (e : EventEnvelope<'TEvent>) -> e.Payload) events
                 let state = Seq.fold aggregate.ApplyEvent aggregate.Zero eventPayloads
                 let result = aggregate.ExecuteCommand state command.Payload
                 Seq.map (fun e -> createEventMetadata e command) <!> result >>= commit
-
+        
         let id = command.AggregateId
         let loadedEvents = load id
         processEvents <!> loadedEvents |> flatten
-
     handleCommand
-            
-
-let processCommandQueue (dequeue:_ -> Result<CommandEnvelope<'TCommand> seq, IError>) handler = 
-    Seq.map handler <!> dequeue()

@@ -31,14 +31,13 @@ namespace PinetreeShop.Domain.Products.WebAPI.Controllers
             var cmd = Command.NewCreate(model.Name, model.Price);
             var envelope = createCommand(id, versionNumber, null, null, null, cmd);
 
-            var res = HandleCommand(envelope);
+            QueueCommand(envelope);
 
             if (model.Quantity > 0)
             {
                 cmd = Command.NewAddToStock(model.Quantity);
-                versionNumber = AggregateVersion.NewExpected(res.Last().EventNumber);
-                envelope = createCommand(id, versionNumber, null, null, null, cmd);
-                HandleCommand(envelope);
+                envelope = createCommand(id, AggregateVersion.Irrelevant, null, null, null, cmd);
+                QueueCommand(envelope);
             }
 
             return Ok(new ProductModel
@@ -61,22 +60,22 @@ namespace PinetreeShop.Domain.Products.WebAPI.Controllers
                 : Command.NewRemoveFromStock(model.Difference);
 
             var envelope = createCommand(id, versionNumber, null, null, null, cmd);
-            HandleCommand(envelope);
+            QueueCommand(envelope);
 
             return Ok();
         }
 
-        private IEnumerable<EventEnvelope<Event>> HandleCommand(CommandEnvelope<Command> cmd)
+        private void QueueCommand(CommandEnvelope<Command> cmd)
         {
-            var res = handleCommand.Invoke(cmd);
+            var list = new List<CommandEnvelope<Command>> { cmd };
+            var res = PinetreeCQRS.Persistence.SqlServer.Commands.queueCommand<Command, Command>(list);
 
             if (res.IsOk)
             {
-                var r = (res as Result<IEnumerable<EventEnvelope<Event>>, IError>.Ok).Item1;
-                return r;
+                return;
             }
 
-            var f = (res as Result<IEnumerable<EventEnvelope<Event>>, IError>.Bad).Item;
+            var f = (res as Result<IEnumerable<CommandEnvelope<Command>>, IError>.Bad).Item;
 
             var reasons = f.Select(x => x.ToString()).ToArray();
             var reason = string.Join("; ", reasons);

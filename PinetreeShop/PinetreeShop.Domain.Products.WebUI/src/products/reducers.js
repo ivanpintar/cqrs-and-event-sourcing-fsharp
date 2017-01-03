@@ -8,7 +8,7 @@ const product = (state, action) => {
             return new Product(action.product);
         case actionTypes.CHANGE_PRODUCT_QUANTITY:
             if(state.id !== action.id) return state;
-            return state.set('quantity', action.quantity);
+            return state.set('quantity', action.difference + state.quantity);
         default:
             return state;
     }

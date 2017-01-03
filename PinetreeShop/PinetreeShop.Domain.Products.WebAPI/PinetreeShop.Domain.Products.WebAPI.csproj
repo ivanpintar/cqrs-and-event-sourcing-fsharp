@@ -130,6 +130,10 @@
       <Project>{68043cde-ada2-41e1-b423-84aa38024da9}</Project>
       <Name>PinetreeCQRS.Infrastructure</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PinetreeCQRS.Persistence\PinetreeCQRS.Persistence.fsproj">
+      <Project>{404c4d7f-18b9-4cdd-941c-9cdba2a73517}</Project>
+      <Name>PinetreeCQRS.Persistence</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PinetreeShop.Domain.Products\PinetreeShop.Domain.Products.fsproj">
       <Project>{7166eae4-a34d-4807-9bd1-65042ac030a4}</Project>
       <Name>PinetreeShop.Domain.Products</Name>
