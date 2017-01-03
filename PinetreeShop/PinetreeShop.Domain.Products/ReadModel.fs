@@ -11,11 +11,11 @@ open System.Diagnostics
 open Chessie.ErrorHandling
 
 type ProductDTO = 
-    { id : Guid
-      name : string
-      price : decimal
-      quantity : int
-      reserved : int }
+    { Id : Guid
+      Name : string
+      Price : decimal
+      Quantity : int
+      Reserved : int }
 
 module private DataAccess = 
     type dbSchema = SqlDataProvider< ConnectionStringName="Products" >
@@ -71,11 +71,11 @@ module private DataAccess =
     let loadProducts() = 
         query { 
             for p in ctx.Products.Product do
-                select { id = p.Id
-                         name = p.Name
-                         price = p.Price
-                         quantity = p.Quantity
-                         reserved = p.Reserved }
+                select { Id = p.Id
+                         Name = p.Name
+                         Price = p.Price
+                         Quantity = p.Quantity
+                         Reserved = p.Reserved }
         }
 
 module Writer = 

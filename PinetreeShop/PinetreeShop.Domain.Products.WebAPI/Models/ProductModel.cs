@@ -11,20 +11,15 @@ namespace PinetreeShop.Domain.Products.WebAPI.Models
         public int Quantity { get; set; }
         public int Reserved { get; set; }
 
-        public static ProductModel FromEntity(object productEntity)
-        {
-            throw new NotImplementedException();
-        }
-
         internal static ProductModel FromDTO(ProductDTO p)
         {
             return new ProductModel
             {
-                Id = p.id,
-                Name = p.name,
-                Price = p.price,
-                Quantity = p.quantity,
-                Reserved = p.reserved
+                Id = p.Id,
+                Name = p.Name,
+                Price = p.Price,
+                Quantity = p.Quantity,
+                Reserved = p.Reserved
             };
         }
     }
