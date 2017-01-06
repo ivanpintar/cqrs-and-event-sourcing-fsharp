@@ -2,6 +2,7 @@
 
 open PinetreeCQRS.Infrastructure.Types
 open System
+open System.Linq
 open System.Collections.Generic
 open Chessie.ErrorHandling
 open Xunit
@@ -40,7 +41,7 @@ let checkSuccess expected result =
         Assert.Equal(expected, actual)
     | Bad f -> failErrors f
 
-let checkFailure expected result =
+let checkFailure (expected:IError list) result =
     match result with
     | Ok (s,_) -> failwith "Did not fail"
-    | Bad f -> Assert.Equal<IError>(expected, f)
+    | Bad f -> Assert.Equal<IError>((expected.ToList()), f)

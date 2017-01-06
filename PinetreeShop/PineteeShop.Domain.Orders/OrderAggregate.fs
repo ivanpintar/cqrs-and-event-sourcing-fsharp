@@ -23,6 +23,7 @@ type ShippingAddress =
     | ShippingAddress of string
 
 type OrderState = 
+    | NotCreated
     | Pending
     | ReadyForShipping
     | Shipped
@@ -56,20 +57,17 @@ module private Handlers =
     type State = 
         { OrderState : OrderState
           OrderLines : OrderLine list
-          ShippingAddress : ShippingAddress
-          Created : bool }
+          ShippingAddress : ShippingAddress }
         static member Zero = 
-            { OrderState = OrderState.Pending
+            { OrderState = OrderState.NotCreated
               OrderLines = []
-              ShippingAddress = ShippingAddress ""
-              Created = false }
+              ShippingAddress = ShippingAddress "" }
     
     let applyEvent state event = 
         match event with
         | OrderCreated(basketId, shippingAddress) -> 
             { state with OrderState = OrderState.Pending
-                         ShippingAddress = shippingAddress
-                         Created = true }
+                         ShippingAddress = shippingAddress }
         | OrderLineAdded orderLine -> { state with OrderLines = orderLine :: state.OrderLines }
         | OrderReadyForShipping -> { state with OrderState = OrderState.ReadyForShipping }
         | OrderShipped -> { state with OrderState = OrderState.Shipped }
@@ -84,19 +82,22 @@ module private Handlers =
             | true -> Bad [ ValidationError error :> IError ]
         
         module private Helpers = 
-            let notCreated = inCase (fun s -> s.Created) "Order already created"
-            let created = inCase (fun s -> not s.Created) "Order not created"
             let notEmptyShippingAddress (ShippingAddress sa) = 
                 inCase (fun sa -> String.IsNullOrWhiteSpace(sa)) "Shipping Address cannot be empty" sa
-            let isPending s = 
-                inCase (fun s -> s.OrderState <> OrderState.Pending) (sprintf "Wrong Order state %A" s.OrderState) s
+            let isOrderState s os = 
+                inCase (fun s -> s.OrderState <> os) (sprintf "Wrong Order state %A" s.OrderState) s
+            let notOrderState s os = 
+                inCase (fun s -> s.OrderState = os) (sprintf "Wrong Order state %A" s.OrderState) s
+            let hasOrderLines ol = inCase (fun ol -> ol = []) "No order lines" ol
+            let canCreate s = isOrderState s NotCreated
+            let created s = notOrderState s NotCreated
         
-        let canCreate (s, sa) = Helpers.notCreated s <* Helpers.notEmptyShippingAddress sa
-        let canAddLine s = Helpers.created s <* Helpers.isPending s
-        let canPrepForShipping s = failwith "not implemented"
-        let isReadyForShipping s = failwith "not implemented"
-        let isShipped s = failwith "not implemented"
-        let canCancel s = failwith "not implemented"
+        let canCreate (s, sa) = Helpers.canCreate s <* Helpers.notEmptyShippingAddress sa
+        let canAddLine s = Helpers.isOrderState s Pending
+        let canPrepForShipping s = Helpers.isOrderState s Pending <* Helpers.hasOrderLines s.OrderLines
+        let canShip s = Helpers.isOrderState s ReadyForShipping 
+        let canDeliver s = Helpers.isOrderState s Shipped
+        let canCancel s = Helpers.notOrderState s NotCreated <* Helpers.notOrderState s Cancelled <* Helpers.notOrderState s Delivered
     
     let executeCommand (state : State) command = 
         match command with
@@ -104,8 +105,8 @@ module private Handlers =
             Validate.canCreate (state, shippingAddress) <?> [ OrderCreated(basketId, shippingAddress) ]
         | AddOrderLine(orderLine) -> Validate.canAddLine state <?> [ OrderLineAdded(orderLine) ]
         | PrepareForShipping -> Validate.canPrepForShipping (state) <?> [ OrderReadyForShipping ]
-        | Ship -> Validate.isReadyForShipping (state) <?> [ OrderShipped ]
-        | Deliver -> Validate.isShipped (state) <?> [ OrderDelivered ]
+        | Ship -> Validate.canShip (state) <?> [ OrderShipped ]
+        | Deliver -> Validate.canDeliver (state) <?> [ OrderDelivered ]
         | Cancel -> Validate.canCancel (state) <?> [ OrderCancelled ]
 
 let makeProductCommandHandler = 

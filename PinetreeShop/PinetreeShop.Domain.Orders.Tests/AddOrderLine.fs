@@ -18,21 +18,13 @@ let orderLine = {
     Quantity = 2
 }
 
-[<Fact>]
-let ``When AddOrderLine OrderLineAdded`` ()= 
-    let initialEvent = OrderCreated(basketId, ShippingAddress "a") |> createInitialEvent aggregateId 1
-
-    let command = AddOrderLine (orderLine) |> createCommand aggregateId (Irrelevant, None, None, None)
-    let expected = OrderLineAdded(orderLine) |> createExpectedEvent command 2
-    handleCommand [initialEvent] command |> checkSuccess expected 
-
 [<Theory>]
 [<InlineData("Pending", true)>]
 [<InlineData("Cancelled", false)>]
 [<InlineData("ReadyForShipping", false)>]
 [<InlineData("Shipped", false)>]
 [<InlineData("Delivered", false)>]
-[<InlineData("Nothing", false)>]
+[<InlineData("NotCreated", false)>]
 let ``When AddOrderLine not pending fail`` state isSuccess = 
     let initialEvent1 = OrderCreated(basketId, ShippingAddress "a")
     let initialEvents = 
@@ -47,10 +39,7 @@ let ``When AddOrderLine not pending fail`` state isSuccess =
     let command = AddOrderLine (orderLine) |> createCommand aggregateId (Irrelevant, None, None, None)
     let initialEvents' = Seq.map (fun e -> createInitialEvent aggregateId 0 e) initialEvents
 
-    let error =
-        match state with
-        | "Nothing" -> "Order not created"
-        | _ -> (sprintf "Wrong Order state %s" state)
+    let error = sprintf "Wrong Order state %s" state
 
     let checkResult r =
         match isSuccess with

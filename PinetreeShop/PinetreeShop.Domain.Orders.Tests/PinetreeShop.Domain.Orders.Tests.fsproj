@@ -55,14 +55,14 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Base.fs" />
-    <Compile Include="Cancel.fs" />
-    <Content Include="App.config" />
-    <Content Include="packages.config" />
     <Compile Include="Create.fs" />
+    <Compile Include="Cancel.fs" />
     <Compile Include="AddOrderLine.fs" />
     <Compile Include="PrepareForShipping.fs" />
     <Compile Include="Ship.fs" />
     <Compile Include="Deliver.fs" />
+    <Content Include="App.config" />
+    <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Chessie">

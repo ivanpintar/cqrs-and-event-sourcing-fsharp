@@ -31,4 +31,4 @@ let ``When Create created fail`` () =
     Create(basketId, ShippingAddress "a")
     |> createCommand aggregateId (Irrelevant, None, None, None)
     |> handleCommand [ initialEvent ]
-    |> checkFailure [ ValidationError "Order already created" ]
+    |> checkFailure [ ValidationError "Wrong Order state Pending" ]
