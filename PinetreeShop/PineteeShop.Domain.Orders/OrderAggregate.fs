@@ -109,7 +109,7 @@ module private Handlers =
         | Deliver -> Validate.canDeliver (state) <?> [ OrderDelivered ]
         | Cancel -> Validate.canCancel (state) <?> [ OrderCancelled ]
 
-let makeProductCommandHandler = 
+let makeOrderCommandHandler = 
     makeCommandHandler { Zero = Handlers.State.Zero
                          ApplyEvent = Handlers.applyEvent
                          ExecuteCommand = Handlers.executeCommand }

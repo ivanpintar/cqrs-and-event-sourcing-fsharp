@@ -13,5 +13,5 @@ module private Helpers =
     let commit = Persistence.Events.commitEvents
     let dequeue = Persistence.Commands.dequeueCommands<Order.Command>
 
-let handler = Order.makeProductCommandHandler Helpers.load Helpers.commit
+let handler = Order.makeOrderCommandHandler Helpers.load Helpers.commit
 let processCommandQueue() = Seq.map handler <!> Helpers.dequeue()
