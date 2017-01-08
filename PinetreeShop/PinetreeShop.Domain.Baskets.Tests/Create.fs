@@ -12,13 +12,13 @@ open System
 let aggregateId = Guid.NewGuid() |> AggregateId
 
 [<Fact>]
-let ``When Create OrderCreated`` () = 
+let ``When Create OrderCreated``() = 
     let command = Create |> createCommand aggregateId (Expected(0), None, None, None)
     let expected = BasketCreated |> createExpectedEvent command 1
     handleCommand [] command |> checkSuccess expected
 
 [<Fact>]
-let ``When Create created fail`` () = 
+let ``When Create created fail``() = 
     let initialEvent = BasketCreated |> createInitialEvent aggregateId 1
     Create
     |> createCommand aggregateId (Irrelevant, None, None, None)

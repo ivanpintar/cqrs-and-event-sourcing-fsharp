@@ -19,6 +19,7 @@ type Command =
     | Reserve of int
     | CancelReservation of int
     | PurchaseReserved of int
+    interface ICommand
 
 type Event = 
     | ProductCreated of string * decimal

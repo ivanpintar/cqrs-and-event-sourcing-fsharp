@@ -54,11 +54,11 @@
     <Compile Include="Base.fs" />
     <Compile Include="CheckOut.fs" />
     <Compile Include="RemoveItem.fs" />
-    <Content Include="packages.config" />
-    <Content Include="App.config" />
     <Compile Include="Create.fs" />
     <Compile Include="AddItem.fs" />
     <Compile Include="Cancel.fs" />
+    <Content Include="App.config" />
+    <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Chessie">

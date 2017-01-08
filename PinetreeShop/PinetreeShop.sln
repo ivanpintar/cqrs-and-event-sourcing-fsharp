@@ -45,6 +45,14 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PinetreeShop.Domain.Baskets
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PinetreeShop.Domain.Baskets.Tests", "PinetreeShop.Domain.Baskets.Tests\PinetreeShop.Domain.Baskets.Tests.fsproj", "{75B14048-628C-43EC-918C-E77B6CD639D2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PinetreeShop.Domain.Baskets.WebAPI", "PinetreeShop.Domain.Baskets.WebAPI\PinetreeShop.Domain.Baskets.WebAPI.csproj", "{A31DE4B4-0594-4759-BFD8-EA9ABE60EA06}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PinetreeShop.Domain.OrderProcess", "PinetreeShop.Domain.OrderProcess\PinetreeShop.Domain.OrderProcess.fsproj", "{46EA57B6-73BB-4B89-AA47-C3F0390FAF24}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain.OrderProcess", "Domain.OrderProcess", "{9A656D55-FEB0-4509-95BC-275F7BD3F596}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PinetreeShop.Domain.OrderProcess.Listener", "PinetreeShop.Domain.OrderProcess.Listener\PinetreeShop.Domain.OrderProcess.Listener.fsproj", "{AFBF4D7F-2001-453D-A92F-35F288B72D8A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -111,6 +119,18 @@ Global
 		{75B14048-628C-43EC-918C-E77B6CD639D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75B14048-628C-43EC-918C-E77B6CD639D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75B14048-628C-43EC-918C-E77B6CD639D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A31DE4B4-0594-4759-BFD8-EA9ABE60EA06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A31DE4B4-0594-4759-BFD8-EA9ABE60EA06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A31DE4B4-0594-4759-BFD8-EA9ABE60EA06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A31DE4B4-0594-4759-BFD8-EA9ABE60EA06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46EA57B6-73BB-4B89-AA47-C3F0390FAF24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46EA57B6-73BB-4B89-AA47-C3F0390FAF24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46EA57B6-73BB-4B89-AA47-C3F0390FAF24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46EA57B6-73BB-4B89-AA47-C3F0390FAF24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFBF4D7F-2001-453D-A92F-35F288B72D8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFBF4D7F-2001-453D-A92F-35F288B72D8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFBF4D7F-2001-453D-A92F-35F288B72D8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFBF4D7F-2001-453D-A92F-35F288B72D8A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -131,5 +151,8 @@ Global
 		{E88A5055-A1EE-4A9A-B3D6-E9EC8479CDEE} = {383751AE-3746-43F4-AFEA-5BE9DE07837F}
 		{6A494406-1C08-4FD3-A626-766AD4F37A3B} = {E7EDE0A6-0A0C-40EE-A817-9BD0196C0436}
 		{75B14048-628C-43EC-918C-E77B6CD639D2} = {E7EDE0A6-0A0C-40EE-A817-9BD0196C0436}
+		{A31DE4B4-0594-4759-BFD8-EA9ABE60EA06} = {E7EDE0A6-0A0C-40EE-A817-9BD0196C0436}
+		{46EA57B6-73BB-4B89-AA47-C3F0390FAF24} = {9A656D55-FEB0-4509-95BC-275F7BD3F596}
+		{AFBF4D7F-2001-453D-A92F-35F288B72D8A} = {9A656D55-FEB0-4509-95BC-275F7BD3F596}
 	EndGlobalSection
 EndGlobal

@@ -13,15 +13,6 @@ type OrderError =
     interface IError
     override e.ToString() = sprintf "%A" e
 
-type BasketId = 
-    | BasketId of Guid
-
-type ProductId = 
-    | ProductId of Guid
-
-type ShippingAddress = 
-    | ShippingAddress of string
-
 type OrderState = 
     | NotCreated
     | Pending
@@ -29,20 +20,15 @@ type OrderState =
     | Shipped
     | Delivered
     | Cancelled
-
-type OrderLine = 
-    { ProductId : ProductId
-      ProductName : string
-      Price : decimal
-      Quantity : int }
-
+    
 type Command = 
     | Create of BasketId * ShippingAddress
     | AddOrderLine of OrderLine
     | PrepareForShipping
     | Ship
     | Deliver
-    | Cancel
+    | Cancel 
+    interface ICommand
 
 type Event = 
     | OrderCreated of BasketId * ShippingAddress

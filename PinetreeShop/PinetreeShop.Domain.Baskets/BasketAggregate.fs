@@ -11,19 +11,7 @@ type BasketError =
     | ValidationError of string
     interface IError
     override e.ToString() = sprintf "%A" e
-
-type ProductId = 
-    | ProductId of Guid
-
-type ShippingAddress = 
-    | ShippingAddress of string
-
-type Item = 
-    { ProductId : ProductId
-      ProductName : string
-      Price : decimal
-      Quantity : int }
-
+    
 type BasketState =
     | NotCreated
     | Pending
@@ -32,28 +20,30 @@ type BasketState =
 
 type Command = 
     | Create
-    | AddItem of Item 
+    | AddItem of BasketItem 
     | RemoveItem of ProductId * int
     | Cancel
     | CheckOut of ShippingAddress
+    interface ICommand
 
 type Event = 
     | BasketCreated
-    | BasketItemAdded of Item
+    | BasketItemAdded of BasketItem
     | BasketItemRemoved of ProductId * int
     | BasketCancelled
-    | BasketCheckedOut of ShippingAddress * Item list
+    | BasketCheckedOut of ShippingAddress * BasketItem list
     interface IEvent
 
-module private Handlers = 
-    type State = 
-        { BasketState : BasketState
-          Items : Map<ProductId, Item> }
-        static member Zero = 
-            { BasketState = NotCreated
-              Items = Map.empty }
+type State = 
+    { BasketState : BasketState
+      Items : Map<ProductId, BasketItem> }
+    static member Zero = 
+        { BasketState = NotCreated
+          Items = Map.empty }
 
-    let addItem currentItems item = 
+module private Handlers = 
+
+    let addItem currentItems (item:BasketItem) : Map<ProductId, BasketItem>= 
         let currentItem = Map.tryFind item.ProductId currentItems 
         let newItem = 
             match currentItem with
@@ -61,7 +51,7 @@ module private Handlers =
             | Some i -> { i with Quantity = i.Quantity + item.Quantity }
         Map.add newItem.ProductId newItem currentItems              
 
-    let removeItem currentItems productId quantity =     
+    let removeItem currentItems productId quantity : Map<ProductId, BasketItem> =     
         let currentItem = Map.tryFind productId currentItems 
         match currentItem with
         | None -> currentItems
@@ -124,6 +114,8 @@ module private Handlers =
 
 
 let makeBasketCommandHandler = 
-    makeCommandHandler { Zero = Handlers.State.Zero
+    makeCommandHandler { Zero = State.Zero
                          ApplyEvent = Handlers.applyEvent
                          ExecuteCommand = Handlers.executeCommand } 
+
+let loadBasket events = Seq.fold Handlers.applyEvent State.Zero events

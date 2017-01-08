@@ -11,7 +11,7 @@ open System
 
 let aggregateId = Guid.NewGuid() |> AggregateId
 
-let item = 
+let item : BasketItem = 
     { ProductId = Guid.NewGuid() |> ProductId
       ProductName = "Test"
       Price = 2m

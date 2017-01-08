@@ -13,6 +13,7 @@ module TestAggregate =
         | CommandOne of string
         | CommandTwo of string
         | CommandThree of string
+        interface ICommand
     
     type Event = 
         | EventOne of string

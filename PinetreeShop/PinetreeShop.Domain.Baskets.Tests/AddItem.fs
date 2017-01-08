@@ -10,12 +10,12 @@ open Xunit
 open System
 
 let aggregateId = Guid.NewGuid() |> AggregateId
-let item = {
-    ProductId = Guid.NewGuid() |> ProductId
-    ProductName = "Test"
-    Price = 2m
-    Quantity = 2
-}
+
+let item : BasketItem = 
+    { ProductId = Guid.NewGuid() |> ProductId
+      ProductName = "Test"
+      Price = 2m
+      Quantity = 2 }
 
 [<Theory>]
 [<InlineData("Pending", true)>]
@@ -24,22 +24,22 @@ let item = {
 [<InlineData("NotCreated", false)>]
 let ``When AddItem`` state isSuccess = 
     let initialEvent1 = BasketCreated
+    
     let initialEvents = 
         match state with
         | "Pending" -> [ initialEvent1 ]
         | "Cancelled" -> [ initialEvent1; BasketCancelled ]
-        | "CheckedOut" -> [ initialEvent1; BasketCheckedOut((ShippingAddress "a"), [item]) ]
+        | "CheckedOut" -> 
+            [ initialEvent1
+              BasketCheckedOut((ShippingAddress "a"), [ item ]) ]
         | _ -> []
-
+    
     let command = AddItem item |> createCommand aggregateId (Irrelevant, None, None, None)
     let initialEvents' = Seq.map (fun e -> createInitialEvent aggregateId 0 e) initialEvents
-
     let error = sprintf "Wrong Basket state %s" state
-
-    let checkResult r =
+    
+    let checkResult r = 
         match isSuccess with
         | true -> checkSuccess (createExpectedEvent command 1 (BasketItemAdded item)) r
         | false -> checkFailure [ ValidationError error ] r
-
     handleCommand initialEvents' command |> checkResult
-

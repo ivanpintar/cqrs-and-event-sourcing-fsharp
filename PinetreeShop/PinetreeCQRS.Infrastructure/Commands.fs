@@ -17,7 +17,7 @@ let createCommand aggregateId (version, causationId, correlationId, processId) p
         match correlationId with
         | Some c -> c
         | _ -> CorrelationId commandId
-    
+            
     { AggregateId = aggregateId
       Payload = payload
       CommandId = CommandId commandId
@@ -26,7 +26,7 @@ let createCommand aggregateId (version, causationId, correlationId, processId) p
       CorrelationId = correlationId'
       ExpectedVersion = version }
 
-let makeCommandHandler (aggregate : Aggregate<'TState, 'TEvent, 'TCommand>) 
+let makeCommandHandler (aggregate : Aggregate<'TState, 'TCommand, 'TEvent>) 
     (load : AggregateId -> Result<EventEnvelope<'TEvent> seq, IError>) 
     (commit : EventEnvelope<'TEvent> seq -> Result<EventEnvelope<'TEvent> seq, IError>) = 
     let handleCommand command : Result<EventEnvelope<'TEvent> seq, IError> = 

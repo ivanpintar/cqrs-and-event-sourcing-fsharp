@@ -68,14 +68,14 @@ namespace PinetreeShop.Domain.Products.WebAPI.Controllers
         private void QueueCommand(CommandEnvelope<Command> cmd)
         {
             var list = new List<CommandEnvelope<Command>> { cmd };
-            var res = PinetreeCQRS.Persistence.SqlServer.Commands.queueCommand<Command, Command>(list);
+            var res = PinetreeCQRS.Persistence.SqlServer.Commands.queueCommand<Command>(list);
 
             if (res.IsOk)
             {
                 return;
             }
 
-            var f = (res as Result<IEnumerable<CommandEnvelope<Command>>, IError>.Bad).Item;
+            var f = (res as Result<IEnumerable<CommandEnvelope<ICommand>>, IError>.Bad).Item;
 
             var reasons = f.Select(x => x.ToString()).ToArray();
             var reason = string.Join("; ", reasons);

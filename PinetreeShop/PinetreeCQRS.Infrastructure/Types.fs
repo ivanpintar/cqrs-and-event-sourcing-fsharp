@@ -15,7 +15,33 @@ type AggregateVersion =
     | Irrelevant
 type EventNumber = int
 type IEvent = interface end
+type ICommand = interface end
 type IError = interface end
+
+type BasketId = 
+    | BasketId of Guid
+    static member FromAggregateId (AggregateId aggregateId) = BasketId aggregateId 
+
+type ProductId =
+    | ProductId of Guid
+    static member FromAggregateId (AggregateId aggregateId) = ProductId aggregateId 
+type OrderId = 
+    | OrderId of Guid
+    static member FromAggregateId (AggregateId aggregateId) = OrderId aggregateId 
+
+type ShippingAddress = ShippingAddress of string
+
+type BasketItem = 
+    { ProductId : ProductId
+      ProductName : string
+      Price : decimal
+      Quantity : int }
+
+type OrderLine = 
+    { ProductId : ProductId
+      ProductName : string
+      Price : decimal
+      Quantity : int }  
 
 type Error = 
     | Error of string 
@@ -31,7 +57,7 @@ type EventEnvelope<'TEvent when 'TEvent :> IEvent> =
       CorrelationId : CorrelationId
       EventNumber : EventNumber }
 
-type CommandEnvelope<'TCommand> = 
+type CommandEnvelope<'TCommand when 'TCommand :> ICommand> = 
     { AggregateId : AggregateId
       Payload : 'TCommand
       CommandId : CommandId
@@ -40,7 +66,12 @@ type CommandEnvelope<'TCommand> =
       CorrelationId : CorrelationId 
       ExpectedVersion : AggregateVersion }
 
-type Aggregate<'TState, 'TEvent, 'TCommand> = 
+type Aggregate<'TState, 'TCommand, 'TEvent> = 
     { Zero : 'TState
       ApplyEvent : 'TState -> 'TEvent -> 'TState
       ExecuteCommand : 'TState -> 'TCommand -> Result<'TEvent list, IError> }
+
+type ProcessManager<'TState, 'TCommand> = 
+    { Zero : 'TState
+      ApplyEvent: 'TState -> EventEnvelope<IEvent> -> 'TState
+      ProcessEvent : 'TState -> EventEnvelope<IEvent> -> Result<CommandEnvelope<ICommand> list, IError> }

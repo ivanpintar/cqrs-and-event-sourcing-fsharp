@@ -55,9 +55,9 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Helpers.fs" />
-    <Compile Include="CommandTests.fs" />
     <Content Include="App.config" />
     <Content Include="packages.config" />
+    <Compile Include="CommandTests.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Chessie">

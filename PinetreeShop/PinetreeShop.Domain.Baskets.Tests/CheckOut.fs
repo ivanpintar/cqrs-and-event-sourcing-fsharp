@@ -10,12 +10,12 @@ open Xunit
 open System
 
 let aggregateId = Guid.NewGuid() |> AggregateId
-let item = {
-    ProductId = Guid.NewGuid() |> ProductId
-    ProductName = "Test"
-    Price = 2m
-    Quantity = 2
-}
+
+let item : BasketItem = 
+    { ProductId = Guid.NewGuid() |> ProductId
+      ProductName = "Test"
+      Price = 2m
+      Quantity = 2 }
 
 [<Theory>]
 [<InlineData("Pending", false)>]
@@ -25,38 +25,50 @@ let item = {
 [<InlineData("NotCreated", false)>]
 let ``When CheckOut`` state isSuccess = 
     let initialEvent1 = BasketCreated
+    
     let initialEvents = 
         match state with
         | "Pending" -> [ initialEvent1 ]
-        | "PendingWithItems" -> [ initialEvent1; BasketItemAdded item ]
-        | "Cancelled" -> [ initialEvent1; BasketItemAdded item; BasketCancelled ]
-        | "CheckedOut" -> [ initialEvent1; BasketItemAdded item; BasketCheckedOut ((ShippingAddress "a"), [item]) ]
+        | "PendingWithItems" -> 
+            [ initialEvent1
+              BasketItemAdded item ]
+        | "Cancelled" -> 
+            [ initialEvent1
+              BasketItemAdded item
+              BasketCancelled ]
+        | "CheckedOut" -> 
+            [ initialEvent1
+              BasketItemAdded item
+              BasketCheckedOut((ShippingAddress "a"), [ item ]) ]
         | _ -> []
-
-    let command = CheckOut (ShippingAddress "a") |> createCommand aggregateId (Irrelevant, None, None, None)
+    
+    let command = CheckOut(ShippingAddress "a") |> createCommand aggregateId (Irrelevant, None, None, None)
     let initialEvents' = Seq.map (fun e -> createInitialEvent aggregateId 0 e) initialEvents
-
+    
     let errors = 
         match state with
         | "Pending" -> [ ValidationError "No items" :> IError ]
-        | "NotCreated" -> [ ValidationError "Wrong Basket state NotCreated" :> IError; ValidationError "No items" :> IError]
-        | _ -> [ ValidationError (sprintf "Wrong Basket state %s" state) :> IError]
-
-    let checkResult r =
+        | "NotCreated" -> 
+            [ ValidationError "Wrong Basket state NotCreated" :> IError
+              ValidationError "No items" :> IError ]
+        | _ -> [ ValidationError(sprintf "Wrong Basket state %s" state) :> IError ]
+    
+    let checkResult r = 
         match isSuccess with
-        | true ->
-            let expectedEvent = BasketCheckedOut((ShippingAddress "a"), [item]) |> createExpectedEvent command 1 
+        | true -> 
+            let expectedEvent = BasketCheckedOut((ShippingAddress "a"), [ item ]) |> createExpectedEvent command 1
             checkSuccess expectedEvent r
         | false -> checkFailure errors r
-
+    
     handleCommand initialEvents' command |> checkResult
 
 [<Fact>]
-let ``When CheckOut empty address fail`` () = 
-    let initialEvents = [ BasketCreated; BasketItemAdded item] |> List.map (fun ie -> createInitialEvent aggregateId 1 ie)
+let ``When CheckOut empty address fail``() = 
+    let initialEvents = 
+        [ BasketCreated
+          BasketItemAdded item ]
+        |> List.map (fun ie -> createInitialEvent aggregateId 1 ie)
     CheckOut(ShippingAddress "")
     |> createCommand aggregateId (Irrelevant, None, None, None)
     |> handleCommand initialEvents
-    |> checkFailure  [ ValidationError "Shipping Address cannot be empty" ]
-
-
+    |> checkFailure [ ValidationError "Shipping Address cannot be empty" ]

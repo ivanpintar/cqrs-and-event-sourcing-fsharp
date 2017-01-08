@@ -29,7 +29,7 @@ module private DataAccess =
           ProcessId = pid
           Payload = JsonConvert.DeserializeObject<'TEvent>(e.EventPayload) }
     
-    let entityToCommand<'TCommand> (e : dbSchema.dataContext.``EventStore.CommandEntity``) = 
+    let entityToCommand<'TCommand when 'TCommand :> ICommand> (e : dbSchema.dataContext.``EventStore.CommandEntity``) = 
         let pid = 
             match e.ProcessId with
             | Some p -> Some(ProcessId p)
@@ -66,7 +66,7 @@ module private DataAccess =
         entity.ProcessId <- processIdToGuid e.ProcessId
         entity
     
-    let commandToEntity<'TCommand> (e : CommandEnvelope<'TCommand>) = 
+    let commandToEntity<'TCommand when 'TCommand :> ICommand> (e : CommandEnvelope<'TCommand>) = 
         let queueName = typeof<'TCommand>.ToString()
         let (AggregateId aggId) = e.AggregateId
         let (CommandId cmdId) = e.CommandId
@@ -103,6 +103,14 @@ module private DataAccess =
         query { 
             for e in (loadTypeEvents typ number) do
                 where (e.AggregateId = aggregateId)
+                select e
+        }
+
+    let loadProcessEvents number (ProcessId processId) = 
+        
+        query { 
+            for e in ctx.EventStore.Event do
+                where (e.Id > number && e.ProcessId = Some processId)
                 select e
         }
     
@@ -152,13 +160,21 @@ module Events =
             |> ok
         with ex -> Bad [ DataAccessError ex.Message :> IError ]
 
+    let loadProcessEvents number processId =
+        try 
+            DataAccess.loadProcessEvents number processId
+            |> Seq.toList
+            |> Seq.map DataAccess.entityToEvent
+            |> ok
+        with ex -> Bad [ DataAccessError ex.Message :> IError ]
+
 module Commands = 
-    let queueCommand commands : Result<CommandEnvelope<'TCommand> seq, IError> = 
+    let queueCommand commands : Result<CommandEnvelope<ICommand> seq, IError> = 
         try 
             DataAccess.queueCommand commands |> ok
         with ex -> Bad [ DataAccessError ex.Message :> IError ]
     
-    let dequeueCommands<'TCommand>() : Result<CommandEnvelope<'TCommand> seq, IError> = 
+    let dequeueCommands<'TCommand when 'TCommand :> ICommand>() : Result<CommandEnvelope<'TCommand> seq, IError> = 
         try 
             typeof<'TCommand>.ToString()
             |> DataAccess.dequeueCommands

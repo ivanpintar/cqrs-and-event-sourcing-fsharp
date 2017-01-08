@@ -13,7 +13,7 @@ open Chessie.ErrorHandling
 let aggregateId = Guid.NewGuid() |> AggregateId
 let productId = Guid.NewGuid() |> ProductId
 
-let item = 
+let item : BasketItem = 
     { ProductId = productId
       ProductName = "Test"
       Price = 2m
@@ -61,12 +61,11 @@ let ``When RemoveItem more than quantity`` added removed =
     let command = RemoveItem(productId, 20) |> createCommand aggregateId (Irrelevant, None, None, None)
     let initialEvents' = Seq.map (fun e -> createInitialEvent aggregateId 0 e) initialEvents
     
-    let checkResult (r:Result<EventEnvelope<Event> seq, IError>) = 
+    let checkResult (r : Result<EventEnvelope<Event> seq, IError>) = 
         match removed with
         | 0 -> 
             match r with
-            | Ok (r', _) -> Assert.Empty(r')
+            | Ok(r', _) -> Assert.Empty(r')
             | _ -> failwith "failed"
         | _ -> checkSuccess (createExpectedEvent command 1 (BasketItemRemoved(productId, removed))) r
-
     handleCommand initialEvents' command |> checkResult
