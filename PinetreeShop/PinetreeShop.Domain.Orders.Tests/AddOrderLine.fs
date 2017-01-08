@@ -37,7 +37,7 @@ let ``When AddOrderLine not pending fail`` state isSuccess =
         | _ -> []
 
     let command = AddOrderLine (orderLine) |> createCommand aggregateId (Irrelevant, None, None, None)
-    let initialEvents' = Seq.map (fun e -> createInitialEvent aggregateId 0 e) initialEvents
+    let initialEvents' = List.map (fun e -> createInitialEvent aggregateId 0 e) initialEvents
 
     let error = sprintf "Wrong Order state %s" state
 

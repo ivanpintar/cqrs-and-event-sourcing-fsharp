@@ -35,7 +35,7 @@ let ``When Cancel`` state isSuccess =
         | _ -> []
     
     let command = Cancel |> createCommand aggregateId (Irrelevant, None, None, None)
-    let initialEvents' = Seq.map (fun e -> createInitialEvent aggregateId 0 e) initialEvents
+    let initialEvents' = List.map (fun e -> createInitialEvent aggregateId 0 e) initialEvents
     let error = sprintf "Wrong Basket state %s" state
     
     let checkResult r = 

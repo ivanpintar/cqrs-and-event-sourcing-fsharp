@@ -27,11 +27,11 @@ let createCommand aggregateId (version, causationId, correlationId, processId) p
       ExpectedVersion = version }
 
 let makeCommandHandler (aggregate : Aggregate<'TState, 'TCommand, 'TEvent>) 
-    (load : AggregateId -> Result<EventEnvelope<'TEvent> seq, IError>) 
-    (commit : EventEnvelope<'TEvent> seq -> Result<EventEnvelope<'TEvent> seq, IError>) = 
-    let handleCommand command : Result<EventEnvelope<'TEvent> seq, IError> = 
+    (load : AggregateId -> Result<EventEnvelope<'TEvent> list, IError>) 
+    (commit : EventEnvelope<'TEvent> list -> Result<EventEnvelope<'TEvent> list, IError>) = 
+    let handleCommand command : Result<EventEnvelope<'TEvent> list, IError> = 
         let processEvents events = 
-            let lastEventNumber = Seq.fold (fun acc e' -> e'.EventNumber) 0 events
+            let lastEventNumber = List.fold (fun acc e' -> e'.EventNumber) 0 events
             let e = lastEventNumber
             
             let v = 
@@ -41,10 +41,10 @@ let makeCommandHandler (aggregate : Aggregate<'TState, 'TCommand, 'TEvent>)
             match e, v with
             | (x, Some(y)) when x > y -> Bad [ Error "Version mismatch" :> IError ]
             | _ -> 
-                let eventPayloads = Seq.map (fun (e : EventEnvelope<'TEvent>) -> e.Payload) events
-                let state = Seq.fold aggregate.ApplyEvent aggregate.Zero eventPayloads
+                let eventPayloads = List.map (fun (e : EventEnvelope<'TEvent>) -> e.Payload) events
+                let state = List.fold aggregate.ApplyEvent aggregate.Zero eventPayloads
                 let result = aggregate.ExecuteCommand state command.Payload
-                Seq.map (fun e -> createEventMetadata e command) <!> result >>= commit
+                List.map (fun e -> createEventMetadata e command) <!> result >>= commit
         
         let id = command.AggregateId
         let loadedEvents = load id

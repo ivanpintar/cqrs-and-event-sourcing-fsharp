@@ -81,6 +81,7 @@
       <Project>{68043cde-ada2-41e1-b423-84aa38024da9}</Project>
       <Private>True</Private>
     </ProjectReference>
+    <Reference Include="System.Transactions" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

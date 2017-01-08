@@ -8,6 +8,9 @@ open System
 open Chessie.ErrorHandling
 open PinetreeCQRS.Infrastructure.Validation
 
+let orderCategory = Category "Order"
+let orderQueueName = QueueName "Order"
+
 type OrderError = 
     | ValidationError of string
     interface IError

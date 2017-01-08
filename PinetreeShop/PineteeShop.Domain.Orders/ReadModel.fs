@@ -116,7 +116,7 @@ module Writer =
             | OrderDelivered -> DataAccess.setState event "Delivered"
     
     let handleEvents() = 
-        let events = DataAccess.loadLastEvent() >>= Events.loadTypeEvents<Event>
+        let events = DataAccess.loadLastEvent() >>= Events.loadTypeEvents orderCategory
         Seq.map Helpers.handler <!> events
 
 module Reader = 

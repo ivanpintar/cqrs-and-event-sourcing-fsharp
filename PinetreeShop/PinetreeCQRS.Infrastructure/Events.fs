@@ -23,12 +23,12 @@ let createEventMetadata payload command =
       CorrelationId = command.CorrelationId
       EventNumber = 0 }
 
-let makeEventProcessor (processManager : ProcessManager<'TState, 'TCommand>) 
-    (load : ProcessId -> Result<EventEnvelope<IEvent> seq, IError>) 
-    (enqueue : CommandEnvelope<'TCommand> seq -> Result<CommandEnvelope<'TCommand> seq, IError>) = 
-    let handleEvent (event:EventEnvelope<IEvent>) : Result<CommandEnvelope<'TCommand> seq, IError> = 
+let makeEventProcessor (processManager : ProcessManager<'TState>) 
+    (load : ProcessId -> Result<EventEnvelope<IEvent> list, IError>) 
+    (enqueue : (QueueName * CommandEnvelope<ICommand>) list -> Result<CommandEnvelope<ICommand> list, IError>) = 
+    let handleEvent (event:EventEnvelope<IEvent>) : Result<CommandEnvelope<ICommand> list, IError> = 
         let processEvents events = 
-            let state = Seq.fold processManager.ApplyEvent processManager.Zero events
+            let state = List.fold processManager.ApplyEvent processManager.Zero events
             let result = processManager.ProcessEvent state event
             result >>= enqueue
         
@@ -36,5 +36,5 @@ let makeEventProcessor (processManager : ProcessManager<'TState, 'TCommand>)
         | Some pid ->
             let loadedEvents = load pid
             processEvents <!> loadedEvents |> flatten
-        | _ -> Ok (Seq.empty, [ Error "No process id on event" ])
+        | _ -> Ok ([], [ Error "No process id on event" ])
     handleEvent

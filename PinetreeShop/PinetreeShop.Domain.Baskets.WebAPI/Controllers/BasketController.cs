@@ -8,6 +8,7 @@ using static PinetreeCQRS.Infrastructure.Types;
 using static PinetreeShop.Domain.Baskets.BasketAggregate;
 using static PinetreeCQRS.Infrastructure.Commands;
 using static PinetreeCQRS.Persistence.SqlServer;
+using Microsoft.FSharp.Collections;
 
 namespace PinetreeShop.Domain.Baskets.WebAPI.Controllers
 {
@@ -115,7 +116,7 @@ namespace PinetreeShop.Domain.Baskets.WebAPI.Controllers
                 return GetBasketAggregate(cmd.AggregateId.Item);
             }
 
-            var f = (res as Result<IEnumerable<EventEnvelope<Event>>, IError>.Bad).Item;
+            var f = (res as Result<FSharpList<EventEnvelope<Event>>, IError>.Bad).Item;
 
             var reasons = f.Select(x => x.ToString()).ToArray();
             var reason = string.Join("; ", reasons);

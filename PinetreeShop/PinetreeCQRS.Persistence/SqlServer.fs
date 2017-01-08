@@ -6,6 +6,8 @@ open PinetreeCQRS.Infrastructure.Types
 open FSharp.Data.Sql
 open Chessie.ErrorHandling
 open Newtonsoft.Json
+open Microsoft.FSharp.Reflection
+open System.Transactions
 
 type DataAccessError = 
     | DataAccessError of string
@@ -13,40 +15,40 @@ type DataAccessError =
 
 module private DataAccess = 
     type dbSchema = SqlDataProvider< ConnectionStringName="EventStore", UseOptionTypes=true >
-    
+        
     let ctx = dbSchema.GetDataContext()
     
     let entityToEvent<'TEvent when 'TEvent :> IEvent> (e : dbSchema.dataContext.``EventStore.EventEntity``) = 
         let pid = 
             match e.ProcessId with
             | Some p -> Some(ProcessId p)
-            | None -> None
+            | None -> None            
         { EventNumber = e.Id
           EventId = EventId e.EventId
           AggregateId = AggregateId e.AggregateId
           CausationId = CausationId e.CausationId
           CorrelationId = CorrelationId e.CorrelationId
           ProcessId = pid
-          Payload = JsonConvert.DeserializeObject<'TEvent>(e.EventPayload) }
+          Payload = JsonConvert.DeserializeObject(e.EventPayload, Type.GetType(e.PayloadType)) :?> 'TEvent}
     
-    let entityToCommand<'TCommand when 'TCommand :> ICommand> (e : dbSchema.dataContext.``EventStore.CommandEntity``) = 
+    let entityToCommand<'TCommand when 'TCommand :> ICommand> (c : dbSchema.dataContext.``EventStore.CommandEntity``) = 
         let pid = 
-            match e.ProcessId with
+            match c.ProcessId with
             | Some p -> Some(ProcessId p)
             | None -> None
         
         let version = 
-            match e.ExpectedVersion with
+            match c.ExpectedVersion with
             | Some vn -> Expected vn
             | _ -> Irrelevant
-        
+            
         { ExpectedVersion = version
-          CommandId = CommandId e.CommandId
-          AggregateId = AggregateId e.AggregateId
-          CausationId = CausationId e.CausationId
-          CorrelationId = CorrelationId e.CorrelationId
+          CommandId = CommandId c.CommandId
+          AggregateId = AggregateId c.AggregateId
+          CausationId = CausationId c.CausationId
+          CorrelationId = CorrelationId c.CorrelationId
           ProcessId = pid
-          Payload = JsonConvert.DeserializeObject<'TCommand>(e.CommandPayload) }
+          Payload = JsonConvert.DeserializeObject(c.CommandPayload, Type.GetType(c.PayloadType)) :?> 'TCommand }
     
     let processIdToGuid pid = 
         match pid with
@@ -55,35 +57,35 @@ module private DataAccess =
             Some id
         | _ -> None
     
-    let eventToEntity<'TEvent when 'TEvent :> IEvent> (e : EventEnvelope<'TEvent>) = 
-        let category = typeof<'TEvent>.ToString()
+    let eventToEntity<'TEvent when 'TEvent :> IEvent> (Category category) (e : EventEnvelope<'TEvent>) = 
+        let typeName = e.Payload.GetType().AssemblyQualifiedName
         let (AggregateId aggId) = e.AggregateId
         let (EventId evtId) = e.EventId
         let (CausationId causeId) = e.CausationId
         let (CorrelationId corrId) = e.CorrelationId
         let payload = JsonConvert.SerializeObject(e.Payload)
-        let entity = ctx.EventStore.Event.Create(aggId, category, causeId, corrId, evtId, payload)
+        let entity = ctx.EventStore.Event.Create(aggId, category, causeId, corrId, evtId, payload, typeName)
         entity.ProcessId <- processIdToGuid e.ProcessId
         entity
     
-    let commandToEntity<'TCommand when 'TCommand :> ICommand> (e : CommandEnvelope<'TCommand>) = 
-        let queueName = typeof<'TCommand>.ToString()
-        let (AggregateId aggId) = e.AggregateId
-        let (CommandId cmdId) = e.CommandId
-        let (CausationId causeId) = e.CausationId
-        let (CorrelationId corrId) = e.CorrelationId
-        let payload = JsonConvert.SerializeObject(e.Payload)
-        let entity = ctx.EventStore.Command.Create(aggId, causeId, cmdId, payload, corrId, queueName)
-        entity.ProcessId <- processIdToGuid e.ProcessId
-        entity.ExpectedVersion <- match e.ExpectedVersion with
+    let commandToEntity<'TCommand when 'TCommand :> ICommand> (QueueName queueName) (c : CommandEnvelope<'TCommand>) = 
+        let typeName = c.Payload.GetType().AssemblyQualifiedName
+        let (AggregateId aggId) = c.AggregateId
+        let (CommandId cmdId) = c.CommandId
+        let (CausationId causeId) = c.CausationId
+        let (CorrelationId corrId) = c.CorrelationId
+        let payload = JsonConvert.SerializeObject(c.Payload)
+        let entity = ctx.EventStore.Command.Create(aggId, causeId, cmdId, payload, corrId, typeName, queueName)
+        entity.ProcessId <- processIdToGuid c.ProcessId
+        entity.ExpectedVersion <- match c.ExpectedVersion with
                                   | Expected vn -> Some vn
                                   | Irrelevant -> None
         entity
     
-    let commitEvents events =
-        let entities = Seq.toList events |> List.map eventToEntity 
+    let commitEvents category events = 
+        let entities = List.map (eventToEntity category) events
         ctx.SubmitUpdates()
-        Seq.map entityToEvent entities
+        List.map entityToEvent entities
     
     let loadEvents number = 
         query { 
@@ -92,34 +94,34 @@ module private DataAccess =
                 select e
         }
     
-    let loadTypeEvents typ number = 
+    let loadTypeEvents (Category category) fromNumber = 
         query { 
-            for e in (loadEvents number)do
-                where (e.Category = typ.ToString())
+            for e in (loadEvents fromNumber) do
+                where (e.Category = category)
                 select e
         }
     
-    let loadAggregateEvents typ number (AggregateId aggregateId) = 
+    let loadAggregateEvents category fromNumber (AggregateId aggregateId) = 
         query { 
-            for e in (loadTypeEvents typ number) do
+            for e in (loadTypeEvents category fromNumber) do
                 where (e.AggregateId = aggregateId)
                 select e
         }
-
-    let loadProcessEvents number (ProcessId processId) = 
-        
+    
+    let loadProcessEvents fromNumber toNumber (ProcessId processId) = 
         query { 
-            for e in ctx.EventStore.Event do
-                where (e.Id > number && e.ProcessId = Some processId)
+            for e in (loadEvents fromNumber) do
+                where (e.Id <= toNumber && e.ProcessId = Some processId)
                 select e
         }
     
-    let queueCommand commands = 
-        let entities = Seq.toList commands |> List.map commandToEntity 
+    let queueCommands commands = 
+        let entities = List.map (fun (queueName, c) -> commandToEntity queueName c) commands
         ctx.SubmitUpdates()
-        Seq.map entityToCommand entities
+        List.map entityToCommand entities
     
-    let dequeueCommands queueName = 
+    let dequeueCommands (QueueName queueName) = 
+        use scope = new TransactionScope()
         let cmds = 
             query { 
                 for c in ctx.EventStore.Command do
@@ -128,55 +130,58 @@ module private DataAccess =
             }
             |> Seq.toList
         cmds |> List.iter (fun c -> c.Delete())
-        Seq.map entityToCommand cmds
+        ctx.SubmitUpdates()
+        scope.Complete()
+        scope.Dispose()
+        cmds
 
 module Events = 
-    let commitEvents<'TEvent when 'TEvent :> IEvent> (events : EventEnvelope<'TEvent> seq) : Result<EventEnvelope<'TEvent> seq, IError> = 
+    let commitEvents<'TEvent when 'TEvent :> IEvent> category (events : EventEnvelope<'TEvent> list) : Result<EventEnvelope<'TEvent> list, IError> = 
         try 
-            DataAccess.commitEvents events |> ok
+            DataAccess.commitEvents category events |> ok
         with ex -> Bad [ DataAccessError ex.Message :> IError ]
     
-    let loadAllEvents number : Result<EventEnvelope<'TEvent> seq, IError> = 
+    let loadAllEvents number : Result<EventEnvelope<IEvent> list, IError> = 
         try 
             DataAccess.loadEvents number
             |> Seq.toList
-            |> Seq.map DataAccess.entityToEvent
+            |> List.map DataAccess.entityToEvent
             |> ok
         with ex -> Bad [ DataAccessError ex.Message :> IError ]
     
-    let loadTypeEvents<'TEvent when 'TEvent :> IEvent> number : Result<EventEnvelope<'TEvent> seq, IError> = 
+    let loadTypeEvents category number : Result<EventEnvelope<'TEvent> list, IError> = 
         try 
-            DataAccess.loadTypeEvents typeof<'TEvent> number
+            DataAccess.loadTypeEvents category number
             |> Seq.toList
-            |> Seq.map DataAccess.entityToEvent
+            |> List.map DataAccess.entityToEvent
             |> ok
         with ex -> Bad [ DataAccessError ex.Message :> IError ]
     
-    let loadAggregateEvents<'TEvent when 'TEvent :> IEvent> number aggregateId : Result<EventEnvelope<'TEvent> seq, IError> = 
+    let loadAggregateEvents category number aggregateId : Result<EventEnvelope<'TEvent> list, IError> = 
         try 
-            DataAccess.loadAggregateEvents typeof<'TEvent> number aggregateId 
+            DataAccess.loadAggregateEvents category number aggregateId
             |> Seq.toList
-            |> Seq.map DataAccess.entityToEvent
+            |> List.map DataAccess.entityToEvent
             |> ok
         with ex -> Bad [ DataAccessError ex.Message :> IError ]
-
-    let loadProcessEvents number processId =
+    
+    let loadProcessEvents fromNumber toNumber processId = 
         try 
-            DataAccess.loadProcessEvents number processId
+            DataAccess.loadProcessEvents fromNumber toNumber processId
             |> Seq.toList
-            |> Seq.map DataAccess.entityToEvent
+            |> List.map DataAccess.entityToEvent
             |> ok
         with ex -> Bad [ DataAccessError ex.Message :> IError ]
 
 module Commands = 
-    let queueCommand commands : Result<CommandEnvelope<ICommand> seq, IError> = 
+    let queueCommands<'TCommand when 'TCommand :> ICommand> (commands :(QueueName * CommandEnvelope<'TCommand>) list): Result<CommandEnvelope<'TCommand> list, IError> = 
         try 
-            DataAccess.queueCommand commands |> ok
+            DataAccess.queueCommands commands |> ok
         with ex -> Bad [ DataAccessError ex.Message :> IError ]
     
-    let dequeueCommands<'TCommand when 'TCommand :> ICommand>() : Result<CommandEnvelope<'TCommand> seq, IError> = 
+    let dequeueCommands<'TCommand when 'TCommand :> ICommand> queueName : Result<CommandEnvelope<'TCommand> list, IError> = 
         try 
-            typeof<'TCommand>.ToString()
-            |> DataAccess.dequeueCommands
+            DataAccess.dequeueCommands queueName
+            |> List.map DataAccess.entityToCommand<'TCommand>
             |> ok
         with ex -> Bad [ DataAccessError ex.Message :> IError ]

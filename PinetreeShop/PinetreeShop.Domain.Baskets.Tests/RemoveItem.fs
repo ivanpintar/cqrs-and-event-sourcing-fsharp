@@ -37,7 +37,7 @@ let ``When RemoveItem`` state isSuccess =
         | _ -> []
     
     let command = RemoveItem(productId, 10) |> createCommand aggregateId (Irrelevant, None, None, None)
-    let initialEvents' = Seq.map (fun e -> createInitialEvent aggregateId 0 e) initialEvents
+    let initialEvents' = List.map (fun e -> createInitialEvent aggregateId 0 e) initialEvents
     let error = sprintf "Wrong Basket state %s" state
     
     let checkResult r = 
@@ -59,9 +59,9 @@ let ``When RemoveItem more than quantity`` added removed =
         | _ -> initialEvents1 @ [ BasketItemAdded item' ]
     
     let command = RemoveItem(productId, 20) |> createCommand aggregateId (Irrelevant, None, None, None)
-    let initialEvents' = Seq.map (fun e -> createInitialEvent aggregateId 0 e) initialEvents
+    let initialEvents' = List.map (fun e -> createInitialEvent aggregateId 0 e) initialEvents
     
-    let checkResult (r : Result<EventEnvelope<Event> seq, IError>) = 
+    let checkResult (r : Result<EventEnvelope<Event> list, IError>) = 
         match removed with
         | 0 -> 
             match r with

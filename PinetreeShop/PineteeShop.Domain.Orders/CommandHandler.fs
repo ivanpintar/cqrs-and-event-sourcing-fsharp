@@ -9,9 +9,9 @@ module Persistence = PinetreeCQRS.Persistence.SqlServer
 module Order = PinetreeShop.Domain.Orders.OrderAggregate
 
 module private Helpers = 
-    let load = Persistence.Events.loadAggregateEvents<Order.Event> 0
-    let commit = Persistence.Events.commitEvents
-    let dequeue = Persistence.Commands.dequeueCommands<Order.Command>
+    let load = Persistence.Events.loadAggregateEvents Order.orderCategory 0
+    let commit = Persistence.Events.commitEvents Order.orderCategory
+    let dequeue () = Persistence.Commands.dequeueCommands Order.orderQueueName
 
 let handler = Order.makeOrderCommandHandler Helpers.load Helpers.commit
-let processCommandQueue() = Seq.map handler <!> Helpers.dequeue()
+let processCommandQueue() = Seq.map handler <!> Helpers.dequeue ()

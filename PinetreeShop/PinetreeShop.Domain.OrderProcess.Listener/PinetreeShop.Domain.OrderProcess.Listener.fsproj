@@ -73,6 +73,23 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PinetreeCQRS.Infrastructure\PinetreeCQRS.Infrastructure.fsproj">
+      <Name>PinetreeCQRS.Infrastructure</Name>
+      <Project>{68043cde-ada2-41e1-b423-84aa38024da9}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\PinetreeCQRS.Persistence\PinetreeCQRS.Persistence.fsproj">
+      <Name>PinetreeCQRS.Persistence</Name>
+      <Project>{404c4d7f-18b9-4cdd-941c-9cdba2a73517}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\PinetreeShop.Domain.OrderProcess\PinetreeShop.Domain.OrderProcess.fsproj">
+      <Name>PinetreeShop.Domain.OrderProcess</Name>
+      <Project>{46ea57b6-73bb-4b89-aa47-c3f0390faf24}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

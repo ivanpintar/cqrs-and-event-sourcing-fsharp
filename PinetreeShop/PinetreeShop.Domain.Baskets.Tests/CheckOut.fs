@@ -43,7 +43,7 @@ let ``When CheckOut`` state isSuccess =
         | _ -> []
     
     let command = CheckOut(ShippingAddress "a") |> createCommand aggregateId (Irrelevant, None, None, None)
-    let initialEvents' = Seq.map (fun e -> createInitialEvent aggregateId 0 e) initialEvents
+    let initialEvents' = List.map (fun e -> createInitialEvent aggregateId 0 e) initialEvents
     
     let errors = 
         match state with

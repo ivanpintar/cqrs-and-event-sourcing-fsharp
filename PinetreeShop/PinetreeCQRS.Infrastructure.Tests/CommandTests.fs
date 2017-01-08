@@ -47,7 +47,7 @@ module TestAggregateTests =
     let checkSuccess expected res = 
         match res with
         | Ok(e, _) -> 
-            let actual = Seq.head e |> comparableEvent
+            let actual = List.head e |> comparableEvent
             Assert.Equal(expected, actual)
         | Bad f -> failwith "aaa"
     
@@ -59,7 +59,7 @@ module TestAggregateTests =
     let handleCommand initialEvents cmd = 
         let lastEventNumber = Seq.fold (fun acc e -> e.EventNumber) 0 initialEvents
         let load id = ok initialEvents
-        let commit = Seq.map (fun e' -> { e' with EventNumber = lastEventNumber + 1 }) >> ok
+        let commit = List.map (fun e' -> { e' with EventNumber = lastEventNumber + 1 }) >> ok
         
         let handler = 
             makeCommandHandler { Zero = TestAggregate.State.Zero

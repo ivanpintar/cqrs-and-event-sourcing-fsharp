@@ -93,7 +93,7 @@ module Writer =
             | _ -> Ok(event, [ Error "Skipped" :> IError ])
     
     let handleEvents() = 
-        let events = DataAccess.loadLastEvent() >>= Events.loadTypeEvents<Event>
+        let events = DataAccess.loadLastEvent() >>= Events.loadTypeEvents productCategory
         Seq.map Helpers.handler <!> events
 
 module Reader = 

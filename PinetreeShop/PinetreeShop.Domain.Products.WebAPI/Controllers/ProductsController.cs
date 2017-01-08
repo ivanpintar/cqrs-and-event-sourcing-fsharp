@@ -10,6 +10,7 @@ using Microsoft.FSharp.Core;
 using static PinetreeCQRS.Infrastructure.Types;
 using static PinetreeShop.Domain.Products.ReadModel;
 using Chessie.ErrorHandling;
+using Microsoft.FSharp.Collections;
 
 namespace PinetreeShop.Domain.Products.WebAPI.Controllers
 {
@@ -67,15 +68,15 @@ namespace PinetreeShop.Domain.Products.WebAPI.Controllers
 
         private void QueueCommand(CommandEnvelope<Command> cmd)
         {
-            var list = new List<CommandEnvelope<Command>> { cmd };
-            var res = PinetreeCQRS.Persistence.SqlServer.Commands.queueCommand<Command>(list);
+            var list = new List<Tuple<QueueName, CommandEnvelope<Command>>> { Tuple.Create(QueueName.NewQueueName("Product"), cmd) };
+            var res = PinetreeCQRS.Persistence.SqlServer.Commands.queueCommands(ListModule.OfSeq(list));
 
             if (res.IsOk)
             {
                 return;
             }
 
-            var f = (res as Result<IEnumerable<CommandEnvelope<ICommand>>, IError>.Bad).Item;
+            var f = (res as Result<FSharpList<CommandEnvelope<Command>>, IError>.Bad).Item;
 
             var reasons = f.Select(x => x.ToString()).ToArray();
             var reason = string.Join("; ", reasons);

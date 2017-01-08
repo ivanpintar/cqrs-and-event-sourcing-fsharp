@@ -37,7 +37,7 @@ let ``When Ship`` state isSuccess =
         | _ -> []
 
     let command = Deliver |> createCommand aggregateId (Irrelevant, None, None, None)
-    let initialEvents' = Seq.map (fun e -> createInitialEvent aggregateId 0 e) initialEvents
+    let initialEvents' = List.map (fun e -> createInitialEvent aggregateId 0 e) initialEvents
 
     let error = sprintf "Wrong Order state %s" state
 

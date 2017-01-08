@@ -7,6 +7,9 @@ open System
 open Chessie.ErrorHandling
 open PinetreeCQRS.Infrastructure.Validation
 
+let basketCategory = Category "Basket"
+let basketQueueName = QueueName "Basket"
+
 type BasketError =
     | ValidationError of string
     interface IError

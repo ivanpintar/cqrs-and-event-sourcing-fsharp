@@ -10,6 +10,8 @@ type FailureId = FailureId of Guid
 type CausationId = CausationId of Guid
 type CorrelationId = CorrelationId of Guid
 type ProcessId = ProcessId of Guid
+type QueueName = QueueName of string
+type Category = Category of string
 type AggregateVersion =
     | Expected of int
     | Irrelevant
@@ -71,7 +73,7 @@ type Aggregate<'TState, 'TCommand, 'TEvent> =
       ApplyEvent : 'TState -> 'TEvent -> 'TState
       ExecuteCommand : 'TState -> 'TCommand -> Result<'TEvent list, IError> }
 
-type ProcessManager<'TState, 'TCommand> = 
+type ProcessManager<'TState> = 
     { Zero : 'TState
       ApplyEvent: 'TState -> EventEnvelope<IEvent> -> 'TState
-      ProcessEvent : 'TState -> EventEnvelope<IEvent> -> Result<CommandEnvelope<ICommand> list, IError> }
+      ProcessEvent : 'TState -> EventEnvelope<IEvent> -> Result<(QueueName * CommandEnvelope<ICommand>) list, IError> }

@@ -7,6 +7,6 @@ open PinetreeCQRS.Infrastructure.Types
     
 
 let getBasket basketId =
-    let events = Seq.map (fun (e : EventEnvelope<Basket.Event>) -> e.Payload) <!> Persistence.Events.loadAggregateEvents<Basket.Event> 0 basketId
+    let events = Seq.map (fun (e : EventEnvelope<Basket.Event>) -> e.Payload) <!> Persistence.Events.loadAggregateEvents Basket.basketCategory 0 basketId
     let state =  Basket.loadBasket <!> events
     state

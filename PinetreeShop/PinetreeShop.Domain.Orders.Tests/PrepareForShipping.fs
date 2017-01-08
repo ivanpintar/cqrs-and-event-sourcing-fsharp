@@ -41,7 +41,7 @@ let ``When PrepareForShipping`` state isSuccess =
         | _ -> []
     
     let command = PrepareForShipping |> createCommand aggregateId (Irrelevant, None, None, None)
-    let initialEvents' = Seq.map (fun e -> createInitialEvent aggregateId 0 e) initialEvents
+    let initialEvents' = List.map (fun e -> createInitialEvent aggregateId 0 e) initialEvents
     
     let errors = 
         match state with

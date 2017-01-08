@@ -35,7 +35,7 @@ let ``When AddItem`` state isSuccess =
         | _ -> []
     
     let command = AddItem item |> createCommand aggregateId (Irrelevant, None, None, None)
-    let initialEvents' = Seq.map (fun e -> createInitialEvent aggregateId 0 e) initialEvents
+    let initialEvents' = List.map (fun e -> createInitialEvent aggregateId 0 e) initialEvents
     let error = sprintf "Wrong Basket state %s" state
     
     let checkResult r = 

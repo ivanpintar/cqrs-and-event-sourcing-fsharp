@@ -7,6 +7,9 @@ open System
 open Chessie.ErrorHandling
 open PinetreeCQRS.Infrastructure.Validation
 
+let productCategory = Category "Product"
+let productQueueName = QueueName "Product"
+
 type ProductError =
     | ValidationError of string
     interface IError
@@ -91,4 +94,4 @@ module private Handlers =
 let makeProductCommandHandler = 
     makeCommandHandler { Zero = Handlers.State.Zero
                          ApplyEvent = Handlers.applyEvent
-                         ExecuteCommand = Handlers.executeCommand } 
+                         ExecuteCommand = Handlers.executeCommand }

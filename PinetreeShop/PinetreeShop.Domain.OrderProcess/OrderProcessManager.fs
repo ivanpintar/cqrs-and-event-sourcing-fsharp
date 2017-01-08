@@ -86,16 +86,18 @@ module private Handlers =
         module private Helpers = 
             let validate value = ok value
     
-    let createCommand aggregateId processId (event : EventEnvelope<IEvent>) command = 
-        { AggregateId = aggregateId
-          CommandId = Guid.NewGuid() |> CommandId
-          Payload = command
-          ProcessId = Some(processId)
-          CausationId = event.CausationId
-          CorrelationId = event.CorrelationId
-          ExpectedVersion = AggregateVersion.Irrelevant }
+    let createCommand queueName aggregateId processId (event : EventEnvelope<IEvent>) command = 
+        let cmd = { AggregateId = aggregateId
+                    CommandId = Guid.NewGuid() |> CommandId
+                    Payload = command
+                    ProcessId = Some(processId)
+                    CausationId = event.CausationId
+                    CorrelationId = event.CorrelationId
+                    ExpectedVersion = AggregateVersion.Irrelevant }
+        (queueName, cmd)
+
     
-    let processEvent state (event : EventEnvelope<IEvent>) : Result<CommandEnvelope<ICommand> list, IError> = 
+    let processEvent state (event : EventEnvelope<IEvent>) : Result<(QueueName * CommandEnvelope<ICommand>) list, IError> = 
         match event.ProcessId with
         | Some pid -> 
             match event.Payload with
@@ -104,7 +106,7 @@ module private Handlers =
                 | Basket.BasketCheckedOut(address, items) -> 
                     let command = 
                         Order.Create(BasketId.FromAggregateId(event.AggregateId), address) :> ICommand 
-                        |> createCommand (Guid.NewGuid() |> AggregateId) pid event
+                        |> createCommand Order.orderQueueName (Guid.NewGuid() |> AggregateId) pid event
                     ok [ command ]
                 | _ -> ok []
             | :? Product.Event as pe -> 
@@ -122,7 +124,7 @@ module private Handlers =
                     
                     let (OrderId orderGuid) = state.OrderId
                     [ addOrderCommand ] @ prepForShippingCmd
-                    |> List.map (fun c -> createCommand (AggregateId orderGuid) pid event c)
+                    |> List.map (fun c -> createCommand Order.orderQueueName (AggregateId orderGuid) pid event c)
                     |> ok
                 | _ -> ok []
             | :? Order.Event as oe -> 
@@ -133,7 +135,7 @@ module private Handlers =
                            (fun i -> 
                            let ol = state.OrderLines.[i]
                            let (ProductId productGuid) = ol.ProductId
-                           Product.Reserve(ol.Quantity) :> ICommand |> createCommand (AggregateId productGuid) pid event)
+                           Product.Reserve(ol.Quantity) :> ICommand |> createCommand Product.productQueueName (AggregateId productGuid) pid event)
                     |> ok
                 | Order.OrderCancelled -> 
                     state.Reserved
@@ -142,7 +144,7 @@ module private Handlers =
                            let ol = state.OrderLines.[i]
                            let (ProductId productGuid) = ol.ProductId
                            Product.CancelReservation(ol.Quantity) :> ICommand 
-                           |> createCommand (AggregateId productGuid) pid event)
+                           |> createCommand Product.productQueueName (AggregateId productGuid) pid event)
                     |> ok
                 | Order.OrderShipped -> 
                     state.Reserved
@@ -151,7 +153,7 @@ module private Handlers =
                            let ol = state.OrderLines.[i]
                            let (ProductId productGuid) = ol.ProductId
                            Product.PurchaseReserved(ol.Quantity) :> ICommand 
-                           |> createCommand (AggregateId productGuid) pid event)
+                           |> createCommand Product.productQueueName (AggregateId productGuid) pid event)
                     |> ok
                 | _ -> ok []
             | _ -> ok []
