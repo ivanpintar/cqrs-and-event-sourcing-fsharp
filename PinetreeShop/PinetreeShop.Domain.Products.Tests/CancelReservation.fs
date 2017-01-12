@@ -21,14 +21,15 @@ let ``When CancelReservation ReservationCanceled``() =
     let command = CancelReservation(5) |> createCommand aggregateId (Expected(3), None, None, None)
     let result = handleCommand initialEvents command
     let expected = ProductReservationCanceled(5) |> createExpectedEvent command 4
-    result |> checkSuccess expected
+    result |> checkSuccess [ expected ]
 
 [<Fact>]
 let ``When CancelReservation not created fail``() = 
     CancelReservation(5)
     |> createCommand aggregateId (Expected(0), None, None, None)
     |> handleCommand []
-    |> checkFailure [ ValidationError "Product must be created"; ValidationError "Not enough reserved items" ]
+    |> checkFailure [ ValidationError "Product must be created"
+                      ValidationError "Not enough reserved items" ]
 
 [<Fact>]
 let ``When CancelReservation more than reserved fail``() = 

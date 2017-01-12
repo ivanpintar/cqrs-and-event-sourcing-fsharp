@@ -16,7 +16,7 @@ let ``When AddToStock ProductQuantityChanged``() =
     let initialEvent = ProductCreated("Test product", 15m) |> createInitialEvent aggregateId 1
     let command = AddToStock(15) |> createCommand aggregateId (Expected(1), None, None, None)
     let expected = ProductQuantityChanged(15) |> createExpectedEvent command 2
-    handleCommand [ initialEvent ] command |> checkSuccess expected
+    handleCommand [ initialEvent ] command |> checkSuccess [ expected ]
 
 [<Fact>]
 let ``When AddToStock not created Fail``() = 

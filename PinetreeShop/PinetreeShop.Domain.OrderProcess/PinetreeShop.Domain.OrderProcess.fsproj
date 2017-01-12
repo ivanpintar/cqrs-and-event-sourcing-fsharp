@@ -70,11 +70,6 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PineteeShop.Domain.Orders\PinetreeShop.Domain.Orders.fsproj">
-      <Name>PinetreeShop.Domain.Orders</Name>
-      <Project>{200396d1-a131-4056-b6c3-401ac4e759de}</Project>
-      <Private>True</Private>
-    </ProjectReference>
     <ProjectReference Include="..\PinetreeCQRS.Infrastructure\PinetreeCQRS.Infrastructure.fsproj">
       <Name>PinetreeCQRS.Infrastructure</Name>
       <Project>{68043cde-ada2-41e1-b423-84aa38024da9}</Project>
@@ -88,6 +83,11 @@
     <ProjectReference Include="..\PinetreeShop.Domain.Baskets\PinetreeShop.Domain.Baskets.fsproj">
       <Name>PinetreeShop.Domain.Baskets</Name>
       <Project>{6a494406-1c08-4fd3-a626-766ad4f37a3b}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\PinetreeShop.Domain.Orders\PinetreeShop.Domain.Orders.fsproj">
+      <Name>PinetreeShop.Domain.Orders</Name>
+      <Project>{200396d1-a131-4056-b6c3-401ac4e759de}</Project>
       <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\PinetreeShop.Domain.Products\PinetreeShop.Domain.Products.fsproj">

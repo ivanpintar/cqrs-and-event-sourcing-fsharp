@@ -20,7 +20,7 @@ let initialEvents =
 let ``When PurchaseReserved ProductPurchased``() = 
     let command = PurchaseReserved(10) |> createCommand aggregateId (Expected(3), None, None, None)
     let expected = ProductPurchased(10) |> createExpectedEvent command 4
-    handleCommand initialEvents command |> checkSuccess expected
+    handleCommand initialEvents command |> checkSuccess [ expected ]
 
 [<Fact>]
 let ``When PurchaseReserved not created fail``() = 

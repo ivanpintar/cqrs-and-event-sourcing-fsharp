@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Table } from 'react-bootstrap';
-import OrderLine from './OrderLine';
+import Item from './Item';
 import ChangeQuantityModal from './ChangeQuantityModal'; 
 import CheckOutModal from './CheckOutModal'; 
 
@@ -23,15 +23,15 @@ class Basket extends React.Component {
     render() {
         let { basket, changeQuantity, cancelBasket, checkOutBasket } = this.props;
         let { selectedOrder, checkingOut } = this.state;
-        let orderLines = [];
+        let items = [];
 
         if(!basket.id) {
             return null;
         }
 
         if(basket) {
-            orderLines = basket.orderLines.map(p => 
-                OrderLine(p, () => this.changeQuantityModal(p))
+            items = basket.items.map(p => 
+                Item(p, () => this.changeQuantityModal(p))
             );
         }
         
@@ -57,7 +57,7 @@ class Basket extends React.Component {
                             <th className='col-md-2'></th>
                         </tr>
                     </thead>
-                    <tbody>{orderLines}</tbody>
+                    <tbody>{items}</tbody>
                     <tfoot>
                         <tr>
                             <td colSpan='4' className='text-right'>

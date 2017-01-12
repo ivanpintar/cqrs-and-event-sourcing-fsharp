@@ -15,7 +15,7 @@ let aggregateId = Guid.NewGuid() |> AggregateId
 let ``When Create OrderCreated``() = 
     let command = Create |> createCommand aggregateId (Expected(0), None, None, None)
     let expected = BasketCreated |> createExpectedEvent command 1
-    handleCommand [] command |> checkSuccess expected
+    handleCommand [] command |> checkSuccess [ expected ]
 
 [<Fact>]
 let ``When Create created fail``() = 

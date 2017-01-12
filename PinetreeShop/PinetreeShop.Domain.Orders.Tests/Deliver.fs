@@ -11,12 +11,12 @@ open System
 
 let aggregateId = Guid.NewGuid() |> AggregateId
 let basketId = Guid.NewGuid() |> BasketId
-let orderLine = {
-    ProductId = Guid.NewGuid() |> ProductId
-    ProductName = "Test"
-    Price = 2m
-    Quantity = 2
-}
+
+let orderLine = 
+    { ProductId = Guid.NewGuid() |> ProductId
+      ProductName = "Test"
+      Price = 2m
+      Quantity = 2 }
 
 [<Theory>]
 [<InlineData("Pending", false)>]
@@ -26,24 +26,26 @@ let orderLine = {
 [<InlineData("Delivered", false)>]
 [<InlineData("NotCreated", false)>]
 let ``When Ship`` state isSuccess = 
-    let initialEvent1 = OrderCreated(basketId, ShippingAddress "a")
+    let initialEvents1 = 
+        [ OrderCreated(basketId, ShippingAddress "a", [ orderLine ])
+          OrderLineProductReserved orderLine.ProductId ]
+    
     let initialEvents = 
         match state with
-        | "Pending" -> [ initialEvent1 ]
-        | "Cancelled" -> [ initialEvent1; OrderCancelled ]
-        | "ReadyForShipping" -> [ initialEvent1; OrderReadyForShipping ]
-        | "Shipped" -> [ initialEvent1; OrderShipped ]
-        | "Delivered" -> [ initialEvent1; OrderDelivered ]
+        | "Pending" -> initialEvents1
+        | "Cancelled" -> initialEvents1 @ [ OrderCancelled ]
+        | "ReadyForShipping" -> initialEvents1 @ [ OrderReadyForShipping ]
+        | "Shipped" -> initialEvents1 @ [ OrderShipped ]
+        | "Delivered" -> initialEvents1 @ [ OrderDelivered ]
         | _ -> []
-
+    
     let command = Deliver |> createCommand aggregateId (Irrelevant, None, None, None)
     let initialEvents' = List.map (fun e -> createInitialEvent aggregateId 0 e) initialEvents
-
     let error = sprintf "Wrong Order state %s" state
-
-    let checkResult r =
+    let expectedEvent = createExpectedEvent command 1 OrderDelivered
+    
+    let checkResult r = 
         match isSuccess with
-        | true -> checkSuccess (createExpectedEvent command 1 OrderDelivered) r
+        | true -> checkSuccess [ expectedEvent ] r
         | false -> checkFailure [ ValidationError error ] r
-
     handleCommand initialEvents' command |> checkResult

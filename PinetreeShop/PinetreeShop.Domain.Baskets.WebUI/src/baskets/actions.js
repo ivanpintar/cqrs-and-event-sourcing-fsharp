@@ -35,7 +35,7 @@ export const dispatchBasketUpdate = (dispatch, basket) => {
 export const changeQuantity = (productId, quantity) => {
     return (dispatch, getState) => {
         const state = getState();
-        const order = state.basket.orderLines.find(p => p.productId === productId);
+        const order = state.basket.items.find(p => p.productId === productId);
         const product = state.products.find(p => p.id === productId);
 
         let url = '';

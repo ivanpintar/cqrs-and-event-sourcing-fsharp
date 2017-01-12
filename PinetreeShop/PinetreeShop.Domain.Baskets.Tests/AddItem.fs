@@ -37,9 +37,10 @@ let ``When AddItem`` state isSuccess =
     let command = AddItem item |> createCommand aggregateId (Irrelevant, None, None, None)
     let initialEvents' = List.map (fun e -> createInitialEvent aggregateId 0 e) initialEvents
     let error = sprintf "Wrong Basket state %s" state
+    let expectedEvent = createExpectedEvent command 1 (BasketItemAdded item)
     
     let checkResult r = 
         match isSuccess with
-        | true -> checkSuccess (createExpectedEvent command 1 (BasketItemAdded item)) r
+        | true -> checkSuccess [ expectedEvent ] r
         | false -> checkFailure [ ValidationError error ] r
     handleCommand initialEvents' command |> checkResult

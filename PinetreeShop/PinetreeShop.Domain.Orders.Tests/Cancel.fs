@@ -26,7 +26,7 @@ let orderLine = {
 [<InlineData("Delivered", false)>]
 [<InlineData("NotCreated", false)>]
 let ``When Cancel`` state isSuccess = 
-    let initialEvent1 = OrderCreated(basketId, ShippingAddress "a")
+    let initialEvent1 = OrderCreated(basketId, ShippingAddress "a", [ orderLine ])
     let initialEvents = 
         match state with
         | "Pending" -> [ initialEvent1 ]
@@ -43,7 +43,7 @@ let ``When Cancel`` state isSuccess =
 
     let checkResult r =
         match isSuccess with
-        | true -> checkSuccess (createExpectedEvent command 1 OrderCancelled) r
+        | true -> checkSuccess [ createExpectedEvent command 1 OrderCancelled ] r
         | false -> checkFailure [ ValidationError error ] r
 
     handleCommand initialEvents' command |> checkResult

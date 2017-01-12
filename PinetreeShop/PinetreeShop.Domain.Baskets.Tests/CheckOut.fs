@@ -57,7 +57,7 @@ let ``When CheckOut`` state isSuccess =
         match isSuccess with
         | true -> 
             let expectedEvent = BasketCheckedOut((ShippingAddress "a"), [ item ]) |> createExpectedEvent command 1
-            checkSuccess expectedEvent r
+            checkSuccess [ expectedEvent ] r
         | false -> checkFailure errors r
     
     handleCommand initialEvents' command |> checkResult

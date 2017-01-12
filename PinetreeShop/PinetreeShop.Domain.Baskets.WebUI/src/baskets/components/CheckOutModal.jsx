@@ -9,10 +9,7 @@ class CheckOutModal extends React.Component{
         this.submit = this.submit.bind(this);
         this.close = this.close.bind(this);
         this.state = {
-            streetAndNumber: '',
-            zipAndCity: '',
-            stateOrProvince: '',
-            country: ''
+            address: ''
         }; 
     }
 
@@ -27,18 +24,8 @@ class CheckOutModal extends React.Component{
     }
 
     submit() {    
-        if(
-            this.state.streetAndNumber &&
-            this.state.zipAndCity &&
-            this.state.stateOrProvince &&
-            this.state.country
-        ) {
-            this.props.checkOutBasket({
-                streetAndNumber: this.state.streetAndNumber,
-                zipAndCity: this.state.zipAndCity,
-                stateOrProvince: this.stateOrProvince,
-                country: this.country
-            });
+        if(this.state.address) {
+            this.props.checkOutBasket(this.state.address);
         }
         this.props.onClose();    
     }
@@ -51,32 +38,11 @@ class CheckOutModal extends React.Component{
                 onSave={this.submit}
                 title='Check Out'>
 				<FormGroup>
-                    <ControlLabel>Street and number</ControlLabel>
+                    <ControlLabel>Address</ControlLabel>
 					<FormControl
-						value={this.state.streetAndNumber}
-						type="text"
-						onChange={(e) => this.handleChange(e, 'streetAndNumber')}/>
-                </FormGroup>
-				<FormGroup>
-                    <ControlLabel>Zip and City</ControlLabel>
-					<FormControl
-						value={this.state.zipAndCity}
-						type="text"
-						onChange={(e) => this.handleChange(e, 'zipAndCity')}/>
-                </FormGroup>
-				<FormGroup>
-                    <ControlLabel>State / Province</ControlLabel>
-					<FormControl
-						value={this.state.stateOrProvince}
-						type="text"
-						onChange={(e) => this.handleChange(e, 'stateOrProvince')}/>
-                </FormGroup>
-				<FormGroup>
-                    <ControlLabel>Country</ControlLabel>
-					<FormControl
-						value={this.state.country}
-						type="text"
-						onChange={(e) => this.handleChange(e, 'country')}/>
+						value={this.state.address}
+						type="textarea"
+						onChange={(e) => this.handleChange(e, 'address')}/>
                 </FormGroup>
             </ModalDialog>
         );

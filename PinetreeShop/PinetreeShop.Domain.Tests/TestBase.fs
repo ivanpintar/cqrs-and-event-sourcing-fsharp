@@ -34,14 +34,18 @@ let createInitialEvent aggregateId eventNumber payload =
       EventId = EventId Guid.Empty
       EventNumber = eventNumber }
 
-let checkSuccess expected result =
+let checkSuccess<'TEvent when 'TEvent :> IEvent> (expected:EventEnvelope<'TEvent> list) (result:Result<EventEnvelope<'TEvent> list, _>) =
     match result with
     | Ok (s, _) -> 
-        let actual = Seq.head s |> createComparableEvent
-        Assert.Equal(expected, actual)
+        List.zip expected s
+        |> List.iter (fun (exp, act) ->
+             let act' = createComparableEvent act
+             Assert.Equal(exp, act'))
     | Bad f -> failErrors f
+
+let checkSuccessList expected result = failwith "fail"
 
 let checkFailure (expected:IError list) result =
     match result with
     | Ok (s,_) -> failwith "Did not fail"
-    | Bad f -> Assert.Equal<IError>((expected.ToList()), f)
+    | Bad f -> Assert.Equal<IError>((expected.ToList()), (f.ToList()))

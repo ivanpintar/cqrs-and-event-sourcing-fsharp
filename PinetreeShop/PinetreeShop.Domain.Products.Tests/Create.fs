@@ -15,7 +15,7 @@ let aggregateId = Guid.NewGuid() |> AggregateId
 let ``When Create ProductCreated``() = 
     let command = Create("Test product", 15m) |> createCommand aggregateId (Expected(0), None, None, None)
     let expected = ProductCreated("Test product", 15m) |> createExpectedEvent command 1
-    handleCommand [] command |> checkSuccess expected
+    handleCommand [] command |> checkSuccess [ expected ]
 
 [<Fact>]
 let ``When Create with negative price Failure``() = 

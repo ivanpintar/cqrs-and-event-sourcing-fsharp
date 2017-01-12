@@ -40,6 +40,6 @@ let ``When Cancel`` state isSuccess =
     
     let checkResult r = 
         match isSuccess with
-        | true -> checkSuccess (createExpectedEvent command 1 BasketCancelled) r
+        | true -> checkSuccess [ createExpectedEvent command 1 BasketCancelled ] r
         | false -> checkFailure [ ValidationError error ] r
     handleCommand initialEvents' command |> checkResult

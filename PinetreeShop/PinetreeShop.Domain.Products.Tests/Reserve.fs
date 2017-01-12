@@ -19,7 +19,7 @@ let initialEvents =
 let ``When Reserve ProductReserved``() = 
     let command = Reserve(5) |> createCommand aggregateId (Expected(2), None, None, None)
     let expected = ProductReserved(5) |> createExpectedEvent command 3
-    handleCommand initialEvents command |> checkSuccess expected
+    handleCommand initialEvents command |> checkSuccess [ expected ]
 
 [<Fact>]
 let ``When Reserve not created ProductReservationFailed``() = 
@@ -29,20 +29,20 @@ let ``When Reserve not created ProductReservationFailed``() =
         [ ValidationError "Product must be created" :> IError
           ValidationError "Not enough available items" :> IError ]
     
-    let expected = ProductReservationFailed(7, expectedErrors) |> createExpectedEvent command 1
-    handleCommand [] command |> checkSuccess expected
+    let expected = ProductReservationFailed(7) |> createExpectedEvent command 1
+    handleCommand [] command |> checkSuccess [ expected ]
 
 [<Fact>]
 let ``When Reserve more than available ProductReservationFailed``() = 
     let reserved = ProductReserved(10) |> createInitialEvent aggregateId 3
     let initialEvents' = initialEvents @ [ reserved ]
     let command = Reserve(7) |> createCommand aggregateId (Expected(3), None, None, None)
-    let expected = ProductReservationFailed(7, [ ValidationError "Not enough available items" ]) |> createExpectedEvent command 4
-    handleCommand initialEvents' command |> checkSuccess expected
+    let expected = ProductReservationFailed(7) |> createExpectedEvent command 4
+    handleCommand initialEvents' command |> checkSuccess [ expected ]
 
 [<Fact>]
 let ``When Reserve no items added ProductReservationFailed``() = 
     let initialEvents' = [ initialEvents.Head ]
     let command = Reserve(7) |> createCommand aggregateId (Expected(1), None, None, None)
-    let expected = ProductReservationFailed(7, [ ValidationError "Not enough available items" ]) |> createExpectedEvent command 2
-    handleCommand initialEvents' command |> checkSuccess expected
+    let expected = ProductReservationFailed(7) |> createExpectedEvent command 2
+    handleCommand initialEvents' command |> checkSuccess [ expected ]

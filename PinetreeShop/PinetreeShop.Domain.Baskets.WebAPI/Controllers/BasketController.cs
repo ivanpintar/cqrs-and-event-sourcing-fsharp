@@ -9,6 +9,7 @@ using static PinetreeShop.Domain.Baskets.BasketAggregate;
 using static PinetreeCQRS.Infrastructure.Commands;
 using static PinetreeCQRS.Persistence.SqlServer;
 using Microsoft.FSharp.Collections;
+using Microsoft.FSharp.Core;
 
 namespace PinetreeShop.Domain.Baskets.WebAPI.Controllers
 {
@@ -24,7 +25,7 @@ namespace PinetreeShop.Domain.Baskets.WebAPI.Controllers
         {
             var basket = GetBasketAggregate(basketId);
 
-            if(basket == null)
+            if (basket == null)
             {
                 return CreateBasket();
             }
@@ -47,7 +48,7 @@ namespace PinetreeShop.Domain.Baskets.WebAPI.Controllers
         [Route("addItem"), HttpPost]
         public IHttpActionResult AddItem([FromBody] AddItemModel model)
         {
-            var basketId = model.BasketId; 
+            var basketId = model.BasketId;
             if (model.BasketId == Guid.Empty)
             {
                 basketId = Guid.NewGuid();
@@ -62,7 +63,7 @@ namespace PinetreeShop.Domain.Baskets.WebAPI.Controllers
             var item = new BasketItem(ProductId.NewProductId(productId), model.Name, model.Price, model.Quantity);
             var addCmd = Command.NewAddItem(item);
             var addEnvelope = createCommand(AggregateId.NewAggregateId(basketId), AggregateVersion.Irrelevant, null, null, null, addCmd);
-            
+
             var basket = CommitCommand(addEnvelope);
 
             return Ok(basket);
@@ -76,9 +77,9 @@ namespace PinetreeShop.Domain.Baskets.WebAPI.Controllers
             var cmd = Command.NewRemoveItem(ProductId.NewProductId(productId), model.Quantity);
             var envelope = createCommand(AggregateId.NewAggregateId(basketId), AggregateVersion.Irrelevant, null, null, null, cmd);
 
-            CommitCommand(envelope);
+            var basket = CommitCommand(envelope);
 
-            return Ok();
+            return Ok(basket);
         }
 
         [Route("checkout"), HttpPost]
@@ -87,7 +88,8 @@ namespace PinetreeShop.Domain.Baskets.WebAPI.Controllers
             var basketId = model.BasketId;
             var address = model.ShippingAddress;
             var cmd = Command.NewCheckOut(ShippingAddress.NewShippingAddress(address));
-            var envelope = createCommand(AggregateId.NewAggregateId(basketId), AggregateVersion.Irrelevant, null, null, null, cmd);
+            var processId = FSharpOption<ProcessId>.Some(ProcessId.NewProcessId(Guid.NewGuid()));
+            var envelope = createCommand(AggregateId.NewAggregateId(basketId), AggregateVersion.Irrelevant, null, null, processId, cmd);
 
             var basket = CommitCommand(envelope);
 

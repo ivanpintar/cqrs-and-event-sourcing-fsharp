@@ -19,7 +19,7 @@ let initialEvents =
 let ``When RemoveFromStock ProductQuantityChanged``() = 
     let command = RemoveFromStock(5) |> createCommand aggregateId (Expected(2), None, None, None)
     let expected = ProductQuantityChanged(-5) |> createExpectedEvent command 3
-    handleCommand initialEvents command |> checkSuccess expected
+    handleCommand initialEvents command |> checkSuccess [ expected ]
 
 [<Fact>]
 let ``When RemoveFromStock less than available ProductQuantityChanged``() = 
@@ -28,7 +28,7 @@ let ``When RemoveFromStock less than available ProductQuantityChanged``() =
     let command = RemoveFromStock(5) |> createCommand aggregateId (Expected(3), None, None, None)
     let result = handleCommand initialEvents' command
     let expected = ProductQuantityChanged(-5) |> createExpectedEvent command 4
-    result |> checkSuccess expected
+    result |> checkSuccess [ expected ]
 
 [<Fact>]
 let ``When RemoveFromStock not created Fail``() = 

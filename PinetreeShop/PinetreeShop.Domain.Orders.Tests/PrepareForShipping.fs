@@ -28,8 +28,8 @@ let orderLine =
 [<InlineData("NotCreated", false)>]
 let ``When PrepareForShipping`` state isSuccess = 
     let initialEvents1 = 
-        [ OrderCreated(basketId, ShippingAddress "a")
-          OrderLineAdded(orderLine) ]
+        [ OrderCreated(basketId, ShippingAddress "a", [ orderLine ])
+          OrderLineProductReserved orderLine.ProductId ]
     
     let initialEvents = 
         match state with
@@ -48,16 +48,18 @@ let ``When PrepareForShipping`` state isSuccess =
         | "NotCreated" -> [ ValidationError "Wrong Order state NotCreated" :> IError ; ValidationError "No order lines" :> IError ]
         | _ -> [ ValidationError (sprintf "Wrong Order state %s" state) :> IError ]
     
+
+    let expectedEvent = createExpectedEvent command 1 OrderReadyForShipping
     let checkResult r = 
         match isSuccess with
-        | true -> checkSuccess (createExpectedEvent command 1 OrderReadyForShipping) r
+        | true -> checkSuccess [ expectedEvent ] r
         | false -> checkFailure errors r
     
     handleCommand initialEvents' command |> checkResult
 
 [<Fact>]
 let ``When PrepareForShipping no orders fail`` () =
-    let initialEvent = OrderCreated(basketId, ShippingAddress "a") |>createInitialEvent aggregateId 0
+    let initialEvent = OrderCreated(basketId, ShippingAddress "a", []) |>createInitialEvent aggregateId 0
     PrepareForShipping
     |> createCommand aggregateId (Irrelevant, None, None, None)
     |> handleCommand [ initialEvent ]

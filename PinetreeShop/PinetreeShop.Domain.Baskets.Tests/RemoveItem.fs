@@ -42,7 +42,7 @@ let ``When RemoveItem`` state isSuccess =
     
     let checkResult r = 
         match isSuccess with
-        | true -> checkSuccess (createExpectedEvent command 1 (BasketItemRemoved(productId, 10))) r
+        | true -> checkSuccess [ createExpectedEvent command 1 (BasketItemRemoved(productId, 10)) ] r
         | false -> checkFailure [ ValidationError error ] r
     handleCommand initialEvents' command |> checkResult
 
@@ -67,5 +67,5 @@ let ``When RemoveItem more than quantity`` added removed =
             match r with
             | Ok(r', _) -> Assert.Empty(r')
             | _ -> failwith "failed"
-        | _ -> checkSuccess (createExpectedEvent command 1 (BasketItemRemoved(productId, removed))) r
+        | _ -> checkSuccess [ createExpectedEvent command 1 (BasketItemRemoved(productId, removed)) ] r
     handleCommand initialEvents' command |> checkResult

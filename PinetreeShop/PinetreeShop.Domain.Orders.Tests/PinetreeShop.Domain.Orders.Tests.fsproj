@@ -57,7 +57,7 @@
     <Compile Include="Base.fs" />
     <Compile Include="Create.fs" />
     <Compile Include="Cancel.fs" />
-    <Compile Include="AddOrderLine.fs" />
+    <Compile Include="ReserveOrderLine.fs" />
     <Compile Include="PrepareForShipping.fs" />
     <Compile Include="Ship.fs" />
     <Compile Include="Deliver.fs" />
@@ -95,14 +95,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PineteeShop.Domain.Orders\PinetreeShop.Domain.Orders.fsproj">
-      <Name>PinetreeShop.Domain.Orders</Name>
-      <Project>{200396d1-a131-4056-b6c3-401ac4e759de}</Project>
-      <Private>True</Private>
-    </ProjectReference>
     <ProjectReference Include="..\PinetreeCQRS.Infrastructure\PinetreeCQRS.Infrastructure.fsproj">
       <Name>PinetreeCQRS.Infrastructure</Name>
       <Project>{68043cde-ada2-41e1-b423-84aa38024da9}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\PinetreeShop.Domain.Orders\PinetreeShop.Domain.Orders.fsproj">
+      <Name>PinetreeShop.Domain.Orders</Name>
+      <Project>{200396d1-a131-4056-b6c3-401ac4e759de}</Project>
       <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\PinetreeShop.Domain.Tests\PinetreeShop.Domain.Tests.fsproj">

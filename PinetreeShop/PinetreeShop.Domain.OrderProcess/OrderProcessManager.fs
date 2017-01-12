@@ -31,13 +31,11 @@ module private Handlers =
     type State = 
         { OrderLines : Map<ProductId, OrderLine>
           Reserved : ProductId list
-          RequiredReservations : int
           ProcessState : ProcessState
           OrderId : OrderId }
         static member Zero = 
             { OrderLines = Map.empty
               Reserved = []
-              RequiredReservations = 0
               ProcessState = NotCreated
               OrderId = OrderId Guid.Empty }
     
@@ -52,8 +50,7 @@ module private Handlers =
         | :? Basket.Event as be -> 
             match be with
             | Basket.BasketCheckedOut(_, items) -> 
-                { state with RequiredReservations = 0
-                             OrderLines = 
+                { state with OrderLines = 
                                  List.map (fun (i : BasketItem) -> i.ProductId, (itemToOrderLine i)) items |> Map.ofList }
             | _ -> state
         | :? Product.Event as pe -> 
@@ -62,7 +59,6 @@ module private Handlers =
                 let (AggregateId productGuid) = event.AggregateId
                 let productId = ProductId productGuid
                 { state with Reserved = productId :: state.Reserved }
-            | Product.ProductReservationFailed(qty, _) -> state
             | _ -> state
         | :? Order.Event as oe -> 
             match oe with
@@ -75,27 +71,17 @@ module private Handlers =
             | Order.OrderDelivered -> { state with ProcessState = OrderDelivered }
             | _ -> state
         | _ -> state
-    
-    module private Validate = 
-        let inCase predicate error value = 
-            let result = predicate value
-            match result with
-            | false -> ok value
-            | true -> Bad [ ProcessError error :> IError ]
         
-        module private Helpers = 
-            let validate value = ok value
-    
     let createCommand queueName aggregateId processId (event : EventEnvelope<IEvent>) command = 
-        let cmd = { AggregateId = aggregateId
-                    CommandId = Guid.NewGuid() |> CommandId
-                    Payload = command
-                    ProcessId = Some(processId)
-                    CausationId = event.CausationId
-                    CorrelationId = event.CorrelationId
-                    ExpectedVersion = AggregateVersion.Irrelevant }
+        let cmd = 
+            { AggregateId = aggregateId
+              CommandId = Guid.NewGuid() |> CommandId
+              Payload = command
+              ProcessId = Some(processId)
+              CausationId = event.CausationId
+              CorrelationId = event.CorrelationId
+              ExpectedVersion = AggregateVersion.Irrelevant }
         (queueName, cmd)
-
     
     let processEvent state (event : EventEnvelope<IEvent>) : Result<(QueueName * CommandEnvelope<ICommand>) list, IError> = 
         match event.ProcessId with
@@ -104,8 +90,9 @@ module private Handlers =
             | :? Basket.Event as be -> 
                 match be with
                 | Basket.BasketCheckedOut(address, items) -> 
+                    let orderLines = List.map itemToOrderLine items
                     let command = 
-                        Order.Create(BasketId.FromAggregateId(event.AggregateId), address) :> ICommand 
+                        Order.Create(BasketId.FromAggregateId(event.AggregateId), address, orderLines) :> ICommand 
                         |> createCommand Order.orderQueueName (Guid.NewGuid() |> AggregateId) pid event
                     ok [ command ]
                 | _ -> ok []
@@ -113,29 +100,21 @@ module private Handlers =
                 match pe with
                 | Product.ProductReserved qty -> 
                     let productId = ProductId.FromAggregateId(event.AggregateId)
-                    let addOrderCommand = Order.AddOrderLine(state.OrderLines.[productId]) :> ICommand
-                    let previouslyReserved = state.Reserved.Length
-                    let allReserved = previouslyReserved + 1 = state.RequiredReservations
-                    
-                    let prepForShippingCmd = 
-                        match allReserved with
-                        | true -> [ Order.PrepareForShipping :> ICommand ]
-                        | _ -> []
-                    
                     let (OrderId orderGuid) = state.OrderId
-                    [ addOrderCommand ] @ prepForShippingCmd
-                    |> List.map (fun c -> createCommand Order.orderQueueName (AggregateId orderGuid) pid event c)
-                    |> ok
+                    let command = 
+                        Order.ReserveOrderLineProduct productId :> ICommand 
+                        |> createCommand Order.orderQueueName (AggregateId orderGuid) pid event
+                    ok [ command ]
                 | _ -> ok []
             | :? Order.Event as oe -> 
                 match oe with
-                | Order.OrderCreated _ -> 
-                    state.Reserved
+                | Order.OrderCreated (_,_,orderLines) -> 
+                    orderLines
                     |> List.map 
-                           (fun i -> 
-                           let ol = state.OrderLines.[i]
+                           (fun ol -> 
                            let (ProductId productGuid) = ol.ProductId
-                           Product.Reserve(ol.Quantity) :> ICommand |> createCommand Product.productQueueName (AggregateId productGuid) pid event)
+                           Product.Reserve(ol.Quantity) :> ICommand 
+                           |> createCommand Product.productQueueName (AggregateId productGuid) pid event)
                     |> ok
                 | Order.OrderCancelled -> 
                     state.Reserved

@@ -29,7 +29,7 @@ type Event =
     | ProductQuantityChanged of int
     | ProductReserved of int
     | ProductReservationCanceled of int
-    | ProductReservationFailed of int * IError list
+    | ProductReservationFailed of int
     | ProductPurchased of int
     interface IEvent
 
@@ -50,7 +50,7 @@ module private Handlers =
         | ProductQuantityChanged diff -> { state with Quantity = state.Quantity + diff }
         | ProductReserved qty -> { state with Reserved = state.Reserved + qty }
         | ProductReservationCanceled qty -> { state with Reserved = state.Reserved - qty }
-        | ProductReservationFailed (qty, reasons) -> state
+        | ProductReservationFailed (qty) -> state
         | ProductPurchased qty -> 
             { state with Reserved = state.Reserved - qty
                          Quantity = state.Quantity - qty }
@@ -88,7 +88,7 @@ module private Handlers =
             let r =  Validate.createdAndCanRemoveItems (state, qty) 
             match r with
             | Ok (s, _) -> ok [ProductReserved(qty)] 
-            | Bad f -> ok [ProductReservationFailed(qty, f)] 
+            | Bad f -> ok [ProductReservationFailed(qty)]
 
 
 let makeProductCommandHandler = 
