@@ -7,9 +7,9 @@ const OrderList = ({ orders, cancel, ship, deliver }) => {
         <OrderRow 
             key={o.id}
             order={o}
-            cancel={() => cancel(o.id, o.processId)}
-            ship={() => ship(o.id, o.processId)}
-            deliver={() => deliver(o.id, o.processId)} />
+            cancel={() => cancel(o)}
+            ship={() => ship(o)}
+            deliver={() => deliver(o)} />
     ));
     
     return (

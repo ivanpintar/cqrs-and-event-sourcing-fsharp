@@ -20,9 +20,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        cancel: (id, processId) => dispatch(cancelOrder(id, processId)),
-        ship: (id, processId) => dispatch(shipOrder(id, processId)),
-        deliver: (id, processId) => dispatch(deliverOrder(id, processId))        
+        cancel: (order) => dispatch(cancelOrder(order)),
+        ship: (order) => dispatch(shipOrder(order)),
+        deliver: (order) => dispatch(deliverOrder(order))        
     };
 }
 

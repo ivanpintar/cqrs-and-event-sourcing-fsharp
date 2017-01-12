@@ -32,25 +32,25 @@ export const getOrders = () => {
     }
 }
 
-const updateOrder = (orderId, processId, urlSuffix, newState) => {
+const updateOrder = (order, urlSuffix, newState) => {
     return dispatch => {
         const url = config.API_URL + '/' + urlSuffix;
 
-        fetch(url, createPostRequest({ orderId, processId }))
+        fetch(url, createPostRequest({ orderId: order.id, processId: order.processId }))
             .then(response => dispatch({
                 type: actionTypes.UPDATE_STATE,
-                orderId,
+                order,
                 newState
             }));
     };
 }
 
-export const cancelOrder = (orderId, processId) => {
-    return updateOrder(orderId, processId, 'cancel', 'Cancelled')
+export const cancelOrder = (order) => {
+    return updateOrder(order, 'cancel', 'Cancelled')
 }
-export const shipOrder = (orderId, processId) => {
-    return updateOrder(orderId, processId, 'ship', 'Shipped')
+export const shipOrder = (order) => {
+    return updateOrder(order, 'ship', 'Shipped')
 }
-export const deliverOrder = (orderId, processId) => {
-    return updateOrder(orderId, processId, 'deliver', 'Delivered')
+export const deliverOrder = (order) => {
+    return updateOrder(order, 'deliver', 'Delivered')
 }

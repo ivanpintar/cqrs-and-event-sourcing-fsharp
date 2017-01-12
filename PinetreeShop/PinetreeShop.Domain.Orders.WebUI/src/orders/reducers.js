@@ -16,6 +16,10 @@ const order = (state, action) => {
 export const orders = (state = Immutable.List(), action) => {
     switch (action.type) {
         case actionTypes.UPDATE_STATE:
+            if (state.some(o => o.id === action.order.id)) {
+                return state.map(o => o.id === action.order.id ? order(o, action) : o);
+            } 
+            return state.push(order(undefined, action));
         case actionTypes.ADD_OR_UPDATE_ORDER:
             if (state.some(o => o.id === action.order.id)) {
                 return state.map(o => o.id === action.order.id ? order(o, action) : o);
