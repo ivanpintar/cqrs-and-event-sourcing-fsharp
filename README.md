@@ -1,4 +1,7 @@
-# cqrs and event sourcing
+# cqrs and event sourcing in F#
+
+This is a copy of the same project in C#. 
+It was previously a branch in the same repo, but I moved it out into a separate repository.
 
 Learning CQRS and Event Sourcing.
 This is a small, very contrived shopping app with three aggregates: Basket, Product and Order.
